@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>마더텅 3개월 완성 플랜 — 공유 버전</title>
+<title>마더텅 3개월 완성 플랜</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -18,145 +18,46 @@
     --text: #e8eaf0;
     --muted: #6b7094;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 2rem;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: -200px; left: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(77,150,255,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; top: -200px; left: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(77,150,255,0.06) 0%, transparent 70%); pointer-events: none; }
   .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
 
-  /* SYNC BADGE */
-  .sync-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(107,203,119,0.08);
-    border: 1px solid rgba(107,203,119,0.2);
-    border-radius: 12px;
-    padding: 0.7rem 1.2rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.78rem;
-    color: var(--accent3);
-    animation: fadeUp 0.5s ease forwards;
-  }
-
-  .sync-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent3);
-    display: inline-block;
-    margin-right: 0.5rem;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-
+  .sync-bar { display: flex; align-items: center; justify-content: space-between; background: rgba(107,203,119,0.08); border: 1px solid rgba(107,203,119,0.2); border-radius: 12px; padding: 0.7rem 1.2rem; margin-bottom: 1.5rem; font-size: 0.78rem; color: var(--accent3); flex-wrap: wrap; gap: 0.5rem; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3); display: inline-block; margin-right: 0.5rem; animation: pulse 2s infinite; }
+  .sync-dot.offline { background: var(--accent1); }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+  .sync-right { display: flex; align-items: center; gap: 1rem; }
   .sync-time { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.7rem; }
 
-  /* HEADER */
   header { margin-bottom: 2rem; animation: fadeUp 0.6s ease forwards; }
-
-  .label-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    background: rgba(255,217,61,0.1);
-    border: 1px solid rgba(255,217,61,0.25);
-    padding: 0.3rem 0.8rem;
-    border-radius: 100px;
-    margin-bottom: 0.8rem;
-    display: inline-block;
-  }
-
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 900;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #fff 0%, #a0a8d0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.4rem;
-  }
-
+  .label-pill { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent2); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.25); padding: 0.3rem 0.8rem; border-radius: 100px; margin-bottom: 0.8rem; display: inline-block; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.1; background: linear-gradient(135deg, #fff 0%, #a0a8d0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.4rem; }
   .subtitle { color: var(--muted); font-size: 0.85rem; font-weight: 300; }
 
-  /* PROGRESS */
-  .total-progress-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
-    animation: fadeUp 0.6s 0.1s ease both;
-  }
-
+  .total-progress-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 2rem; animation: fadeUp 0.6s 0.1s ease both; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
   .progress-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; }
   .progress-pct { font-family: 'DM Mono', monospace; font-size: 1.2rem; color: var(--accent2); font-weight: 500; }
-
   .progress-bar-wrap { background: var(--border); border-radius: 100px; height: 8px; overflow: hidden; }
   .progress-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent4), var(--accent3)); transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-
   .subject-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.2rem; }
   .sub-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }
   .sub-bar-label span:last-child { font-family: 'DM Mono', monospace; }
   .sub-bar-wrap { background: var(--border); border-radius: 100px; height: 4px; overflow: hidden; }
   .sub-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-  .fill-red { background: var(--accent1); }
-  .fill-blue { background: var(--accent4); }
-  .fill-green { background: var(--accent3); }
+  .fill-red { background: var(--accent1); } .fill-blue { background: var(--accent4); } .fill-green { background: var(--accent3); }
 
-  /* TABS */
   .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; animation: fadeUp 0.6s 0.2s ease both; }
-  .tab-btn {
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 0.82rem; font-weight: 500;
-    padding: 0.55rem 1.2rem;
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+  .tab-btn { font-family: 'Noto Sans KR', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.55rem 1.2rem; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.2s ease; }
   .tab-btn:hover { border-color: var(--accent4); color: var(--text); }
   .tab-btn.active { background: var(--accent4); border-color: var(--accent4); color: #fff; }
   .tab-btn[data-month="2"].active { background: var(--accent1); border-color: var(--accent1); }
   .tab-btn[data-month="3"].active { background: var(--accent3); border-color: var(--accent3); color: #0a0c14; }
 
-  /* MONTH */
   .month-content { display: none; }
   .month-content.active { display: block; animation: fadeUp 0.3s ease forwards; }
-
-  .month-header {
-    display: flex; align-items: center; gap: 1.5rem;
-    margin-bottom: 1.5rem; padding: 1.5rem 2rem;
-    background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
+  .month-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem 2rem; background: var(--surface); border-radius: 16px; border: 1px solid var(--border); flex-wrap: wrap; }
   .month-num { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; line-height: 1; opacity: 0.15; }
   .month-info h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.2rem; }
   .month-info p { font-size: 0.8rem; color: var(--muted); }
@@ -165,74 +66,32 @@
   .badge-blue { background: rgba(77,150,255,0.15); color: var(--accent4); border: 1px solid rgba(77,150,255,0.3); }
   .badge-green { background: rgba(107,203,119,0.15); color: var(--accent3); border: 1px solid rgba(107,203,119,0.3); }
 
-  /* WEEKS */
   .weeks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   @media (max-width: 700px) { .weeks-grid { grid-template-columns: 1fr; } .subject-bars { grid-template-columns: 1fr; } }
 
-  .week-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1.3rem 1.5rem;
-    transition: border-color 0.2s, transform 0.2s;
-  }
+  .week-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.3rem 1.5rem; transition: border-color 0.2s, transform 0.2s; }
   .week-card:hover { border-color: #353860; transform: translateY(-2px); }
   .week-card.completed { border-color: rgba(107,203,119,0.3); background: rgba(107,203,119,0.04); }
-
   .week-num-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
   .week-num { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
-
-  .week-check {
-    width: 20px; height: 20px; border-radius: 50%;
-    border: 2px solid var(--border); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; flex-shrink: 0;
-  }
+  .week-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
   .week-check.done { background: var(--accent3); border-color: var(--accent3); }
   .week-check.done::after { content: '✓'; color: #0a0c14; font-size: 0.65rem; font-weight: 900; }
-
   .week-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.6rem; line-height: 1.4; }
 
   .tasks-list { list-style: none; }
-  .task-item {
-    display: flex; align-items: flex-start; gap: 0.5rem;
-    padding: 0.35rem 0; font-size: 0.8rem; color: var(--muted);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    cursor: pointer; transition: color 0.15s;
-  }
+  .task-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.35rem 0; font-size: 0.8rem; color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.04); transition: color 0.15s; }
   .task-item:last-child { border-bottom: none; }
   .task-item:hover { color: var(--text); }
-
-  .task-item input[type="checkbox"] {
-    appearance: none; -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border: 1.5px solid var(--border); border-radius: 3px;
-    flex-shrink: 0; margin-top: 1px; cursor: pointer;
-    transition: all 0.15s; position: relative;
-  }
+  .task-item input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1.5px solid var(--border); border-radius: 3px; flex-shrink: 0; margin-top: 1px; cursor: pointer; transition: all 0.15s; position: relative; }
   .task-item input[type="checkbox"]:checked { background: var(--accent3); border-color: var(--accent3); }
-  .task-item input[type="checkbox"]:checked::after {
-    content: ''; position: absolute;
-    top: 1px; left: 3px; width: 4px; height: 7px;
-    border: 1.5px solid #0a0c14; border-top: none; border-left: none;
-    transform: rotate(45deg);
-  }
+  .task-item input[type="checkbox"]:checked::after { content: ''; position: absolute; top: 1px; left: 3px; width: 4px; height: 7px; border: 1.5px solid #0a0c14; border-top: none; border-left: none; transform: rotate(45deg); }
   .task-item.checked { text-decoration: line-through; color: #404460; }
+  .task-item input[type="checkbox"]:disabled { opacity: 0.4; }
 
-  /* 체크 중 로딩 표시 */
-  .task-item input[type="checkbox"].saving { opacity: 0.5; }
+  .day-tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; background: var(--surface2); color: var(--muted); padding: 0.1rem 0.35rem; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
 
-  .day-tag {
-    font-family: 'DM Mono', monospace; font-size: 0.65rem;
-    background: var(--surface2); color: var(--muted);
-    padding: 0.1rem 0.35rem; border-radius: 4px;
-    flex-shrink: 0; margin-top: 1px;
-  }
-
-  /* TIPS */
-  .tips-section {
-    margin-top: 2rem; padding: 1.5rem 2rem;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; animation: fadeUp 0.6s 0.35s ease both;
-  }
+  .tips-section { margin-top: 2rem; padding: 1.5rem 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; animation: fadeUp 0.6s 0.35s ease both; }
   .tips-title { font-family: 'DM Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent2); margin-bottom: 1rem; }
   .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
   .tip-card { background: var(--surface2); border-radius: 10px; padding: 1rem; border: 1px solid var(--border); }
@@ -240,67 +99,40 @@
   .tip-card h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem; }
   .tip-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
 
-  /* RESET BTN */
-  .reset-btn {
-    font-family: 'DM Mono', monospace; font-size: 0.7rem;
-    background: transparent; border: 1px solid rgba(255,107,107,0.3);
-    color: rgba(255,107,107,0.6); padding: 0.35rem 0.8rem;
-    border-radius: 6px; cursor: pointer; transition: all 0.2s;
-  }
+  .reset-btn { font-family: 'DM Mono', monospace; font-size: 0.7rem; background: transparent; border: 1px solid rgba(255,107,107,0.3); color: rgba(255,107,107,0.6); padding: 0.35rem 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
   .reset-btn:hover { border-color: var(--accent1); color: var(--accent1); }
 
-  /* LOADING OVERLAY */
-  .loading-overlay {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 999; transition: opacity 0.4s;
-  }
+  .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
   .loading-overlay.hidden { opacity: 0; pointer-events: none; }
-  .loading-spinner {
-    width: 36px; height: 36px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent4);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 1rem;
-  }
+  .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent4); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
   .loading-text { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">공유 데이터 불러오는 중...</div>
+  <div class="loading-text">Firebase 데이터 불러오는 중...</div>
 </div>
 
 <div class="container">
-
-  <!-- SYNC BAR -->
   <div class="sync-bar">
-    <div><span class="sync-dot"></span>실시간 공유 활성화 — 누구든 체크하면 모두에게 반영돼요</div>
-    <div style="display:flex;align-items:center;gap:1rem;">
-      <span class="sync-time" id="syncTime">동기화 중...</span>
+    <div><span class="sync-dot" id="syncDot"></span><span id="syncStatus">Firebase 연결 중...</span></div>
+    <div class="sync-right">
+      <span class="sync-time" id="syncTime"></span>
       <button class="reset-btn" onclick="confirmReset()">전체 초기화</button>
     </div>
   </div>
 
-  <!-- HEADER -->
   <header>
     <div class="label-pill">📚 SHARED STUDY ROADMAP</div>
     <h1>마더텅 3개월<br>완성 플랜</h1>
-    <p class="subtitle">수학1 · 수학2 · 확률과통계 — 함께 체크하는 공유 커리큘럼</p>
+    <p class="subtitle">수학1 · 수학2 · 확률과통계 — 함께 체크하는 실시간 공유 커리큘럼</p>
   </header>
 
-  <!-- TOTAL PROGRESS -->
   <div class="total-progress-card">
     <div class="progress-header">
       <span class="progress-title">전체 진행률</span>
@@ -323,7 +155,6 @@
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-month="1" onclick="switchTab(1)">1개월차 — 수학1</button>
     <button class="tab-btn" data-month="2" onclick="switchTab(2)">2개월차 — 수학2</button>
@@ -507,7 +338,6 @@
     </div>
   </div>
 
-  <!-- TIPS -->
   <div class="tips-section">
     <div class="tips-title">💡 마더텅 활용 꿀팁</div>
     <div class="tips-grid">
@@ -517,108 +347,100 @@
       <div class="tip-card"><div class="tip-icon">📊</div><h4>기출 병행</h4><p>마더텅 유형 완성 후 수능·모평 기출과 반드시 연결.</p></div>
     </div>
   </div>
-
 </div>
 
-<script>
-  const STORAGE_KEY = 'mothertong-shared-v1';
-  const POLL_INTERVAL = 5000; // 5초마다 동기화
-  let localState = {};
-  let pollTimer = null;
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // 총 태스크 수 계산용
-  const MONTH_RANGES = {
-    1: ['t0','t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','t14','t15','t16','t17','t18','t19','t20','t21','t22','t23'],
-    2: ['t24','t25','t26','t27','t28','t29','t30','t31','t32','t33','t34','t35','t36','t37','t38','t39','t40','t41','t42','t43','t44','t45','t46','t47'],
-    3: ['t48','t49','t50','t51','t52','t53','t54','t55','t56','t57','t58','t59','t60','t61','t62','t63','t64','t65','t66','t67','t68','t69','t70','t71']
+  const firebaseConfig = {
+    apiKey: "AIzaSyCz9dmLAFVdp_fe4bneN5wlW8bknyH3bgM",
+    authDomain: "yeonwoo-d3721.firebaseapp.com",
+    databaseURL: "https://yeonwoo-d3721-default-rtdb.asia-southeast1.firebaseio.com",
+    projectId: "yeonwoo-d3721",
+    storageBucket: "yeonwoo-d3721.firebasestorage.app",
+    messagingSenderId: "1021874423334",
+    appId: "1:1021874423334:web:35e70b78c8e0d6c18788e7",
+    measurementId: "G-KZBEHQ0WC5"
   };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const dbRef = ref(db, 'mothertong/checks');
 
   const WEEK_TASKS = {
-    1: ['t0','t1','t2','t3','t4','t5'],
-    2: ['t6','t7','t8','t9','t10','t11'],
-    3: ['t12','t13','t14','t15','t16','t17'],
-    4: ['t18','t19','t20','t21','t22','t23'],
-    5: ['t24','t25','t26','t27','t28','t29'],
-    6: ['t30','t31','t32','t33','t34','t35'],
-    7: ['t36','t37','t38','t39','t40','t41'],
-    8: ['t42','t43','t44','t45','t46','t47'],
-    9: ['t48','t49','t50','t51','t52','t53'],
-    10: ['t54','t55','t56','t57','t58','t59'],
-    11: ['t60','t61','t62','t63','t64','t65'],
-    12: ['t66','t67','t68','t69','t70','t71']
+    1:['t0','t1','t2','t3','t4','t5'], 2:['t6','t7','t8','t9','t10','t11'],
+    3:['t12','t13','t14','t15','t16','t17'], 4:['t18','t19','t20','t21','t22','t23'],
+    5:['t24','t25','t26','t27','t28','t29'], 6:['t30','t31','t32','t33','t34','t35'],
+    7:['t36','t37','t38','t39','t40','t41'], 8:['t42','t43','t44','t45','t46','t47'],
+    9:['t48','t49','t50','t51','t52','t53'], 10:['t54','t55','t56','t57','t58','t59'],
+    11:['t60','t61','t62','t63','t64','t65'], 12:['t66','t67','t68','t69','t70','t71']
+  };
+  const MONTH_RANGES = {
+    1: [...WEEK_TASKS[1],...WEEK_TASKS[2],...WEEK_TASKS[3],...WEEK_TASKS[4]],
+    2: [...WEEK_TASKS[5],...WEEK_TASKS[6],...WEEK_TASKS[7],...WEEK_TASKS[8]],
+    3: [...WEEK_TASKS[9],...WEEK_TASKS[10],...WEEK_TASKS[11],...WEEK_TASKS[12]]
   };
 
-  async function loadFromStorage() {
-    try {
-      const result = await window.storage.get(STORAGE_KEY, true);
-      return result ? JSON.parse(result.value) : {};
-    } catch(e) {
-      return {};
-    }
-  }
+  let remoteState = {};
+  let isSaving = false;
 
-  async function saveToStorage(state) {
-    try {
-      await window.storage.set(STORAGE_KEY, JSON.stringify(state), true);
-    } catch(e) {
-      console.error('저장 실패', e);
-    }
-  }
+  // 실시간 리스너 — Firebase 변경사항을 즉시 UI에 반영
+  onValue(dbRef, (snapshot) => {
+    remoteState = snapshot.val() || {};
+    applyStateToUI(remoteState);
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    setTimeout(() => document.getElementById('loadingOverlay').remove(), 400);
+    setSyncStatus(true);
+    updateSyncTime();
+  }, (error) => {
+    console.error(error);
+    setSyncStatus(false);
+    document.getElementById('loadingOverlay').classList.add('hidden');
+  });
 
   function applyStateToUI(state) {
     document.querySelectorAll('.task-item input[type="checkbox"]').forEach(cb => {
-      const id = cb.dataset.id;
-      const shouldBeChecked = !!state[id];
-      if (cb.checked !== shouldBeChecked) {
-        cb.checked = shouldBeChecked;
-        cb.parentElement.classList.toggle('checked', shouldBeChecked);
-      }
+      const checked = !!state[cb.dataset.id];
+      cb.checked = checked;
+      cb.parentElement.classList.toggle('checked', checked);
     });
     updateProgress(state);
     updateWeekChecks(state);
   }
 
-  function getStateFromUI() {
-    const state = {};
-    document.querySelectorAll('.task-item input[type="checkbox"]').forEach(cb => {
-      state[cb.dataset.id] = cb.checked;
-    });
-    return state;
+  async function saveState(state) {
+    try {
+      await set(dbRef, state);
+      updateSyncTime();
+    } catch(e) {
+      setSyncStatus(false);
+    }
   }
 
-  async function handleCheck(el) {
-    el.classList.add('saving');
-    el.parentElement.classList.toggle('checked', el.checked);
-    localState[el.dataset.id] = el.checked;
-    await saveToStorage(localState);
-    el.classList.remove('saving');
-    updateProgress(localState);
-    updateWeekChecks(localState);
-    updateSyncTime();
+  function setSyncStatus(online) {
+    const dot = document.getElementById('syncDot');
+    const status = document.getElementById('syncStatus');
+    dot.classList.toggle('offline', !online);
+    status.textContent = online ? '실시간 동기화 활성화 — 누가 체크해도 모두에게 반영됩니다' : '연결 오류 — 재시도 중...';
   }
 
-  async function toggleWeek(n) {
-    const tasks = WEEK_TASKS[n];
-    const allChecked = tasks.every(id => !!localState[id]);
-    tasks.forEach(id => { localState[id] = !allChecked; });
-    applyStateToUI(localState);
-    await saveToStorage(localState);
-    updateSyncTime();
+  function updateSyncTime() {
+    const now = new Date();
+    const t = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+    document.getElementById('syncTime').textContent = `마지막 동기화: ${t}`;
   }
 
   function updateProgress(state) {
     const allIds = Object.values(MONTH_RANGES).flat();
-    const total = allIds.length;
     const done = allIds.filter(id => state[id]).length;
-    const pct = total > 0 ? Math.round(done / total * 100) : 0;
-
+    const pct = Math.round(done / allIds.length * 100);
     document.getElementById('totalPct').textContent = pct + '%';
     document.getElementById('totalBar').style.width = pct + '%';
-
     [1,2,3].forEach(m => {
       const ids = MONTH_RANGES[m];
-      const mDone = ids.filter(id => state[id]).length;
-      const mPct = ids.length > 0 ? Math.round(mDone / ids.length * 100) : 0;
+      const mPct = Math.round(ids.filter(id => state[id]).length / ids.length * 100);
       document.getElementById('pct' + m).textContent = mPct + '%';
       document.getElementById('bar' + m).style.width = mPct + '%';
     });
@@ -626,73 +448,41 @@
 
   function updateWeekChecks(state) {
     Object.entries(WEEK_TASKS).forEach(([w, tasks]) => {
-      const allDone = tasks.length > 0 && tasks.every(id => !!state[id]);
-      const checkEl = document.getElementById('wcheck-' + w);
-      const card = document.getElementById('wc-' + w);
-      if (checkEl) checkEl.classList.toggle('done', allDone);
-      if (card) card.classList.toggle('completed', allDone);
+      const allDone = tasks.every(id => !!state[id]);
+      document.getElementById('wcheck-' + w)?.classList.toggle('done', allDone);
+      document.getElementById('wc-' + w)?.classList.toggle('completed', allDone);
     });
   }
 
-  function updateSyncTime() {
-    const now = new Date();
-    const h = now.getHours().toString().padStart(2,'0');
-    const m = now.getMinutes().toString().padStart(2,'0');
-    const s = now.getSeconds().toString().padStart(2,'0');
-    document.getElementById('syncTime').textContent = `마지막 동기화: ${h}:${m}:${s}`;
-  }
+  // 전역 함수 노출
+  window.handleCheck = async function(el) {
+    remoteState[el.dataset.id] = el.checked;
+    el.parentElement.classList.toggle('checked', el.checked);
+    updateProgress(remoteState);
+    updateWeekChecks(remoteState);
+    await saveState({...remoteState});
+  };
 
-  async function poll() {
-    try {
-      const remoteState = await loadFromStorage();
-      // 리모트와 로컬 병합 (체크된 게 우선)
-      let changed = false;
-      Object.keys(remoteState).forEach(id => {
-        if (remoteState[id] && !localState[id]) {
-          localState[id] = true;
-          changed = true;
-        }
-      });
-      if (changed) {
-        applyStateToUI(localState);
-        updateSyncTime();
-      }
-    } catch(e) {}
-  }
+  window.toggleWeek = async function(n) {
+    const tasks = WEEK_TASKS[n];
+    const allChecked = tasks.every(id => !!remoteState[id]);
+    tasks.forEach(id => { remoteState[id] = !allChecked; });
+    applyStateToUI(remoteState);
+    await saveState({...remoteState});
+  };
 
-  async function confirmReset() {
+  window.confirmReset = async function() {
     if (!confirm('⚠️ 모든 체크를 초기화할까요?\n이 작업은 모든 사용자에게 적용됩니다.')) return;
-    localState = {};
-    await saveToStorage(localState);
-    applyStateToUI(localState);
-    updateSyncTime();
-  }
+    remoteState = {};
+    await saveState({});
+  };
 
-  function switchTab(n) {
+  window.switchTab = function(n) {
     document.querySelectorAll('.month-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById('month-' + n).classList.add('active');
     document.querySelector('.tab-btn[data-month="' + n + '"]').classList.add('active');
-  }
-
-  // INIT
-  async function init() {
-    const overlay = document.getElementById('loadingOverlay');
-    try {
-      localState = await loadFromStorage();
-      applyStateToUI(localState);
-      updateSyncTime();
-    } catch(e) {
-      localState = {};
-    }
-    overlay.classList.add('hidden');
-    setTimeout(() => overlay.remove(), 400);
-
-    // 주기적 동기화
-    pollTimer = setInterval(poll, POLL_INTERVAL);
-  }
-
-  init();
+  };
 </script>
 </body>
 </html>
