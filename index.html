@@ -92,6 +92,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .cal-cell.sat .cal-day { color: var(--accent2); }
 .cal-count { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.1rem 0.4rem; border-radius: 100px; }
 .cal-count.zero { color: var(--muted); background: transparent; }
+  .member-total { 
+  font-family: 'DM Mono', monospace; font-size: 0.7rem;
+  color: var(--accent3); background: rgba(255,217,61,0.1);
+  border: 1px solid rgba(255,217,61,0.2);
+  padding: 0.1rem 0.45rem; border-radius: 100px;
+  white-space: nowrap;
+}
+.member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
 .cal-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 36px; }
 .cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
 
@@ -477,6 +485,7 @@ function renderTable() {
     if (isTod) cls += ' today-col';
     hHtml += `<th class="${cls}" data-day="${d}">${d}</th>`;
   }
+  hHtml += '<th class="name-col" style="min-width:60px;text-align:center">이번달</th>';
   hHtml += '</tr>';
   head.innerHTML = hHtml;
 
@@ -496,6 +505,13 @@ function renderTable() {
         onchange="handleTableCheck(this)"
       ></td>`;
     }
+    // 월간 총 체크 횟수
+    let total = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      if (isChecked(curYear, curMonth, d, member)) total++;
+    }
+    bHtml += `<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
+    
     bHtml += '</tr>';
   });
 
@@ -505,6 +521,10 @@ function renderTable() {
     const cnt = dayCount(curYear, curMonth, d);
     bHtml += `<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
   }
+  // 전체 합계도 추가
+    let grandTotal = 0;
+    for (let d = 1; d <= daysInMonth; d++) grandTotal += dayCount(curYear, curMonth, d);
+    bHtml += `<td class="stat-cell has-cnt">${grandTotal}회</td>`;
   bHtml += '</tr>';
 
   body.innerHTML = bHtml;
