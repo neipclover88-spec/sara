@@ -81,6 +81,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 }
 .cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,229,160,0.1); }
 .cal-cell.today { border-color: var(--accent); }
+  .cal-cell.holiday { border-color: rgba(255,107,107,0.3); }
+.cal-cell.holiday .cal-day { color: #ff6b6b; }
+.cal-holiday { font-size: 0.55rem; color: #ff6b6b; text-align: center; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cal-cell.today .cal-day { color: var(--accent); }
 .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
 .cal-cell.my-checked { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.4); }
@@ -237,6 +240,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// 공휴일 데이터 (년도별로 추가 가능)
+const HOLIDAYS = {
+  "2025": {
+    "0": { 1: "신정" },
+    "1": { 10: "설날 연휴 전날", 28: "설날", 29: "설날 연휴", 30: "설날 연휴" },
+    "2": { 1: "삼일절" },
+    "4": { 5: "어린이날", 6: "대체공휴일" },
+    "5": { 6: "현충일" },
+    "7": { 15: "광복절" },
+    "9": { 3: "개천절", 5: "추석 연휴", 6: "추석", 7: "추석 연휴", 8: "대체공휴일", 9: "한글날" },
+    "11": { 25: "크리스마스" }
+  },
+  "2026": {
+    "0": { 1: "신정" },
+    "1": { 16: "설날 연휴", 17: "설날", 18: "설날 연휴" },
+    "2": { 1: "삼일절" },
+    "4": { 5: "어린이날", 25: "부처님오신날" },
+    "5": { 6: "현충일" },
+    "7": { 15: "광복절" },
+    "8": { 24: "추석 연휴", 25: "추석", 26: "추석 연휴" },
+    "9": { 3: "개천절", 9: "한글날" },
+    "11": { 25: "크리스마스" }
+  }
+};
+
+function getHoliday(y, m, d) {
+  return HOLIDAYS[String(y)]?.[String(m)]?.[d] || null;
+}
+  
 // ── 멤버 목록 (가나다 순) ──────────────────────────
 const MEMBERS = [
   "귀엽동이만학도(치/한)",
@@ -381,8 +413,12 @@ function renderCalendar() {
     cell.className = cls;
 
     const dots = Math.min(cnt, 9);
+   const holiday = getHoliday(curYear, curMonth, d);
+    if (holiday) cls += ' holiday';
+    cell.className = cls;
     cell.innerHTML = `
       <span class="cal-day">${d}</span>
+      ${holiday ? `<span class="cal-holiday">${holiday}</span>` : ''}
       <span class="cal-count${cnt===0?' zero':''}">${cnt}명</span>
       <div class="cal-dots">${'<div class="cal-dot"></div>'.repeat(dots)}</div>
     `;
