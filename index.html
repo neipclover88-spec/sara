@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마더텅 3개월 완성 플랜</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c14;
+    --surface: #111320;
+    --surface2: #181b2e;
+    --border: #252840;
+    --accent1: #ff6b6b;
+    --accent2: #ffd93d;
+    --accent3: #6bcb77;
+    --accent4: #4d96ff;
+    --text: #e8eaf0;
+    --muted: #6b7094;
+    --tag-m1: rgba(255,107,107,0.15);
+    --tag-m2: rgba(77,150,255,0.15);
+    --tag-m3: rgba(107,203,119,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(77,150,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -200px; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,107,107,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .label-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    background: rgba(255,217,61,0.1);
+    border: 1px solid rgba(255,217,61,0.25);
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, #a0a8d0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
+
+  /* TOTAL PROGRESS */
+  .total-progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+    opacity: 0;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .progress-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .progress-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent4), var(--accent3));
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  .subject-bars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .sub-bar-item { }
+  .sub-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .sub-bar-label span:last-child {
+    font-family: 'DM Mono', monospace;
+  }
+  .sub-bar-wrap {
+    background: var(--border);
+    border-radius: 100px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .sub-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+  .fill-red { background: var(--accent1); }
+  .fill-blue { background: var(--accent4); }
+  .fill-green { background: var(--accent3); }
+
+  /* MONTH TABS */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+    opacity: 0;
+  }
+
+  .tab-btn {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn:hover {
+    border-color: var(--accent4);
+    color: var(--text);
+  }
+
+  .tab-btn.active {
+    background: var(--accent4);
+    border-color: var(--accent4);
+    color: #fff;
+  }
+
+  .tab-btn[data-month="2"].active { background: var(--accent1); border-color: var(--accent1); }
+  .tab-btn[data-month="3"].active { background: var(--accent3); border-color: var(--accent3); color: #0a0c14; }
+
+  /* MONTH CONTENT */
+  .month-content { display: none; }
+  .month-content.active { display: block; animation: fadeUp 0.4s ease forwards; }
+
+  /* MONTH HEADER */
+  .month-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .month-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.15;
+  }
+
+  .month-info h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .month-info p {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .month-badge {
+    margin-left: auto;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-red { background: var(--tag-m1); color: var(--accent1); border: 1px solid rgba(255,107,107,0.3); }
+  .badge-blue { background: var(--tag-m2); color: var(--accent4); border: 1px solid rgba(77,150,255,0.3); }
+  .badge-green { background: var(--tag-m3); color: var(--accent3); border: 1px solid rgba(107,203,119,0.3); }
+
+  /* WEEKS GRID */
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 700px) {
+    .weeks-grid { grid-template-columns: 1fr; }
+    .subject-bars { grid-template-columns: 1fr; }
+  }
+
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.3rem 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .week-card:hover {
+    border-color: #353860;
+    transform: translateY(-2px);
+  }
+
+  .week-card.completed {
+    border-color: rgba(107,203,119,0.3);
+    background: rgba(107,203,119,0.04);
+  }
+
+  .week-num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+
+  .week-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .week-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .week-check.done {
+    background: var(--accent3);
+    border-color: var(--accent3);
+  }
+
+  .week-check.done::after {
+    content: '✓';
+    color: #0a0c14;
+    font-size: 0.65rem;
+    font-weight: 900;
+  }
+
+  .week-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .tasks-list {
+    list-style: none;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .task-item:last-child { border-bottom: none; }
+  .task-item:hover { color: var(--text); }
+
+  .task-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .task-item input[type="checkbox"]:checked {
+    background: var(--accent3);
+    border-color: var(--accent3);
+  }
+
+  .task-item input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 3px;
+    width: 4px; height: 7px;
+    border: 1.5px solid #0a0c14;
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+  }
+
+  .task-item.checked {
+    text-decoration: line-through;
+    color: #404460;
+  }
+
+  .day-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--surface2);
+    color: var(--muted);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* TIPS SECTION */
+  .tips-section {
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    animation: fadeUp 0.6s 0.35s ease forwards;
+    opacity: 0;
+  }
+
+  .tips-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .tip-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .tip-icon { font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .tip-card h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .tip-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="label-pill">📚 STUDY ROADMAP</div>
+        <h1>마더텅 3개월<br>완성 플랜</h1>
+        <p class="subtitle">수학1 · 수학2 · 확률과통계 — 체계적 12주 커리큘럼</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOTAL PROGRESS -->
+  <div class="total-progress-card">
+    <div class="progress-header">
+      <span class="progress-title">전체 진행률</span>
+      <span class="progress-pct" id="totalPct">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="totalBar"></div>
+    </div>
+    <div class="subject-bars">
+      <div class="sub-bar-item">
+        <div class="sub-bar-label"><span>수학 1</span><span id="pct1">0%</span></div>
+        <div class="sub-bar-wrap"><div class="sub-bar-fill fill-red" id="bar1"></div></div>
+      </div>
+      <div class="sub-bar-item">
+        <div class="sub-bar-label"><span>수학 2</span><span id="pct2">0%</span></div>
+        <div class="sub-bar-wrap"><div class="sub-bar-fill fill-blue" id="bar2"></div></div>
+      </div>
+      <div class="sub-bar-item">
+        <div class="sub-bar-label"><span>확률과통계</span><span id="pct3">0%</span></div>
+        <div class="sub-bar-wrap"><div class="sub-bar-fill fill-green" id="bar3"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-month="1" onclick="switchTab(1)">1개월차 — 수학1</button>
+    <button class="tab-btn" data-month="2" onclick="switchTab(2)">2개월차 — 수학2</button>
+    <button class="tab-btn" data-month="3" onclick="switchTab(3)">3개월차 — 확통 + 복습</button>
+  </div>
+
+  <!-- MONTH 1 -->
+  <div class="month-content active" id="month-1">
+    <div class="month-header">
+      <div class="month-num">01</div>
+      <div class="month-info">
+        <h2>📐 수학 1 완성</h2>
+        <p>지수·로그함수 → 삼각함수 → 수열 순으로 개념부터 유형까지</p>
+      </div>
+      <div class="month-badge badge-red">4주 완성</div>
+    </div>
+    <div class="weeks-grid">
+      <!-- Week 1 -->
+      <div class="week-card" id="wc-1">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 01</span>
+          <div class="week-check" id="wcheck-1" onclick="toggleWeek(1)"></div>
+        </div>
+        <div class="week-title">지수함수와 로그함수 — 개념편</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>지수의 확장, 지수법칙 정리 + 유형 문제</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>로그의 정의, 로그의 성질</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>상용로그 + 지수·로그 방정식</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>지수함수·로그함수 그래프</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>지수·로그 부등식</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>1주차 틀린 문제 오답 정리 + 기출 변형</li>
+        </ul>
+      </div>
+      <!-- Week 2 -->
+      <div class="week-card" id="wc-2">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 02</span>
+          <div class="week-check" id="wcheck-2" onclick="toggleWeek(2)"></div>
+        </div>
+        <div class="week-title">삼각함수 — 개념 + 핵심 유형</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>호도법, 삼각함수 정의 + 사분면</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>삼각함수 그래프 (sin·cos·tan)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>삼각함수 방정식·부등식</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>삼각함수 덧셈정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>배각공식·반각공식 + 합성</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>삼각함수 실전 기출 풀이</li>
+        </ul>
+      </div>
+      <!-- Week 3 -->
+      <div class="week-card" id="wc-3">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 03</span>
+          <div class="week-check" id="wcheck-3" onclick="toggleWeek(3)"></div>
+        </div>
+        <div class="week-title">수열 — 등차·등비·점화식</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>등차수열과 등차급수</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>등비수열과 등비급수</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>수열의 합 (∑ 기호) 계산</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>수학적 귀납법</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>점화식 — 1·2단계 점화식 유형</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>수열 실전 기출 + 고난도 준비</li>
+        </ul>
+      </div>
+      <!-- Week 4 -->
+      <div class="week-card" id="wc-4">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 04</span>
+          <div class="week-check" id="wcheck-4" onclick="toggleWeek(4)"></div>
+        </div>
+        <div class="week-title">수학1 실전 마무리 + 약점 보완</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>지수·로그 전체 오답 재풀이</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>삼각함수 전체 오답 재풀이</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>수열 전체 오답 재풀이</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>수능 기출 모의고사 세트 풀기 (수학1)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>고난도 문항 집중 분석 (28·29번급)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>수학1 최종 점검 + 오답 노트 완성</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONTH 2 -->
+  <div class="month-content" id="month-2">
+    <div class="month-header">
+      <div class="month-num">02</div>
+      <div class="month-info">
+        <h2>📊 수학 2 완성</h2>
+        <p>극한·연속 → 미분 → 적분 순으로 개념부터 실전 고난도까지</p>
+      </div>
+      <div class="month-badge badge-blue">4주 완성</div>
+    </div>
+    <div class="weeks-grid">
+      <!-- Week 5 -->
+      <div class="week-card" id="wc-5">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 05</span>
+          <div class="week-check" id="wcheck-5" onclick="toggleWeek(5)"></div>
+        </div>
+        <div class="week-title">함수의 극한과 연속</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>수열의 극한 복습 + 함수의 극한 정의</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>극한의 성질, 좌극한·우극한</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>∞/∞, 0/0 꼴 극한 계산</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>함수의 연속 (연속의 정의·성질)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>연속함수의 성질 + 최대·최소 정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>극한·연속 기출 풀이 + 오답 정리</li>
+        </ul>
+      </div>
+      <!-- Week 6 -->
+      <div class="week-card" id="wc-6">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 06</span>
+          <div class="week-check" id="wcheck-6" onclick="toggleWeek(6)"></div>
+        </div>
+        <div class="week-title">미분 — 개념 + 활용</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>미분계수, 도함수 정의</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>다항함수 미분법 + 곱·나눗셈법칙</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>합성함수·역함수 미분</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>접선의 방정식, 평균값 정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>함수의 증가·감소, 극값 구하기</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>미분 기출 유형 집중 풀이</li>
+        </ul>
+      </div>
+      <!-- Week 7 -->
+      <div class="week-card" id="wc-7">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 07</span>
+          <div class="week-check" id="wcheck-7" onclick="toggleWeek(7)"></div>
+        </div>
+        <div class="week-title">미분 고급 + 적분 입문</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>함수의 그래프 그리기 + 최대최소</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>속도·가속도, 시각적 활용</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>부정적분 — 기본 공식</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>치환적분, 부분적분</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>정적분 정의 + 미적분학 기본정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>적분 개념 확인 문제 풀이</li>
+        </ul>
+      </div>
+      <!-- Week 8 -->
+      <div class="week-card" id="wc-8">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 08</span>
+          <div class="week-check" id="wcheck-8" onclick="toggleWeek(8)"></div>
+        </div>
+        <div class="week-title">적분 활용 + 수학2 실전 마무리</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>넓이 계산 (정적분 활용)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>부피 계산, 속도·거리 문제</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>수학2 전단원 오답 재풀이</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>수능 기출 세트 풀기 (수학2)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>고난도 킬러 문항 분석</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>수학2 최종 점검 + 오답노트 완성</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONTH 3 -->
+  <div class="month-content" id="month-3">
+    <div class="month-header">
+      <div class="month-num">03</div>
+      <div class="month-info">
+        <h2>🎲 확률과통계 + 전체 복습</h2>
+        <p>경우의 수 → 확률 → 통계 → 3과목 통합 실전 마무리</p>
+      </div>
+      <div class="month-badge badge-green">4주 완성</div>
+    </div>
+    <div class="weeks-grid">
+      <!-- Week 9 -->
+      <div class="week-card" id="wc-9">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 09</span>
+          <div class="week-check" id="wcheck-9" onclick="toggleWeek(9)"></div>
+        </div>
+        <div class="week-title">경우의 수 — 순열·조합</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>경우의 수 기본 (합의 법칙, 곱의 법칙)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>순열 — nPr, 원순열, 중복순열</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>조합 — nCr, 중복조합 H</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>이항정리, 다항정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>경우의 수 실전 기출 유형 정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>오답 정리 + 고난도 경우의 수</li>
+        </ul>
+      </div>
+      <!-- Week 10 -->
+      <div class="week-card" id="wc-10">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 10</span>
+          <div class="week-check" id="wcheck-10" onclick="toggleWeek(10)"></div>
+        </div>
+        <div class="week-title">확률 — 조건부확률 + 독립</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>확률의 정의·덧셈정리·여사건</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>조건부확률, 확률의 곱셈정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>사건의 독립·종속</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>독립시행의 확률, 반복시행</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>확률 실전 기출 유형 집중</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>확률 단원 오답 + 심화 문제</li>
+        </ul>
+      </div>
+      <!-- Week 11 -->
+      <div class="week-card" id="wc-11">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 11</span>
+          <div class="week-check" id="wcheck-11" onclick="toggleWeek(11)"></div>
+        </div>
+        <div class="week-title">통계 — 확률분포 + 추정</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>이산확률변수, 기댓값·분산</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>이항분포 B(n, p)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>정규분포, 표준정규분포 Z</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>표본평균의 분포, 중심극한정리</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>모평균 추정 (신뢰구간)</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>통계 기출 유형 + 오답 정리</li>
+        </ul>
+      </div>
+      <!-- Week 12 -->
+      <div class="week-card" id="wc-12">
+        <div class="week-num-row">
+          <span class="week-num">WEEK 12</span>
+          <div class="week-check" id="wcheck-12" onclick="toggleWeek(12)"></div>
+        </div>
+        <div class="week-title">🏁 3과목 통합 실전 마무리</div>
+        <ul class="tasks-list">
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">월</span>수학1 + 수학2 핵심 오답 최종 회독</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">화</span>확률과통계 전단원 오답 최종 회독</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">수</span>실전 모의고사 1회 — 3과목 통합</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">목</span>실전 모의고사 채점 + 전략 분석</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">금</span>취약 단원 집중 보충</li>
+          <li class="task-item"><input type="checkbox" onchange="handleCheck(this)"><span class="day-tag">주말</span>🎉 완성! 오답노트 + 마지막 점검</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="tips-section">
+    <div class="tips-title">💡 마더텅 활용 꿀팁</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">📝</div>
+        <h4>오답노트 필수</h4>
+        <p>틀린 문제는 반드시 오답노트에 기록. 3회독 이상 반복이 핵심.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">⏱️</div>
+        <h4>시간 제한 훈련</h4>
+        <p>단순 풀기 → 시간 측정 → 실전 세트 순으로 진행.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔄</div>
+        <h4>주간 복습 사이클</h4>
+        <p>월~금 새 내용, 주말은 그 주 전체 복습. 압축 회독.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📊</div>
+        <h4>기출 병행</h4>
+        <p>마더텅 유형 완성 후 수능·모평 기출과 반드시 연결.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // STATE
+  const STORAGE_KEY = 'mothertong_plan_v1';
+  let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+  // INIT
+  window.addEventListener('DOMContentLoaded', () => {
+    restoreState();
+    updateProgress();
+  });
+
+  function switchTab(n) {
+    document.querySelectorAll('.month-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('month-' + n).classList.add('active');
+    document.querySelector('.tab-btn[data-month="' + n + '"]').classList.add('active');
+  }
+
+  function handleCheck(el) {
+    const li = el.parentElement;
+    if (el.checked) {
+      li.classList.add('checked');
+    } else {
+      li.classList.remove('checked');
+    }
+    saveState();
+    updateProgress();
+  }
+
+  function toggleWeek(n) {
+    const card = document.getElementById('wc-' + n);
+    const checkEl = document.getElementById('wcheck-' + n);
+    const boxes = card.querySelectorAll('input[type="checkbox"]');
+    const allChecked = Array.from(boxes).every(b => b.checked);
+    boxes.forEach(b => {
+      b.checked = !allChecked;
+      b.parentElement.classList.toggle('checked', !allChecked);
+    });
+    saveState();
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const allBoxes = document.querySelectorAll('.task-item input[type="checkbox"]');
+    const checked = document.querySelectorAll('.task-item input[type="checkbox"]:checked');
+    const total = allBoxes.length;
+    const done = checked.length;
+
+    // Per month
+    const counts = [0,0,0];
+    const totals = [0,0,0];
+    for (let m = 1; m <= 3; m++) {
+      const monthEl = document.getElementById('month-' + m);
+      const mBoxes = monthEl.querySelectorAll('input[type="checkbox"]');
+      const mChecked = monthEl.querySelectorAll('input[type="checkbox"]:checked');
+      totals[m-1] = mBoxes.length;
+      counts[m-1] = mChecked.length;
+    }
+
+    const totalPct = total > 0 ? Math.round(done/total*100) : 0;
+    document.getElementById('totalPct').textContent = totalPct + '%';
+    document.getElementById('totalBar').style.width = totalPct + '%';
+
+    const ids = [['bar1','pct1'],['bar2','pct2'],['bar3','pct3']];
+    for (let i = 0; i < 3; i++) {
+      const p = totals[i] > 0 ? Math.round(counts[i]/totals[i]*100) : 0;
+      document.getElementById(ids[i][0]).style.width = p + '%';
+      document.getElementById(ids[i][1]).textContent = p + '%';
+    }
+
+    // Week check icons
+    for (let w = 1; w <= 12; w++) {
+      const card = document.getElementById('wc-' + w);
+      if (!card) continue;
+      const boxes = card.querySelectorAll('input[type="checkbox"]');
+      const allDone = Array.from(boxes).every(b => b.checked);
+      const checkEl = document.getElementById('wcheck-' + w);
+      if (allDone && boxes.length > 0) {
+        checkEl.classList.add('done');
+        card.classList.add('completed');
+      } else {
+        checkEl.classList.remove('done');
+        card.classList.remove('completed');
+      }
+    }
+  }
+
+  function saveState() {
+    const boxes = document.querySelectorAll('.task-item input[type="checkbox"]');
+    const s = {};
+    boxes.forEach((b, i) => { s[i] = b.checked; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    state = s;
+  }
+
+  function restoreState() {
+    const boxes = document.querySelectorAll('.task-item input[type="checkbox"]');
+    boxes.forEach((b, i) => {
+      if (state[i]) {
+        b.checked = true;
+        b.parentElement.classList.add('checked');
+      }
+    });
+  }
+</script>
+</body>
+</html>
