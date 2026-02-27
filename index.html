@@ -1,52 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>출석 체크</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>출석체크</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body { font-family: Arial; text-align:center; }
-table { border-collapse: collapse; margin:auto; }
-td, th { border:1px solid #ccc; padding:6px; }
-button { padding:6px 10px; margin:5px; }
-.checked { background:#4CAF50; color:white; }
+:root {
+  --bg: #0d0f1a;
+  --surface: #141726;
+  --surface2: #1c2035;
+  --border: #2a2f4a;
+  --accent: #00e5a0;
+  --accent2: #4d96ff;
+  --accent3: #ffd93d;
+  --danger: #ff6b6b;
+  --text: #e8eaf0;
+  --muted: #5a6080;
+  --checked: #00e5a0;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* NAV */
+.nav { position:sticky; top:0; z-index:100; background:rgba(13,15,26,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.nav-title { font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:0.5rem; }
+.nav-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.nav-month { display:flex; align-items:center; gap:0.5rem; }
+.month-btn { background:var(--surface); border:1px solid var(--border); color:var(--text); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:1rem; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+.month-btn:hover { border-color:var(--accent); color:var(--accent); }
+.month-label { font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent); min-width:80px; text-align:center; }
+.sync-badge { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--accent); background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.2); padding:0.25rem 0.7rem; border-radius:100px; }
+.sync-badge.err { color:var(--danger); background:rgba(255,107,107,0.1); border-color:rgba(255,107,107,0.2); }
+
+/* MAIN */
+.main { max-width:1200px; margin:0 auto; padding:2rem; }
+
+/* CALENDAR */
+.calendar-section { margin-bottom:3rem; }
+.section-label { font-family:'DM Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted); margin-bottom:1rem; }
+.weekday-row { display:grid; grid-template-columns:repeat(7,1fr); gap:0.5rem; margin-bottom:0.5rem; }
+.weekday { text-align:center; font-size:0.7rem; font-family:'DM Mono',monospace; color:var(--muted); padding:0.3rem; }
+.weekday:first-child { color:#ff6b6b; }
+.weekday:last-child { color:var(--accent2); }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0.5rem; }
+.cal-cell { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:0.8rem 0.5rem; min-height:80px; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:0.4rem; position:relative; }
+.cal-cell:hover { border-color:var(--accent); transform:translateY(-2px); }
+.cal-cell.today { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.cal-cell.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.cal-cell.empty:hover { transform:none; }
+.cal-day { font-size:1rem; font-weight:700; }
+.cal-cell.sun .cal-day { color:#ff6b6b; }
+.cal-cell.sat .cal-day { color:var(--accent2); }
+.cal-count { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent); background:rgba(0,229,160,0.1); padding:0.15rem 0.5rem; border-radius:100px; }
+.cal-count.zero { color:var(--muted); background:transparent; }
+.cal-avatars { display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin-top:2px; }
+.cal-avatar { width:6px; height:6px; border-radius:50%; background:var(--accent); opacity:0.6; }
+
+/* DIVIDER */
+.divider { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
+
+/* ATTENDANCE TABLE */
+.attendance-section { }
+.att-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:0.5rem; }
+.att-title { font-size:1.2rem; font-weight:700; }
+.selected-day-badge { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent3); background:rgba(255,217,61,0.1); border:1px solid rgba(255,217,61,0.2); padding:0.3rem 0.8rem; border-radius:100px; }
+
+.table-wrap { overflow-x:auto; border-radius:14px; border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; min-width:900px; }
+thead { position:sticky; top:60px; z-index:10; }
+th { background:var(--surface2); padding:0.7rem 0.5rem; font-size:0.72rem; font-family:'DM Mono',monospace; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+th.name-col { text-align:left; padding-left:1rem; min-width:130px; color:var(--text); }
+th.day-col { min-width:36px; text-align:center; cursor:pointer; transition:color 0.15s; }
+th.day-col:hover { color:var(--accent); }
+th.day-col.today-col { color:var(--accent); }
+th.day-col.sun-col { color:#ff6b6b55; }
+th.day-col.sat-col { color:#4d96ff55; }
+
+tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:rgba(255,255,255,0.02); }
+td { padding:0.6rem 0.5rem; text-align:center; }
+td.name-cell { text-align:left; padding-left:1rem; font-size:0.85rem; font-weight:500; white-space:nowrap; }
+
+.check-box { width:20px; height:20px; border-radius:5px; border:1.5px solid var(--border); background:transparent; cursor:pointer; appearance:none; -webkit-appearance:none; transition:all 0.15s; position:relative; margin:0 auto; display:block; }
+.check-box:checked { background:var(--accent); border-color:var(--accent); }
+.check-box:checked::after { content:''; position:absolute; top:2px; left:5px; width:6px; height:10px; border:2px solid #0d0f1a; border-top:none; border-left:none; transform:rotate(45deg); }
+.check-box:disabled { opacity:0.2; cursor:not-allowed; }
+.check-box.saving { opacity:0.5; }
+.check-box:hover:not(:checked):not(:disabled) { border-color:var(--accent); background:rgba(0,229,160,0.1); }
+
+/* STATS ROW */
+.stats-row td { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); background:var(--surface); border-top:2px solid var(--border); }
+.stats-row td.has-count { color:var(--accent); }
+
+/* NAME INPUT */
+.name-selector { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+.name-label { font-size:0.8rem; color:var(--muted); }
+.name-select { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:0.5rem 1rem; border-radius:8px; font-family:'Noto Sans KR',sans-serif; font-size:0.85rem; cursor:pointer; outline:none; transition:border-color 0.15s; }
+.name-select:focus { border-color:var(--accent); }
+.my-highlight { font-family:'DM Mono',monospace; font-size:0.7rem; background:rgba(0,229,160,0.1); color:var(--accent); border:1px solid rgba(0,229,160,0.25); padding:0.25rem 0.7rem; border-radius:100px; }
+
+/* LOADING */
+.loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
+.loading.hidden { opacity:0; pointer-events:none; }
+.spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
+.loading-txt { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--muted); }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:600px) {
+  .main { padding:1rem; }
+  .nav { padding:0.8rem 1rem; }
+  .cal-cell { min-height:60px; padding:0.5rem 0.3rem; }
+  .cal-day { font-size:0.85rem; }
+}
 </style>
 </head>
 <body>
 
-<h2>출석 체크</h2>
-<div id="loading">데이터 불러오는 중...</div>
-
-<div>
-<button onclick="changeMonth(-1)">◀</button>
-<span id="monthLabel"></span>
-<button onclick="changeMonth(1)">▶</button>
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">데이터 불러오는 중...</div>
 </div>
 
-<br>
+<nav class="nav">
+  <div class="nav-title"><span class="nav-dot"></span>출석체크</div>
+  <div class="nav-month">
+    <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+    <span class="month-label" id="monthLabel"></span>
+    <button class="month-btn" onclick="changeMonth(1)">›</button>
+  </div>
+  <span class="sync-badge" id="syncBadge">연결 중...</span>
+</nav>
 
-<table id="calendar"></table>
+<div class="main">
+  <!-- 내 이름 선택 -->
+  <div class="name-selector">
+    <span class="name-label">내 이름:</span>
+    <select class="name-select" id="nameSelect" onchange="onNameChange()">
+      <option value="">선택하세요</option>
+    </select>
+    <span class="my-highlight" id="myHighlight" style="display:none"></span>
+  </div>
 
-<br><br>
+  <!-- 달력 -->
+  <div class="calendar-section">
+    <div class="section-label" id="calLabel"></div>
+    <div class="weekday-row">
+      <div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div>
+      <div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>
+    </div>
+    <div class="calendar-grid" id="calGrid"></div>
+  </div>
 
-<div>
-이름:
-<input id="nameInput" placeholder="이름 입력">
-<button onclick="saveName()">저장</button>
+  <hr class="divider" id="tableDivider">
+
+  <!-- 출석 테이블 -->
+  <div class="attendance-section" id="attSection">
+    <div class="att-header">
+      <div class="att-title">전체 출석 관리</div>
+      <span class="selected-day-badge" id="selectedDayBadge" style="display:none"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="attTable">
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  deleteField,
-  onSnapshot,
-  collection 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/* 🔥 네 Firebase 설정 */
 const firebaseConfig = {
   apiKey: "AIzaSyAAbcRjELm-nN_f3XXgcn8eti2PHTMAIYM",
   authDomain: "sara-7bdd3.firebaseapp.com",
@@ -58,109 +187,220 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app);
 
-let current = new Date();
-let allData = {};
-let myName = localStorage.getItem("att_name") || "";
+// ── 멤버 목록 ──────────────────────────────────────
+const MEMBERS = [
+  "연우(경한)", "사라(약대)", "귀엽동이만학도(치/한)", "긍정(메디컬)",
+  "도르르(메디컬)", "두콩(약대)", "루비(메디컬)", "미농(한/약)",
+  "스카피(메디컬)", "음악듣는 어피치", "지니(의대)", "진인사/남/금/시/협", "청소오리/의한약"
+];
 
-/* Firestore 실시간 */
-const colRef = collection(db, "attendance");
+// ── 상태 ───────────────────────────────────────────
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // 0-based
+let allData = {}; // allData[year][month][day][member] = true/false
+let myName = localStorage.getItem('att_myname') || '';
+let highlightDay = null;
 
-onSnapshot(colRef, (snapshot) => {
+const today = new Date();
+const todayY = today.getFullYear();
+const todayM = today.getMonth();
+const todayD = today.getDate();
 
-  allData = {};
-
-  snapshot.forEach(docSnap => {
-
-    const id = docSnap.id;
-    const [y,m,d] = id.split("-").map(Number);
-
-    if(!allData[y]) allData[y] = {};
-    if(!allData[y][m]) allData[y][m] = {};
-    allData[y][m][d] = docSnap.data();
-
-  });
-
+// ── Firebase 리스너 ────────────────────────────────
+const dbRef = ref(db, 'attendance');
+onValue(dbRef, (snap) => {
+  allData = snap.val() || {};
   render();
-  document.getElementById("loading").style.display="none";
-
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('syncBadge').textContent = '● 실시간 연결됨';
+  document.getElementById('syncBadge').classList.remove('err');
+}, (err) => {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('syncBadge').textContent = '● 연결 오류';
+  document.getElementById('syncBadge').classList.add('err');
 });
 
-/* 렌더 */
-function render(){
-  const y = current.getFullYear();
-  const m = current.getMonth()+1;
-
-  document.getElementById("monthLabel").innerText = `${y}년 ${m}월`;
-
-  const first = new Date(y,m-1,1).getDay();
-  const last = new Date(y,m,0).getDate();
-
-  let html="<tr>";
-  const days=["일","월","화","수","목","금","토"];
-  days.forEach(d=> html+=`<th>${d}</th>`);
-  html+="</tr><tr>";
-
-  for(let i=0;i<first;i++) html+="<td></td>";
-
-  for(let d=1; d<=last; d++){
-    const checked = isChecked(y,m,d,myName);
-    html+=`<td class="${checked?'checked':''}" onclick="calClick(${d})">${d}</td>`;
-    if((first+d)%7===0) html+="</tr><tr>";
-  }
-
-  html+="</tr>";
-  document.getElementById("calendar").innerHTML=html;
+// ── 저장 ───────────────────────────────────────────
+async function saveCheck(year, month, day, member, checked) {
+  const path = ref(db, `attendance/${year}/${month}/${day}/${member.replace(/\//g,'_').replace(/\./g,'_')}`);
+  await set(path, checked || null);
 }
 
-/* 체크 여부 */
-function isChecked(y,m,d,name){
-  return !!allData[y]?.[m]?.[d]?.[safeKey(name)];
+// ── 이름 키 변환 ────────────────────────────────────
+function memberKey(name) { return name.replace(/\//g,'_').replace(/\./g,'_'); }
+
+// ── 체크 상태 가져오기 ─────────────────────────────
+function isChecked(year, month, day, member) {
+  return !!(allData[year]?.[month]?.[day]?.[memberKey(member)]);
 }
 
-/* 날짜 클릭 */
-window.calClick = async function(day){
+function dayCount(year, month, day) {
+  const d = allData[year]?.[month]?.[day] || {};
+  return Object.values(d).filter(Boolean).length;
+}
 
-  if(!myName){
-    alert("이름 먼저 저장하세요");
-    return;
-  }
+// ── 이름 셀렉터 초기화 ────────────────────────────
+function initNameSelect() {
+  const sel = document.getElementById('nameSelect');
+  MEMBERS.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    if (m === myName) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  updateHighlight();
+}
 
-  const y=current.getFullYear();
-  const m=current.getMonth()+1;
-
-  const dateId=`${y}-${m}-${day}`;
-  const docRef=doc(db,"attendance",dateId);
-
-  const checked = isChecked(y,m,day,myName);
-
-  if(!checked){
-    await setDoc(docRef,{[safeKey(myName)]:true},{merge:true});
-  }else{
-    await setDoc(docRef,{[safeKey(myName)]:deleteField()},{merge:true});
-  }
+window.onNameChange = function() {
+  myName = document.getElementById('nameSelect').value;
+  localStorage.setItem('att_myname', myName);
+  updateHighlight();
+  renderTable();
 };
 
-/* 이름 저장 */
-window.saveName = function(){
-  const v=document.getElementById("nameInput").value.trim();
-  if(!v) return;
-  myName=v;
-  localStorage.setItem("att_name",v);
+function updateHighlight() {
+  const el = document.getElementById('myHighlight');
+  if (myName) { el.style.display=''; el.textContent = myName + ' 으로 체크 중'; }
+  else { el.style.display='none'; }
+}
+
+// ── 달 변경 ───────────────────────────────────────
+window.changeMonth = function(dir) {
+  currentMonth += dir;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  highlightDay = null;
   render();
 };
 
-/* 월 변경 */
-window.changeMonth = function(diff){
-  current.setMonth(current.getMonth()+diff);
-  render();
-};
-
-function safeKey(name){
-  return name.replace(/[/.#$\[\]]/g,"_");
+// ── 전체 렌더 ─────────────────────────────────────
+function render() {
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('monthLabel').textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
+  document.getElementById('calLabel').textContent = `${currentYear}년 ${monthNames[currentMonth]} 달력`;
+  renderCalendar();
+  renderTable();
 }
 
+// ── 달력 렌더 ─────────────────────────────────────
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  // 빈 칸
+  for (let i = 0; i < firstDay; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell empty';
+    grid.appendChild(cell);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dow = new Date(currentYear, currentMonth, d).getDay();
+    const count = dayCount(currentYear, currentMonth, d);
+    const cell = document.createElement('div');
+    let cls = 'cal-cell';
+    if (dow === 0) cls += ' sun';
+    if (dow === 6) cls += ' sat';
+    if (currentYear===todayY && currentMonth===todayM && d===todayD) cls += ' today';
+    cell.className = cls;
+    cell.innerHTML = `
+      <span class="cal-day">${d}</span>
+      <span class="cal-count${count===0?' zero':''}">${count}명</span>
+      <div class="cal-avatars">${'<div class="cal-avatar"></div>'.repeat(Math.min(count,10))}</div>
+    `;
+    cell.onclick = () => scrollToDay(d);
+    grid.appendChild(cell);
+  }
+}
+
+// ── 테이블 렌더 ───────────────────────────────────
+function renderTable() {
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const head = document.getElementById('tableHead');
+  const body = document.getElementById('tableBody');
+
+  // 헤더
+  let headHtml = '<tr><th class="name-col">이름</th>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dow = new Date(currentYear, currentMonth, d).getDay();
+    let cls = 'day-col';
+    if (dow===0) cls += ' sun-col';
+    if (dow===6) cls += ' sat-col';
+    if (currentYear===todayY && currentMonth===todayM && d===todayD) cls += ' today-col';
+    headHtml += `<th class="${cls}" onclick="scrollToDay(${d})">${d}</th>`;
+  }
+  headHtml += '</tr>';
+  head.innerHTML = headHtml;
+
+  // 멤버 행
+  let bodyHtml = '';
+  MEMBERS.forEach(member => {
+    const isMe = member === myName;
+    bodyHtml += `<tr${isMe ? ' style="background:rgba(0,229,160,0.04)"':''}>`;
+    bodyHtml += `<td class="name-cell"${isMe?' style="color:var(--accent);font-weight:700"':''}>${member}</td>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const checked = isChecked(currentYear, currentMonth, d, member);
+      const isToday = currentYear===todayY && currentMonth===todayM && d===todayD;
+      const canCheck = isMe;
+      bodyHtml += `<td>
+        <input type="checkbox" class="check-box"
+          ${checked ? 'checked' : ''}
+          ${!canCheck ? 'disabled' : ''}
+          data-member="${member}" data-day="${d}"
+          onchange="handleCheck(this)"
+          title="${member} - ${d}일"
+        >
+      </td>`;
+    }
+    bodyHtml += '</tr>';
+  });
+
+  // 통계 행
+  bodyHtml += '<tr class="stats-row"><td class="name-cell" style="font-size:0.7rem;color:var(--muted)">합계</td>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cnt = dayCount(currentYear, currentMonth, d);
+    bodyHtml += `<td class="${cnt>0?'has-count':''}">${cnt||''}</td>`;
+  }
+  bodyHtml += '</tr>';
+
+  body.innerHTML = bodyHtml;
+}
+
+// ── 체크 핸들러 ───────────────────────────────────
+window.handleCheck = async function(el) {
+  if (!myName) { el.checked = !el.checked; alert('먼저 내 이름을 선택해주세요!'); return; }
+  const member = el.dataset.member;
+  const day = parseInt(el.dataset.day);
+  el.classList.add('saving');
+  await saveCheck(currentYear, currentMonth, day, member, el.checked);
+  el.classList.remove('saving');
+};
+
+// ── 날짜 스크롤 ───────────────────────────────────
+window.scrollToDay = function(day) {
+  highlightDay = day;
+  document.getElementById('tableDivider').scrollIntoView({ behavior:'smooth', block:'start' });
+
+  // 해당 날 컬럼 하이라이트
+  setTimeout(() => {
+    const badge = document.getElementById('selectedDayBadge');
+    badge.style.display = '';
+    badge.textContent = `${currentYear}년 ${currentMonth+1}월 ${day}일`;
+
+    // 컬럼 스크롤 (테이블 헤더 기준)
+    const ths = document.querySelectorAll('#tableHead th');
+    if (ths[day]) {
+      ths[day].scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+    }
+  }, 300);
+};
+
+// ── 초기화 ────────────────────────────────────────
+initNameSelect();
 </script>
 </body>
 </html>
