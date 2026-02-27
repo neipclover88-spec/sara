@@ -1,234 +1,37 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>출석체크</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>출석 체크</title>
 <style>
-:root {
-  --bg: #0d0f1a;
-  --surface: #141726;
-  --surface2: #1c2035;
-  --border: #2a2f4a;
-  --accent: #00e5a0;
-  --accent2: #4d96ff;
-  --accent3: #ffd93d;
-  --danger: #ff6b6b;
-  --text: #e8eaf0;
-  --muted: #5a6080;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-
-/* NAV */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(13,15,26,0.95); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.8rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-}
-.nav-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
-.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
-.nav-month { display: flex; align-items: center; gap: 0.5rem; }
-.month-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 1rem; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-.month-btn:hover { border-color: var(--accent); color: var(--accent); }
-.month-label { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--accent); min-width: 90px; text-align: center; }
-.sync-badge { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--accent); background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); padding: 0.2rem 0.6rem; border-radius: 100px; }
-.sync-badge.err { color: var(--danger); background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.2); }
-
-/* MAIN */
-.main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-
-/* NAME SELECTOR */
-.name-selector {
-  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 0.9rem 1.2rem; margin-bottom: 1.5rem;
-}
-.name-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
-.name-select {
-  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-  padding: 0.45rem 1rem; border-radius: 8px;
-  font-family: 'Noto Sans KR', sans-serif; font-size: 0.82rem;
-  cursor: pointer; outline: none; transition: border-color 0.15s;
-}
-.name-select:focus { border-color: var(--accent); }
-.my-badge {
-  font-size: 0.75rem; background: rgba(0,229,160,0.12); color: var(--accent);
-  border: 1px solid rgba(0,229,160,0.25); padding: 0.25rem 0.8rem;
-  border-radius: 100px; white-space: nowrap;
-}
-.hint-txt { font-size: 0.75rem; color: var(--muted); }
-
-/* CALENDAR */
-.calendar-section { margin-bottom: 2.5rem; }
-.section-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 0.8rem; }
-.weekday-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
-.weekday { text-align: center; font-size: 0.68rem; font-family: 'DM Mono', monospace; color: var(--muted); padding: 0.25rem; }
-.weekday:first-child { color: #ff6b6b88; }
-.weekday:last-child { color: #4d96ff88; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
-
-.cal-cell {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.6rem 0.4rem; min-height: 70px;
-  cursor: pointer; transition: all 0.18s;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-}
-.cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,229,160,0.1); }
-.cal-cell.today { border-color: var(--accent); }
-  .cal-cell.holiday { border-color: rgba(255,107,107,0.3); }
-.cal-cell.holiday .cal-day { color: #ff6b6b; }
-.cal-holiday { font-size: 0.55rem; color: #ff6b6b; text-align: center; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-cell.today .cal-day { color: var(--accent); }
-.cal-cell.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.cal-cell.my-checked { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.4); }
-.cal-day { font-size: 0.92rem; font-weight: 700; line-height: 1; }
-.cal-cell.sun .cal-day { color: #ff6b6b; }
-.cal-cell.sat .cal-day { color: var(--accent2); }
-.cal-count { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.1rem 0.4rem; border-radius: 100px; }
-.cal-count.zero { color: var(--muted); background: transparent; }
-  .member-total { 
-  font-family: 'DM Mono', monospace; font-size: 0.7rem;
-  color: var(--accent3); background: rgba(255,217,61,0.1);
-  border: 1px solid rgba(255,217,61,0.2);
-  padding: 0.1rem 0.45rem; border-radius: 100px;
-  white-space: nowrap;
-}
-.member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
-.cal-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 36px; }
-.cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
-
-/* DIVIDER */
-hr.divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1.5rem; }
-
-/* ATTENDANCE TABLE */
-.att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
-.att-title { font-size: 1.1rem; font-weight: 700; }
-.selected-badge {
-  font-family: 'DM Mono', monospace; font-size: 0.72rem;
-  color: var(--accent3); background: rgba(255,217,61,0.1);
-  border: 1px solid rgba(255,217,61,0.2); padding: 0.28rem 0.8rem; border-radius: 100px;
-}
-
-.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
-table { width: 100%; border-collapse: collapse; }
-thead tr th {
-  background: var(--surface2);
-  padding: 0.65rem 0.4rem;
-  font-size: 0.68rem; font-family: 'DM Mono', monospace;
-  color: var(--muted); border-bottom: 2px solid var(--border);
-  white-space: nowrap; text-align: center;
-}
-thead tr th.name-col { text-align: left; padding-left: 1rem; min-width: 140px; color: var(--text); font-size: 0.75rem; }
-thead tr th.day-col { min-width: 32px; cursor: pointer; transition: color 0.15s; }
-thead tr th.day-col:hover { color: var(--accent); }
-thead tr th.today-col { color: var(--accent) !important; }
-thead tr th.sun-col { color: #ff6b6b66; }
-thead tr th.sat-col { color: #4d96ff66; }
-
-tbody tr { border-bottom: 1px solid rgba(42,47,74,0.6); transition: background 0.12s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr.my-row { background: rgba(0,229,160,0.03); }
-tbody tr:hover { background: rgba(255,255,255,0.02); }
-tbody tr.stats-row { background: var(--surface2) !important; border-top: 2px solid var(--border); }
-
-td { padding: 0.5rem 0.4rem; text-align: center; }
-td.name-cell { text-align: left; padding-left: 1rem; font-size: 0.82rem; font-weight: 500; white-space: nowrap; }
-td.name-cell.my-name { color: var(--accent); font-weight: 700; }
-td.stat-cell { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
-td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
-
-/* CHECKBOX */
-.check-box {
-  width: 18px; height: 18px; border-radius: 4px;
-  border: 1.5px solid var(--border); background: transparent;
-  cursor: pointer; appearance: none; -webkit-appearance: none;
-  transition: all 0.13s; position: relative; display: block; margin: 0 auto;
-}
-.check-box:checked { background: var(--accent); border-color: var(--accent); }
-.check-box:checked::after {
-  content: ''; position: absolute;
-  top: 2px; left: 4px; width: 6px; height: 9px;
-  border: 2px solid #0d0f1a; border-top: none; border-left: none;
-  transform: rotate(45deg);
-}
-.check-box:disabled { opacity: 0.15; cursor: not-allowed; }
-.check-box:hover:not(:checked):not(:disabled) { border-color: var(--accent); background: rgba(0,229,160,0.08); }
-
-/* LOADING */
-.loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
-.loading.hidden { opacity: 0; pointer-events: none; }
-.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
-.loading-txt { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 600px) {
-  .main { padding: 1rem; }
-  .cal-cell { min-height: 56px; }
-  .cal-day { font-size: 0.8rem; }
-}
+body { font-family: Arial; text-align:center; }
+table { border-collapse: collapse; margin:auto; }
+td, th { border:1px solid #ccc; padding:6px; }
+button { padding:6px 10px; margin:5px; }
+.checked { background:#4CAF50; color:white; }
 </style>
 </head>
 <body>
 
-<div class="loading" id="loading">
-  <div class="spinner"></div>
-  <div class="loading-txt">데이터 불러오는 중...</div>
+<h2>출석 체크</h2>
+<div id="loading">데이터 불러오는 중...</div>
+
+<div>
+<button onclick="changeMonth(-1)">◀</button>
+<span id="monthLabel"></span>
+<button onclick="changeMonth(1)">▶</button>
 </div>
 
-<nav class="nav">
-  <div class="nav-title"><span class="nav-dot"></span>출석체크</div>
-  <div class="nav-month">
-    <button class="month-btn" onclick="changeMonth(-1)">‹</button>
-    <span class="month-label" id="monthLabel"></span>
-    <button class="month-btn" onclick="changeMonth(1)">›</button>
-  </div>
-  <span class="sync-badge" id="syncBadge">연결 중...</span>
-</nav>
+<br>
 
-<div class="main">
+<table id="calendar"></table>
 
-  <!-- 이름 선택 -->
-  <div class="name-selector">
-    <span class="name-label">내 이름 선택:</span>
-    <select class="name-select" id="nameSelect" onchange="onNameChange()">
-      <option value="">-- 선택 --</option>
-    </select>
-    <span class="my-badge" id="myBadge" style="display:none"></span>
-    <span class="hint-txt" id="hintTxt">이름을 선택하면 달력 클릭으로 바로 체크할 수 있어요</span>
-  </div>
+<br><br>
 
-  <!-- 달력 -->
-  <div class="calendar-section">
-    <div class="section-label" id="calLabel"></div>
-    <div class="weekday-row">
-      <div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div>
-      <div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>
-    </div>
-    <div class="calendar-grid" id="calGrid"></div>
-  </div>
-
-  <hr class="divider" id="divider">
-
-  <!-- 출석 테이블 -->
-  <div id="attSection">
-    <div class="att-header">
-      <div class="att-title">전체 출석 관리</div>
-      <span class="selected-badge" id="selectedBadge" style="display:none"></span>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead id="tableHead"></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
+<div>
+이름:
+<input id="nameInput" placeholder="이름 입력">
+<button onclick="saveName()">저장</button>
 </div>
 
 <script type="module">
@@ -243,25 +46,24 @@ import {
   collection 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* 🔥 네 Firestore 프로젝트 */
+/* 🔥 네 Firebase 설정 */
 const firebaseConfig = {
-  apiKey: "AIzaSyAAbcRjELm-nN_f3XXgcn8eti2PHTMAIYM",
-  authDomain: "sara-7bdd3.firebaseapp.com",
-  projectId: "sara-7bdd3",
-  storageBucket: "sara-7bdd3.firebasestorage.app",
-  messagingSenderId: "964270515893",
-  appId: "1:964270515893:web:b49b87e1c5c30873ba40fc",
-  measurementId: "G-TJ3PQD8PK5"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ───────────────── 상태 ───────────────── */
+let current = new Date();
 let allData = {};
-let myName = localStorage.getItem('att_myname') || '';
+let myName = localStorage.getItem("att_name") || "";
 
-/* ───────────────── Firestore 실시간 리스너 ───────────────── */
+/* Firestore 실시간 */
 const colRef = collection(db, "attendance");
 
 onSnapshot(colRef, (snapshot) => {
@@ -270,65 +72,93 @@ onSnapshot(colRef, (snapshot) => {
 
   snapshot.forEach(docSnap => {
 
-    const id = docSnap.id; // 예: 2026-1-27
-    const [y, m, d] = id.split('-').map(Number);
+    const id = docSnap.id;
+    const [y,m,d] = id.split("-").map(Number);
 
-    if (!allData[y]) allData[y] = {};
-    if (!allData[y][m]) allData[y][m] = {};
-
+    if(!allData[y]) allData[y] = {};
+    if(!allData[y][m]) allData[y][m] = {};
     allData[y][m][d] = docSnap.data();
 
   });
 
   render();
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(true);
+  document.getElementById("loading").style.display="none";
 
-}, () => {
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(false);
 });
 
-/* ───────────────── 체크 저장 ───────────────── */
-async function saveCheck(y, m, d, member, checked) {
+/* 렌더 */
+function render(){
+  const y = current.getFullYear();
+  const m = current.getMonth()+1;
 
-  const dateId = `${y}-${m}-${d}`;
-  const docRef = doc(db, "attendance", dateId);
+  document.getElementById("monthLabel").innerText = `${y}년 ${m}월`;
 
-  if (checked) {
+  const first = new Date(y,m-1,1).getDay();
+  const last = new Date(y,m,0).getDate();
 
-    await setDoc(docRef, {
-      [mKey(member)]: true
-    }, { merge: true });
+  let html="<tr>";
+  const days=["일","월","화","수","목","금","토"];
+  days.forEach(d=> html+=`<th>${d}</th>`);
+  html+="</tr><tr>";
 
-  } else {
+  for(let i=0;i<first;i++) html+="<td></td>";
 
-    await setDoc(docRef, {
-      [mKey(member)]: deleteField()
-    }, { merge: true });
-
+  for(let d=1; d<=last; d++){
+    const checked = isChecked(y,m,d,myName);
+    html+=`<td class="${checked?'checked':''}" onclick="calClick(${d})">${d}</td>`;
+    if((first+d)%7===0) html+="</tr><tr>";
   }
+
+  html+="</tr>";
+  document.getElementById("calendar").innerHTML=html;
 }
 
-/* ───────────────── 기존 함수 유지 ───────────────── */
-
-function mKey(name) {
-  return name.replace(/[/.#$\[\]]/g, '_');
+/* 체크 여부 */
+function isChecked(y,m,d,name){
+  return !!allData[y]?.[m]?.[d]?.[safeKey(name)];
 }
 
-function isChecked(y, m, d, member) {
-  return !!(allData[y]?.[m]?.[d]?.[mKey(member)]);
-}
+/* 날짜 클릭 */
+window.calClick = async function(day){
 
-function dayCount(y, m, d) {
-  const obj = allData[y]?.[m]?.[d] || {};
-  return Object.values(obj).filter(Boolean).length;
-}
+  if(!myName){
+    alert("이름 먼저 저장하세요");
+    return;
+  }
 
-/* 🔥 기존 렌더/이벤트 코드들은 그대로 사용됨 */
-/* render(), renderCalendar(), renderTable(), 
-   changeMonth(), handleTableCheck(), 
-   calCellClick() 등은 수정 필요 없음 */
+  const y=current.getFullYear();
+  const m=current.getMonth()+1;
+
+  const dateId=`${y}-${m}-${day}`;
+  const docRef=doc(db,"attendance",dateId);
+
+  const checked = isChecked(y,m,day,myName);
+
+  if(!checked){
+    await setDoc(docRef,{[safeKey(myName)]:true},{merge:true});
+  }else{
+    await setDoc(docRef,{[safeKey(myName)]:deleteField()},{merge:true});
+  }
+};
+
+/* 이름 저장 */
+window.saveName = function(){
+  const v=document.getElementById("nameInput").value.trim();
+  if(!v) return;
+  myName=v;
+  localStorage.setItem("att_name",v);
+  render();
+};
+
+/* 월 변경 */
+window.changeMonth = function(diff){
+  current.setMonth(current.getMonth()+diff);
+  render();
+};
+
+function safeKey(name){
+  return name.replace(/[/.#$\[\]]/g,"_");
+}
 
 </script>
 </body>
