@@ -22,7 +22,6 @@
 html { scroll-behavior: smooth; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-/* NAV */
 .nav {
   position: sticky; top: 0; z-index: 100;
   background: rgba(13,15,26,0.95); backdrop-filter: blur(12px);
@@ -40,10 +39,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .sync-badge { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--accent); background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); padding: 0.2rem 0.6rem; border-radius: 100px; }
 .sync-badge.err { color: var(--danger); background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.2); }
 
-/* MAIN */
 .main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
 
-/* NAME SELECTOR */
 .name-selector {
   display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
   background: var(--surface); border: 1px solid var(--border);
@@ -64,7 +61,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 }
 .hint-txt { font-size: 0.75rem; color: var(--muted); }
 
-/* CALENDAR */
 .calendar-section { margin-bottom: 2.5rem; }
 .section-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 0.8rem; }
 .weekday-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
@@ -75,38 +71,28 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 .cal-cell {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.6rem 0.4rem; min-height: 70px;
+  border-radius: 10px; padding: 0.6rem 0.4rem; min-height: 72px;
   cursor: pointer; transition: all 0.18s;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
 .cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,229,160,0.1); }
 .cal-cell.today { border-color: var(--accent); }
 .cal-cell.today .cal-day { color: var(--accent); }
-.cal-cell.holiday { border-color: rgba(255,107,107,0.3); }
-.cal-cell.holiday .cal-day { color: #ff6b6b; }
-.cal-holiday { font-size: 0.55rem; color: #ff6b6b; text-align: center; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
 .cal-cell.my-checked { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.4); }
+.cal-cell.holiday { border-color: rgba(255,107,107,0.3); }
+.cal-cell.holiday .cal-day { color: #ff6b6b; }
 .cal-day { font-size: 0.92rem; font-weight: 700; line-height: 1; }
 .cal-cell.sun .cal-day { color: #ff6b6b; }
 .cal-cell.sat .cal-day { color: var(--accent2); }
+.cal-holiday { font-size: 0.55rem; color: #ff6b6b; text-align: center; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cal-count { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.1rem 0.4rem; border-radius: 100px; }
 .cal-count.zero { color: var(--muted); background: transparent; }
-.member-total { 
-  font-family: 'DM Mono', monospace; font-size: 0.7rem;
-  color: var(--accent3); background: rgba(255,217,61,0.1);
-  border: 1px solid rgba(255,217,61,0.2);
-  padding: 0.1rem 0.45rem; border-radius: 100px;
-  white-space: nowrap;
-}
-.member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
 .cal-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 36px; }
 .cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
 
-/* DIVIDER */
 hr.divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1.5rem; }
 
-/* ATTENDANCE TABLE */
 .att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
 .att-title { font-size: 1.1rem; font-weight: 700; }
 .selected-badge {
@@ -125,11 +111,13 @@ thead tr th {
   white-space: nowrap; text-align: center;
 }
 thead tr th.name-col { text-align: left; padding-left: 1rem; min-width: 140px; color: var(--text); font-size: 0.75rem; }
+thead tr th.total-col { color: var(--accent3); min-width: 55px; }
 thead tr th.day-col { min-width: 32px; cursor: pointer; transition: color 0.15s; }
 thead tr th.day-col:hover { color: var(--accent); }
 thead tr th.today-col { color: var(--accent) !important; }
 thead tr th.sun-col { color: #ff6b6b66; }
 thead tr th.sat-col { color: #4d96ff66; }
+thead tr th.holiday-col { color: #ff6b6b99 !important; }
 
 tbody tr { border-bottom: 1px solid rgba(42,47,74,0.6); transition: background 0.12s; }
 tbody tr:last-child { border-bottom: none; }
@@ -142,8 +130,9 @@ td.name-cell { text-align: left; padding-left: 1rem; font-size: 0.82rem; font-we
 td.name-cell.my-name { color: var(--accent); font-weight: 700; }
 td.stat-cell { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
 td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
+.member-total { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 0.1rem 0.45rem; border-radius: 100px; white-space: nowrap; }
+.member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
 
-/* CHECKBOX */
 .check-box {
   width: 18px; height: 18px; border-radius: 4px;
   border: 1.5px solid var(--border); background: transparent;
@@ -151,16 +140,10 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
   transition: all 0.13s; position: relative; display: block; margin: 0 auto;
 }
 .check-box:checked { background: var(--accent); border-color: var(--accent); }
-.check-box:checked::after {
-  content: ''; position: absolute;
-  top: 2px; left: 4px; width: 6px; height: 9px;
-  border: 2px solid #0d0f1a; border-top: none; border-left: none;
-  transform: rotate(45deg);
-}
+.check-box:checked::after { content: ''; position: absolute; top: 2px; left: 4px; width: 6px; height: 9px; border: 2px solid #0d0f1a; border-top: none; border-left: none; transform: rotate(45deg); }
 .check-box:disabled { opacity: 0.15; cursor: not-allowed; }
 .check-box:hover:not(:checked):not(:disabled) { border-color: var(--accent); background: rgba(0,229,160,0.08); }
 
-/* LOADING */
 .loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
 .loading.hidden { opacity: 0; pointer-events: none; }
 .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
@@ -192,8 +175,6 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
 </nav>
 
 <div class="main">
-
-  <!-- 이름 선택 -->
   <div class="name-selector">
     <span class="name-label">내 이름 선택:</span>
     <select class="name-select" id="nameSelect" onchange="onNameChange()">
@@ -203,7 +184,6 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
     <span class="hint-txt" id="hintTxt">이름을 선택하면 달력 클릭으로 바로 체크할 수 있어요</span>
   </div>
 
-  <!-- 달력 -->
   <div class="calendar-section">
     <div class="section-label" id="calLabel"></div>
     <div class="weekday-row">
@@ -215,7 +195,6 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
 
   <hr class="divider" id="divider">
 
-  <!-- 출석 테이블 -->
   <div id="attSection">
     <div class="att-header">
       <div class="att-title">전체 출석 관리</div>
@@ -228,36 +207,34 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
       </table>
     </div>
   </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// ── Firebase 설정 ──────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyAAbcRjELm-nN_f3XXgcn8eti2PHTMAIYM",
   authDomain: "sara-7bdd3.firebaseapp.com",
   projectId: "sara-7bdd3",
   storageBucket: "sara-7bdd3.firebasestorage.app",
   messagingSenderId: "964270515893",
-  appId: "1:964270515893:web:b49b87e1c5c30873ba40fc",
-  measurementId: "G-TJ3PQD8PK5"
+  appId: "1:964270515893:web:b49b87e1c5c30873ba40fc"
 };
-
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db = getFirestore(app);
 
-  // 공휴일 데이터 (년도별로 추가 가능)
+// ── 공휴일 ────────────────────────────────────────
 const HOLIDAYS = {
   "2025": {
     "0": { 1: "신정" },
-    "1": { 10: "설날 연휴 전날", 28: "설날", 29: "설날 연휴", 30: "설날 연휴" },
+    "1": { 28: "설날 전날", 29: "설날", 30: "설날 연휴" },
     "2": { 1: "삼일절" },
     "4": { 5: "어린이날", 6: "대체공휴일" },
     "5": { 6: "현충일" },
     "7": { 15: "광복절" },
-    "9": { 3: "개천절", 5: "추석 연휴", 6: "추석", 7: "추석 연휴", 8: "대체공휴일", 9: "한글날" },
+    "9": { 3: "개천절", 5: "추석연휴", 6: "추석", 7: "추석연휴", 8: "대체공휴일", 9: "한글날" },
     "11": { 25: "크리스마스" }
   },
   "2026": {
@@ -267,15 +244,13 @@ const HOLIDAYS = {
     "4": { 5: "어린이날", 25: "부처님오신날" },
     "5": { 6: "현충일" },
     "7": { 15: "광복절" },
-    "8": { 24: "추석 연휴", 25: "추석", 26: "추석 연휴" },
+    "8": { 24: "추석연휴", 25: "추석", 26: "추석연휴" },
     "9": { 3: "개천절", 9: "한글날" },
     "11": { 25: "크리스마스" }
   }
 };
+function getHoliday(y, m, d) { return HOLIDAYS[String(y)]?.[String(m)]?.[d] || null; }
 
-function getHoliday(y, m, d) {
-  return HOLIDAYS[String(y)]?.[String(m)]?.[d] || null;
-}
 // ── 멤버 목록 (가나다 순) ──────────────────────────
 const MEMBERS = [
   "귀엽동이만학도(치/한)",
@@ -290,50 +265,37 @@ const MEMBERS = [
   "음악듣는 어피치",
   "지니(의대)",
   "진인사/남/금/시/협",
-  "청소오리/의한약",
-  "크롱(한의대)",
-  "피카츄(의대)",
-  "헤나(수의대)",
-  "Rachel"
+  "청소오리/의한약"
 ];
 
 // ── 상태 ───────────────────────────────────────────
 const now = new Date();
 let curYear = now.getFullYear();
 let curMonth = now.getMonth();
-let allData = {};
+let allData = {}; // allData[docId][memberKey] = true
 let myName = localStorage.getItem('att_myname') || '';
+const todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
 
-const todayY = now.getFullYear();
-const todayM = now.getMonth();
-const todayD = now.getDate();
+// ── Firestore 키 변환 ─────────────────────────────
+function mKey(name) { return name.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g, '_'); }
+function docId(y, m) { return `${y}_${String(m).padStart(2,'0')}`; } // e.g. "2026_02"
 
-// ── Firebase 키 변환 ───────────────────────────────
-function mKey(name) {
-  return name.replace(/[/.#$\[\]]/g, '_');
+// ── Firestore 리스너 (월 단위) ─────────────────────
+let unsubscribe = null;
+
+function subscribeMonth(y, m) {
+  if (unsubscribe) unsubscribe();
+  const ref = doc(db, 'attendance', docId(y, m));
+  unsubscribe = onSnapshot(ref, (snap) => {
+    allData = snap.exists() ? snap.data() : {};
+    render();
+    document.getElementById('loading').classList.add('hidden');
+    setSyncStatus(true);
+  }, () => {
+    document.getElementById('loading').classList.add('hidden');
+    setSyncStatus(false);
+  });
 }
-
-// ── 체크 여부 ─────────────────────────────────────
-function isChecked(y, m, d, member) {
-  return !!(allData[y]?.[m]?.[d]?.[mKey(member)]);
-}
-
-function dayCount(y, m, d) {
-  const obj = allData[y]?.[m]?.[d] || {};
-  return Object.values(obj).filter(Boolean).length;
-}
-
-// ── Firebase 리스너 ────────────────────────────────
-const dbRef = ref(db, 'attendance');
-onValue(dbRef, (snap) => {
-  allData = snap.val() || {};
-  render();
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(true);
-}, () => {
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(false);
-});
 
 function setSyncStatus(ok) {
   const el = document.getElementById('syncBadge');
@@ -341,10 +303,28 @@ function setSyncStatus(ok) {
   el.classList.toggle('err', !ok);
 }
 
-// ── 저장 ───────────────────────────────────────────
+// ── 저장 (Firestore) ──────────────────────────────
+// 구조: attendance/{year_month}/{day_memberKey} = true/false
 async function saveCheck(y, m, d, member, checked) {
-  const r = ref(db, `attendance/${y}/${m}/${d}/${mKey(member)}`);
-  await set(r, checked || null);
+  const ref = doc(db, 'attendance', docId(y, m));
+  const field = `d${d}_${mKey(member)}`;
+  // 기존 문서 가져와서 병합
+  const snap = await getDoc(ref);
+  const data = snap.exists() ? snap.data() : {};
+  if (checked) {
+    data[field] = true;
+  } else {
+    delete data[field];
+  }
+  await setDoc(ref, data);
+}
+
+// ── 체크 여부 ─────────────────────────────────────
+function isChecked(d, member) {
+  return !!(allData[`d${d}_${mKey(member)}`]);
+}
+function dayCount(d) {
+  return MEMBERS.filter(m => isChecked(d, m)).length;
 }
 
 // ── 이름 선택 ─────────────────────────────────────
@@ -370,12 +350,10 @@ function updateBadge() {
   const badge = document.getElementById('myBadge');
   const hint = document.getElementById('hintTxt');
   if (myName) {
-    badge.style.display = '';
-    badge.textContent = myName + ' 으로 체크 중 ✓';
+    badge.style.display = ''; badge.textContent = myName + ' 으로 체크 중 ✓';
     hint.style.display = 'none';
   } else {
-    badge.style.display = 'none';
-    hint.style.display = '';
+    badge.style.display = 'none'; hint.style.display = '';
   }
 }
 
@@ -384,7 +362,8 @@ window.changeMonth = function(dir) {
   curMonth += dir;
   if (curMonth > 11) { curMonth = 0; curYear++; }
   if (curMonth < 0) { curMonth = 11; curYear--; }
-  render();
+  document.getElementById('loading').classList.remove('hidden');
+  subscribeMonth(curYear, curMonth);
 };
 
 // ── 전체 렌더 ─────────────────────────────────────
@@ -404,16 +383,15 @@ function renderCalendar() {
   const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
 
   for (let i = 0; i < firstDow; i++) {
-    const e = document.createElement('div');
-    e.className = 'cal-cell empty';
-    grid.appendChild(e);
+    const e = document.createElement('div'); e.className = 'cal-cell empty'; grid.appendChild(e);
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dow = new Date(curYear, curMonth, d).getDay();
-    const cnt = dayCount(curYear, curMonth, d);
+    const cnt = dayCount(d);
     const isTod = curYear===todayY && curMonth===todayM && d===todayD;
-    const amIChecked = myName && isChecked(curYear, curMonth, d, myName);
+    const amIChecked = myName && isChecked(d, myName);
+    const holiday = getHoliday(curYear, curMonth, d);
 
     const cell = document.createElement('div');
     let cls = 'cal-cell';
@@ -421,50 +399,33 @@ function renderCalendar() {
     if (dow===6) cls += ' sat';
     if (isTod) cls += ' today';
     if (amIChecked) cls += ' my-checked';
+    if (holiday) cls += ' holiday';
     cell.className = cls;
 
     const dots = Math.min(cnt, 9);
-   const holiday = getHoliday(curYear, curMonth, d);
-    if (holiday) cls += ' holiday';
-    cell.className = cls;
     cell.innerHTML = `
       <span class="cal-day">${d}</span>
       ${holiday ? `<span class="cal-holiday">${holiday}</span>` : ''}
       <span class="cal-count${cnt===0?' zero':''}">${cnt}명</span>
       <div class="cal-dots">${'<div class="cal-dot"></div>'.repeat(dots)}</div>
     `;
-
-    cell.addEventListener('click', () => calCellClick(d, cell));
+    cell.addEventListener('click', () => calCellClick(d));
     grid.appendChild(cell);
   }
 }
 
-// ── 달력 셀 클릭 → 내 체크 토글 + 테이블 스크롤 ──
-async function calCellClick(day, cell) {
-  // 이름 미선택 시 알림
-  if (!myName) {
-    alert('먼저 위에서 내 이름을 선택해주세요!');
-    return;
-  }
-
-  // 내 체크 토글
-  const current = isChecked(curYear, curMonth, day, myName);
-  const newVal = !current;
-  await saveCheck(curYear, curMonth, day, myName, newVal);
-
-  // 테이블 하이라이트 + 스크롤
+// ── 달력 클릭 → 내 체크 토글 ─────────────────────
+async function calCellClick(day) {
+  if (!myName) { alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
+  const current = isChecked(day, myName);
+  await saveCheck(curYear, curMonth, day, myName, !current);
   scrollToDay(day);
 }
 
-// ── 테이블 스크롤 + 날짜 하이라이트 ─────────────
 function scrollToDay(day) {
   document.getElementById('divider').scrollIntoView({ behavior:'smooth', block:'start' });
-
   const badge = document.getElementById('selectedBadge');
-  badge.style.display = '';
-  badge.textContent = `${curYear}년 ${curMonth+1}월 ${day}일`;
-
-  // 해당 컬럼 스크롤
+  badge.style.display = ''; badge.textContent = `${curYear}년 ${curMonth+1}월 ${day}일`;
   setTimeout(() => {
     const th = document.querySelector(`#tableHead th[data-day="${day}"]`);
     if (th) th.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
@@ -482,24 +443,27 @@ function renderTable() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dow = new Date(curYear, curMonth, d).getDay();
     const isTod = curYear===todayY && curMonth===todayM && d===todayD;
+    const holiday = getHoliday(curYear, curMonth, d);
     let cls = 'day-col';
-    if (dow===0) cls += ' sun-col';
+    if (dow===0 || holiday) cls += ' sun-col';
     if (dow===6) cls += ' sat-col';
     if (isTod) cls += ' today-col';
-    hHtml += `<th class="${cls}" data-day="${d}">${d}</th>`;
+    if (holiday) cls += ' holiday-col';
+    hHtml += `<th class="${cls}" data-day="${d}" title="${holiday||''}">${d}${holiday?'🔴':''}</th>`;
   }
-  hHtml += '<th class="name-col" style="min-width:60px;text-align:center">이번달</th>';
-  hHtml += '</tr>';
+  hHtml += '<th class="total-col">이번달</th></tr>';
   head.innerHTML = hHtml;
 
   // 멤버 행
   let bHtml = '';
   MEMBERS.forEach(member => {
     const isMe = member === myName;
+    let total = 0;
     bHtml += `<tr class="${isMe?'my-row':''}">`;
     bHtml += `<td class="name-cell${isMe?' my-name':''}">${member}</td>`;
     for (let d = 1; d <= daysInMonth; d++) {
-      const checked = isChecked(curYear, curMonth, d, member);
+      const checked = isChecked(d, member);
+      if (checked) total++;
       bHtml += `<td><input type="checkbox" class="check-box"
         ${checked?'checked':''}
         ${!isMe?'disabled':''}
@@ -508,40 +472,33 @@ function renderTable() {
         onchange="handleTableCheck(this)"
       ></td>`;
     }
-    // 월간 총 체크 횟수
-    let total = 0;
-    for (let d = 1; d <= daysInMonth; d++) {
-      if (isChecked(curYear, curMonth, d, member)) total++;
-    }
     bHtml += `<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
     bHtml += '</tr>';
   });
 
   // 합계 행
+  let grandTotal = 0;
   bHtml += '<tr class="stats-row"><td class="name-cell" style="font-size:0.7rem;color:var(--muted);font-family:\'DM Mono\',monospace">합계</td>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const cnt = dayCount(curYear, curMonth, d);
+    const cnt = dayCount(d);
+    grandTotal += cnt;
     bHtml += `<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
   }
-  // 전체 합계도 추가
-    let grandTotal = 0;
-    for (let d = 1; d <= daysInMonth; d++) grandTotal += dayCount(curYear, curMonth, d);
-    bHtml += `<td class="stat-cell has-cnt">${grandTotal}회</td>`;
+  bHtml += `<td class="stat-cell has-cnt">${grandTotal}회</td>`;
   bHtml += '</tr>';
 
   body.innerHTML = bHtml;
 }
 
-// ── 테이블 체크박스 직접 클릭 ────────────────────
+// ── 테이블 직접 체크 ──────────────────────────────
 window.handleTableCheck = async function(el) {
   if (!myName) { el.checked = !el.checked; alert('먼저 이름을 선택해주세요!'); return; }
-  const member = el.dataset.member;
-  const day = parseInt(el.dataset.day);
-  await saveCheck(curYear, curMonth, day, member, el.checked);
+  await saveCheck(curYear, curMonth, parseInt(el.dataset.day), el.dataset.member, el.checked);
 };
 
 // ── 초기화 ────────────────────────────────────────
 initNameSelect();
+subscribeMonth(curYear, curMonth);
 </script>
 </body>
 </html>
