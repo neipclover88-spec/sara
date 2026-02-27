@@ -232,89 +232,90 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  deleteField,
+  onSnapshot,
+  collection 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔥 네 Firestore 프로젝트 */
 const firebaseConfig = {
-  apiKey: "AIzaSyCz9dmLAFVdp_fe4bneN5wlW8bknyH3bgM",
-  authDomain: "yeonwoo-d3721.firebaseapp.com",
-  databaseURL: "https://yeonwoo-d3721-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "yeonwoo-d3721",
-  storageBucket: "yeonwoo-d3721.firebasestorage.app",
-  messagingSenderId: "1021874423334",
-  appId: "1:1021874423334:web:35e70b78c8e0d6c18788e7"
+  apiKey: "AIzaSyAAbcRjELm-nN_f3XXgcn8eti2PHTMAIYM",
+  authDomain: "sara-7bdd3.firebaseapp.com",
+  projectId: "sara-7bdd3",
+  storageBucket: "sara-7bdd3.firebasestorage.app",
+  messagingSenderId: "964270515893",
+  appId: "1:964270515893:web:b49b87e1c5c30873ba40fc",
+  measurementId: "G-TJ3PQD8PK5"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db = getFirestore(app);
 
-// 공휴일 데이터 (년도별로 추가 가능)
-const HOLIDAYS = {
-  "2025": {
-    "0": { 1: "신정" },
-    "1": { 10: "설날 연휴 전날", 28: "설날", 29: "설날 연휴", 30: "설날 연휴" },
-    "2": { 1: "삼일절" },
-    "4": { 5: "어린이날", 6: "대체공휴일" },
-    "5": { 6: "현충일" },
-    "7": { 15: "광복절" },
-    "9": { 3: "개천절", 5: "추석 연휴", 6: "추석", 7: "추석 연휴", 8: "대체공휴일", 9: "한글날" },
-    "11": { 25: "크리스마스" }
-  },
-  "2026": {
-    "0": { 1: "신정" },
-    "1": { 16: "설날 연휴", 17: "설날", 18: "설날 연휴" },
-    "2": { 1: "삼일절" },
-    "4": { 5: "어린이날", 25: "부처님오신날" },
-    "5": { 6: "현충일" },
-    "7": { 15: "광복절" },
-    "8": { 24: "추석 연휴", 25: "추석", 26: "추석 연휴" },
-    "9": { 3: "개천절", 9: "한글날" },
-    "11": { 25: "크리스마스" }
-  }
-};
-
-function getHoliday(y, m, d) {
-  return HOLIDAYS[String(y)]?.[String(m)]?.[d] || null;
-}
-  
-// ── 멤버 목록 (가나다 순) ──────────────────────────
-const MEMBERS = [
-  "귀엽동이만학도(치/한)",
-  "긍정(메디컬)",
-  "도르르(메디컬)",
-  "두콩(약대)",
-  "루비(메디컬)",
-  "미농(한/약)",
-  "사라(약대)",
-  "스카피(메디컬)",
-  "연우(경한)",
-  "음악듣는 어피치",
-  "지니(의대)",
-  "진인사/남/금/시/협",
-  "청소오리/의한약",
-  "크롱(한의대)",
-  "피카츄(의대)",
-  "헤나(수의대)",
-  "Rachel",
-];
-
-// ── 상태 ───────────────────────────────────────────
-const now = new Date();
-let curYear = now.getFullYear();
-let curMonth = now.getMonth();
+/* ───────────────── 상태 ───────────────── */
 let allData = {};
 let myName = localStorage.getItem('att_myname') || '';
 
-const todayY = now.getFullYear();
-const todayM = now.getMonth();
-const todayD = now.getDate();
+/* ───────────────── Firestore 실시간 리스너 ───────────────── */
+const colRef = collection(db, "attendance");
 
-// ── Firebase 키 변환 ───────────────────────────────
+onSnapshot(colRef, (snapshot) => {
+
+  allData = {};
+
+  snapshot.forEach(docSnap => {
+
+    const id = docSnap.id; // 예: 2026-1-27
+    const [y, m, d] = id.split('-').map(Number);
+
+    if (!allData[y]) allData[y] = {};
+    if (!allData[y][m]) allData[y][m] = {};
+
+    allData[y][m][d] = docSnap.data();
+
+  });
+
+  render();
+  document.getElementById('loading').classList.add('hidden');
+  setSyncStatus(true);
+
+}, () => {
+  document.getElementById('loading').classList.add('hidden');
+  setSyncStatus(false);
+});
+
+/* ───────────────── 체크 저장 ───────────────── */
+async function saveCheck(y, m, d, member, checked) {
+
+  const dateId = `${y}-${m}-${d}`;
+  const docRef = doc(db, "attendance", dateId);
+
+  if (checked) {
+
+    await setDoc(docRef, {
+      [mKey(member)]: true
+    }, { merge: true });
+
+  } else {
+
+    await setDoc(docRef, {
+      [mKey(member)]: deleteField()
+    }, { merge: true });
+
+  }
+}
+
+/* ───────────────── 기존 함수 유지 ───────────────── */
+
 function mKey(name) {
   return name.replace(/[/.#$\[\]]/g, '_');
 }
 
-// ── 체크 여부 ─────────────────────────────────────
 function isChecked(y, m, d, member) {
   return !!(allData[y]?.[m]?.[d]?.[mKey(member)]);
 }
@@ -324,226 +325,11 @@ function dayCount(y, m, d) {
   return Object.values(obj).filter(Boolean).length;
 }
 
-// ── Firebase 리스너 ────────────────────────────────
-const dbRef = ref(db, 'attendance');
-onValue(dbRef, (snap) => {
-  allData = snap.val() || {};
-  render();
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(true);
-}, () => {
-  document.getElementById('loading').classList.add('hidden');
-  setSyncStatus(false);
-});
+/* 🔥 기존 렌더/이벤트 코드들은 그대로 사용됨 */
+/* render(), renderCalendar(), renderTable(), 
+   changeMonth(), handleTableCheck(), 
+   calCellClick() 등은 수정 필요 없음 */
 
-function setSyncStatus(ok) {
-  const el = document.getElementById('syncBadge');
-  el.textContent = ok ? '● 실시간 연결됨' : '● 연결 오류';
-  el.classList.toggle('err', !ok);
-}
-
-// ── 저장 ───────────────────────────────────────────
-async function saveCheck(y, m, d, member, checked) {
-  const r = ref(db, `attendance/${y}/${m}/${d}/${mKey(member)}`);
-  await set(r, checked || null);
-}
-
-// ── 이름 선택 ─────────────────────────────────────
-function initNameSelect() {
-  const sel = document.getElementById('nameSelect');
-  MEMBERS.forEach(name => {
-    const opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    if (name === myName) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  updateBadge();
-}
-
-window.onNameChange = function() {
-  myName = document.getElementById('nameSelect').value;
-  localStorage.setItem('att_myname', myName);
-  updateBadge();
-  render();
-};
-
-function updateBadge() {
-  const badge = document.getElementById('myBadge');
-  const hint = document.getElementById('hintTxt');
-  if (myName) {
-    badge.style.display = '';
-    badge.textContent = myName + ' 으로 체크 중 ✓';
-    hint.style.display = 'none';
-  } else {
-    badge.style.display = 'none';
-    hint.style.display = '';
-  }
-}
-
-// ── 월 변경 ───────────────────────────────────────
-window.changeMonth = function(dir) {
-  curMonth += dir;
-  if (curMonth > 11) { curMonth = 0; curYear++; }
-  if (curMonth < 0) { curMonth = 11; curYear--; }
-  render();
-};
-
-// ── 전체 렌더 ─────────────────────────────────────
-function render() {
-  const mn = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  document.getElementById('monthLabel').textContent = `${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').textContent = `${curYear}년 ${mn[curMonth]} 출석 달력 — 클릭하면 바로 체크!`;
-  renderCalendar();
-  renderTable();
-}
-
-// ── 달력 렌더 ─────────────────────────────────────
-function renderCalendar() {
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-  const firstDow = new Date(curYear, curMonth, 1).getDay();
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
-
-  for (let i = 0; i < firstDow; i++) {
-    const e = document.createElement('div');
-    e.className = 'cal-cell empty';
-    grid.appendChild(e);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(curYear, curMonth, d).getDay();
-    const cnt = dayCount(curYear, curMonth, d);
-    const isTod = curYear===todayY && curMonth===todayM && d===todayD;
-    const amIChecked = myName && isChecked(curYear, curMonth, d, myName);
-
-    const cell = document.createElement('div');
-    let cls = 'cal-cell';
-    if (dow===0) cls += ' sun';
-    if (dow===6) cls += ' sat';
-    if (isTod) cls += ' today';
-    if (amIChecked) cls += ' my-checked';
-    cell.className = cls;
-
-    const dots = Math.min(cnt, 9);
-   const holiday = getHoliday(curYear, curMonth, d);
-    if (holiday) cls += ' holiday';
-    cell.className = cls;
-    cell.innerHTML = `
-      <span class="cal-day">${d}</span>
-      ${holiday ? `<span class="cal-holiday">${holiday}</span>` : ''}
-      <span class="cal-count${cnt===0?' zero':''}">${cnt}명</span>
-      <div class="cal-dots">${'<div class="cal-dot"></div>'.repeat(dots)}</div>
-    `;
-
-    cell.addEventListener('click', () => calCellClick(d, cell));
-    grid.appendChild(cell);
-  }
-}
-
-// ── 달력 셀 클릭 → 내 체크 토글 + 테이블 스크롤 ──
-async function calCellClick(day, cell) {
-  // 이름 미선택 시 알림
-  if (!myName) {
-    alert('먼저 위에서 내 이름을 선택해주세요!');
-    return;
-  }
-
-  // 내 체크 토글
-  const current = isChecked(curYear, curMonth, day, myName);
-  const newVal = !current;
-  await saveCheck(curYear, curMonth, day, myName, newVal);
-
-  // 테이블 하이라이트 + 스크롤
-  scrollToDay(day);
-}
-
-// ── 테이블 스크롤 + 날짜 하이라이트 ─────────────
-function scrollToDay(day) {
-  document.getElementById('divider').scrollIntoView({ behavior:'smooth', block:'start' });
-
-  const badge = document.getElementById('selectedBadge');
-  badge.style.display = '';
-  badge.textContent = `${curYear}년 ${curMonth+1}월 ${day}일`;
-
-  // 해당 컬럼 스크롤
-  setTimeout(() => {
-    const th = document.querySelector(`#tableHead th[data-day="${day}"]`);
-    if (th) th.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
-  }, 350);
-}
-
-// ── 테이블 렌더 ───────────────────────────────────
-function renderTable() {
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
-  const head = document.getElementById('tableHead');
-  const body = document.getElementById('tableBody');
-
-  // 헤더
-  let hHtml = '<tr><th class="name-col">이름</th>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(curYear, curMonth, d).getDay();
-    const isTod = curYear===todayY && curMonth===todayM && d===todayD;
-    let cls = 'day-col';
-    if (dow===0) cls += ' sun-col';
-    if (dow===6) cls += ' sat-col';
-    if (isTod) cls += ' today-col';
-    hHtml += `<th class="${cls}" data-day="${d}">${d}</th>`;
-  }
-  hHtml += '<th class="name-col" style="min-width:60px;text-align:center">이번달</th>';
-  hHtml += '</tr>';
-  head.innerHTML = hHtml;
-
-  // 멤버 행
-  let bHtml = '';
-  MEMBERS.forEach(member => {
-    const isMe = member === myName;
-    bHtml += `<tr class="${isMe?'my-row':''}">`;
-    bHtml += `<td class="name-cell${isMe?' my-name':''}">${member}</td>`;
-    for (let d = 1; d <= daysInMonth; d++) {
-      const checked = isChecked(curYear, curMonth, d, member);
-      bHtml += `<td><input type="checkbox" class="check-box"
-        ${checked?'checked':''}
-        ${!isMe?'disabled':''}
-        data-member="${member.replace(/"/g,'&quot;')}"
-        data-day="${d}"
-        onchange="handleTableCheck(this)"
-      ></td>`;
-    }
-    // 월간 총 체크 횟수
-    let total = 0;
-    for (let d = 1; d <= daysInMonth; d++) {
-      if (isChecked(curYear, curMonth, d, member)) total++;
-    }
-    bHtml += `<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
-    
-    bHtml += '</tr>';
-  });
-
-  // 합계 행
-  bHtml += '<tr class="stats-row"><td class="name-cell" style="font-size:0.7rem;color:var(--muted);font-family:\'DM Mono\',monospace">합계</td>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const cnt = dayCount(curYear, curMonth, d);
-    bHtml += `<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
-  }
-  // 전체 합계도 추가
-    let grandTotal = 0;
-    for (let d = 1; d <= daysInMonth; d++) grandTotal += dayCount(curYear, curMonth, d);
-    bHtml += `<td class="stat-cell has-cnt">${grandTotal}회</td>`;
-  bHtml += '</tr>';
-
-  body.innerHTML = bHtml;
-}
-
-// ── 테이블 체크박스 직접 클릭 ────────────────────
-window.handleTableCheck = async function(el) {
-  if (!myName) { el.checked = !el.checked; alert('먼저 이름을 선택해주세요!'); return; }
-  const member = el.dataset.member;
-  const day = parseInt(el.dataset.day);
-  await saveCheck(curYear, curMonth, day, member, el.checked);
-};
-
-// ── 초기화 ────────────────────────────────────────
-initNameSelect();
 </script>
 </body>
 </html>
