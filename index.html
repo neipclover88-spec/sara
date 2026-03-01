@@ -22,138 +22,169 @@
 html { scroll-behavior: smooth; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
+/* NAV */
 .nav {
   position: sticky; top: 0; z-index: 100;
   background: rgba(13,15,26,0.95); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  padding: 0.8rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
 }
 .nav-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
 .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .nav-month { display: flex; align-items: center; gap: 0.5rem; }
-.month-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 1rem; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.month-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 7px; cursor: pointer; font-size: 1rem; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
 .month-btn:hover { border-color: var(--accent); color: var(--accent); }
-.month-label { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--accent); min-width: 90px; text-align: center; }
-.sync-badge { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--accent); background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); padding: 0.2rem 0.6rem; border-radius: 100px; }
+.month-label { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--accent); min-width: 88px; text-align: center; }
+.sync-badge { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--accent); background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); padding: 0.18rem 0.6rem; border-radius: 100px; }
 .sync-badge.err { color: var(--danger); background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.2); }
 
-.main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+.main { max-width: 1200px; margin: 0 auto; padding: 1.2rem 1.5rem; }
 
-.name-selector {
-  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+/* 이름 선택 그리드 */
+.name-section {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 0.9rem 1.2rem; margin-bottom: 1.5rem;
+  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem;
 }
-.name-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
-.name-select {
-  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-  padding: 0.45rem 1rem; border-radius: 8px;
-  font-family: 'Noto Sans KR', sans-serif; font-size: 0.82rem;
-  cursor: pointer; outline: none; transition: border-color 0.15s;
+.name-section-label {
+  font-family: 'DM Mono', monospace; font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted); margin-bottom: 0.7rem;
 }
-.name-select:focus { border-color: var(--accent); }
-.my-badge {
-  font-size: 0.75rem; background: rgba(0,229,160,0.12); color: var(--accent);
-  border: 1px solid rgba(0,229,160,0.25); padding: 0.25rem 0.8rem;
-  border-radius: 100px; white-space: nowrap;
+.name-grid {
+  display: flex; flex-wrap: wrap; gap: 0.45rem;
 }
-.hint-txt { font-size: 0.75rem; color: var(--muted); }
+.name-chip {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.38rem 0.75rem;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 8px; cursor: pointer;
+  font-size: 0.78rem; font-weight: 500;
+  transition: all 0.15s; user-select: none;
+  white-space: nowrap;
+}
+.name-chip:hover { border-color: #444b70; color: var(--text); transform: translateY(-1px); }
+.name-chip.selected {
+  border-color: var(--accent); background: rgba(0,229,160,0.1);
+  color: var(--accent); font-weight: 700;
+  box-shadow: 0 0 0 1px rgba(0,229,160,0.2);
+}
+.chip-emoji { font-size: 1rem; line-height: 1; }
 
-.calendar-section { margin-bottom: 2.5rem; }
-.section-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 0.8rem; }
+/* 선택된 멤버 표시 */
+.selected-info {
+  margin-top: 0.7rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem; color: var(--muted);
+  display: none; align-items: center; gap: 0.5rem;
+}
+.selected-info.show { display: flex; }
+.selected-info strong { color: var(--accent); }
+
+/* 달력 */
+.calendar-section { margin-bottom: 2rem; }
+.section-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 0.7rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; }
+.cal-guide {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0; text-transform: none;
+  color: var(--accent);
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.3);
+  padding: 0.25rem 0.8rem;
+  border-radius: 100px;
+  white-space: nowrap;
+}
 .weekday-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
-.weekday { text-align: center; font-size: 0.68rem; font-family: 'DM Mono', monospace; color: var(--muted); padding: 0.25rem; }
+.weekday { text-align: center; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted); padding: 0.2rem; }
 .weekday:first-child { color: #ff6b6b88; }
 .weekday:last-child { color: #4d96ff88; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
 
 .cal-cell {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.6rem 0.4rem; min-height: 72px;
-  cursor: pointer; transition: all 0.18s;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border-radius: 10px; padding: 0.5rem 0.3rem; min-height: 82px;
+  cursor: pointer; transition: all 0.17s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
-.cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,229,160,0.1); }
+.cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,229,160,0.1); }
 .cal-cell.today { border-color: var(--accent); }
 .cal-cell.today .cal-day { color: var(--accent); }
 .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.cal-cell.my-checked { background: rgba(0,229,160,0.06); border-color: rgba(0,229,160,0.4); }
-.cal-cell.holiday { border-color: rgba(255,107,107,0.3); }
+.cal-cell.my-checked { background: rgba(0,229,160,0.05); border-color: rgba(0,229,160,0.4); }
 .cal-cell.holiday .cal-day { color: #ff6b6b; }
-.cal-day { font-size: 0.92rem; font-weight: 700; line-height: 1; }
+.cal-cell.holiday { border-color: rgba(255,107,107,0.25); }
+.cal-day { font-size: 0.88rem; font-weight: 700; line-height: 1; }
 .cal-cell.sun .cal-day { color: #ff6b6b; }
 .cal-cell.sat .cal-day { color: var(--accent2); }
-.cal-holiday { font-size: 0.55rem; color: #ff6b6b; text-align: center; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-count { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.1rem 0.4rem; border-radius: 100px; }
+.cal-holiday { font-size: 0.5rem; color: #ff6b6b; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+.cal-count { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.06rem 0.35rem; border-radius: 100px; }
 .cal-count.zero { color: var(--muted); background: transparent; }
-.cal-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 36px; }
-.cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
 
-hr.divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1.5rem; }
-
-.att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
-.att-title { font-size: 1.1rem; font-weight: 700; }
-.selected-badge {
-  font-family: 'DM Mono', monospace; font-size: 0.72rem;
-  color: var(--accent3); background: rgba(255,217,61,0.1);
-  border: 1px solid rgba(255,217,61,0.2); padding: 0.28rem 0.8rem; border-radius: 100px;
+/* 이모지 점들 */
+.cal-emojis {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 1px; max-width: 58px; margin-top: 1px; line-height: 1;
 }
+.cal-emoji {
+  font-size: 0.75rem; cursor: default;
+  transition: transform 0.12s;
+  position: relative;
+}
+.cal-emoji:hover { transform: scale(1.5); z-index: 5; }
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 0.4rem 0 1.3rem; }
+
+.att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+.att-title { font-size: 1.05rem; font-weight: 700; }
+.selected-badge { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 0.25rem 0.75rem; border-radius: 100px; }
 
 .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
 table { width: 100%; border-collapse: collapse; }
-thead tr th {
-  background: var(--surface2);
-  padding: 0.65rem 0.4rem;
-  font-size: 0.68rem; font-family: 'DM Mono', monospace;
-  color: var(--muted); border-bottom: 2px solid var(--border);
-  white-space: nowrap; text-align: center;
-}
-thead tr th.name-col { text-align: left; padding-left: 1rem; min-width: 140px; color: var(--text); font-size: 0.75rem; }
-thead tr th.total-col { color: var(--accent3); min-width: 55px; }
-thead tr th.day-col { min-width: 32px; cursor: pointer; transition: color 0.15s; }
+thead tr th { background: var(--surface2); padding: 0.6rem 0.35rem; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; text-align: center; }
+thead tr th.name-col { text-align: left; padding-left: 0.9rem; min-width: 145px; color: var(--text); font-size: 0.72rem; }
+thead tr th.total-col { color: var(--accent3); min-width: 52px; }
+thead tr th.day-col { min-width: 28px; cursor: pointer; transition: color 0.15s; }
 thead tr th.day-col:hover { color: var(--accent); }
 thead tr th.today-col { color: var(--accent) !important; }
-thead tr th.sun-col { color: #ff6b6b66; }
-thead tr th.sat-col { color: #4d96ff66; }
-thead tr th.holiday-col { color: #ff6b6b99 !important; }
+thead tr th.sun-col { color: #ff6b6b55; }
+thead tr th.sat-col { color: #4d96ff55; }
+thead tr th.holiday-col { color: #ff6b6b88 !important; }
 
-tbody tr { border-bottom: 1px solid rgba(42,47,74,0.6); transition: background 0.12s; }
+tbody tr { border-bottom: 1px solid rgba(42,47,74,0.5); transition: background 0.1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr.my-row { background: rgba(0,229,160,0.03); }
-tbody tr:hover { background: rgba(255,255,255,0.02); }
+tbody tr:hover { background: rgba(255,255,255,0.015); }
 tbody tr.stats-row { background: var(--surface2) !important; border-top: 2px solid var(--border); }
 
-td { padding: 0.5rem 0.4rem; text-align: center; }
-td.name-cell { text-align: left; padding-left: 1rem; font-size: 0.82rem; font-weight: 500; white-space: nowrap; }
+td { padding: 0.45rem 0.35rem; text-align: center; }
+td.name-cell { text-align: left; padding-left: 0.9rem; font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
 td.name-cell.my-name { color: var(--accent); font-weight: 700; }
-td.stat-cell { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+.name-emoji-inline { font-size: 0.95rem; margin-right: 5px; }
+td.stat-cell { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--muted); }
 td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
-.member-total { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 0.1rem 0.45rem; border-radius: 100px; white-space: nowrap; }
+.member-total { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.18); padding: 0.08rem 0.4rem; border-radius: 100px; white-space: nowrap; }
 .member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
 
-.check-box {
-  width: 18px; height: 18px; border-radius: 4px;
-  border: 1.5px solid var(--border); background: transparent;
-  cursor: pointer; appearance: none; -webkit-appearance: none;
-  transition: all 0.13s; position: relative; display: block; margin: 0 auto;
-}
+.check-box { width: 17px; height: 17px; border-radius: 4px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; transition: all 0.13s; position: relative; display: block; margin: 0 auto; }
 .check-box:checked { background: var(--accent); border-color: var(--accent); }
-.check-box:checked::after { content: ''; position: absolute; top: 2px; left: 4px; width: 6px; height: 9px; border: 2px solid #0d0f1a; border-top: none; border-left: none; transform: rotate(45deg); }
-.check-box:disabled { opacity: 0.15; cursor: not-allowed; }
+.check-box:checked::after { content: ''; position: absolute; top: 2px; left: 3px; width: 5px; height: 8px; border: 2px solid #0d0f1a; border-top: none; border-left: none; transform: rotate(45deg); }
+.check-box:disabled { opacity: 0.13; cursor: not-allowed; }
 .check-box:hover:not(:checked):not(:disabled) { border-color: var(--accent); background: rgba(0,229,160,0.08); }
 
 .loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
 .loading.hidden { opacity: 0; pointer-events: none; }
-.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
-.loading-txt { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+.spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+.loading-txt { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 600px) {
-  .main { padding: 1rem; }
-  .cal-cell { min-height: 56px; }
+  .main { padding: 0.9rem 1rem; }
+  .cal-cell { min-height: 68px; }
   .cal-day { font-size: 0.8rem; }
+  .cal-emoji { font-size: 0.65rem; }
+  .name-chip { font-size: 0.72rem; padding: 0.32rem 0.6rem; }
 }
 </style>
 </head>
@@ -175,15 +206,19 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
 </nav>
 
 <div class="main">
-  <div class="name-selector">
-    <span class="name-label">내 이름 선택:</span>
-    <select class="name-select" id="nameSelect" onchange="onNameChange()">
-      <option value="">-- 선택 --</option>
-    </select>
-    <span class="my-badge" id="myBadge" style="display:none"></span>
-    <span class="hint-txt" id="hintTxt">이름을 선택하면 달력 클릭으로 바로 체크할 수 있어요</span>
+
+  <!-- 이름 선택 -->
+  <div class="name-section">
+    <div class="name-section-label">👤 내 이름 선택</div>
+    <div class="name-grid" id="nameGrid"></div>
+    <div class="selected-info" id="selectedInfo">
+      <span>선택됨:</span>
+      <strong id="selectedInfoText"></strong>
+      <span style="color:var(--muted)">— 달력 날짜를 클릭하면 바로 체크돼요</span>
+    </div>
   </div>
 
+  <!-- 달력 -->
   <div class="calendar-section">
     <div class="section-label" id="calLabel"></div>
     <div class="weekday-row">
@@ -213,7 +248,6 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── Firebase 설정 ──────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyAAbcRjELm-nN_f3XXgcn8eti2PHTMAIYM",
   authDomain: "sara-7bdd3.firebaseapp.com",
@@ -225,280 +259,246 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ── 멤버 + 이모지 (가나다순) ──────────────────────
+const MEMBERS = [
+  { name: "귀염둥이만학도(치/한)", emoji: "🐰" },
+  { name: "긍정(메디컬)",          emoji: "🌻" },
+  { name: "도로로(메디컬)",         emoji: "🐻" },
+  { name: "두콩(약대)",             emoji: "🟢" },
+  { name: "루비(메디컬)",           emoji: "💎" },
+  { name: "Rachel",                emoji: "🌸" },
+  { name: "사라(약대)",             emoji: "⭐" },
+  { name: "스카피(메디컬)",         emoji: "🌙" },
+  { name: "연우(경한)",             emoji: "🍀" },
+  { name: "음악듣는 어피치",        emoji: "🎀" },
+  { name: "진인사/남/남구/시험",    emoji: "🌈" },
+  { name: "청소오리(의한약)",       emoji: "🐥" },
+  { name: "크롱(한의대)",           emoji: "🍵" },
+  { name: "피카츄(의대)",           emoji: "✨" }
+];
+
 // ── 공휴일 ────────────────────────────────────────
 const HOLIDAYS = {
   "2025": {
-    "0": { 1: "신정" },
-    "1": { 28: "설날 전날", 29: "설날", 30: "설날 연휴" },
-    "2": { 1: "삼일절" },
-    "4": { 5: "어린이날", 6: "대체공휴일" },
-    "5": { 6: "현충일" },
-    "7": { 15: "광복절" },
-    "9": { 3: "개천절", 5: "추석연휴", 6: "추석", 7: "추석연휴", 8: "대체공휴일", 9: "한글날" },
-    "11": { 25: "크리스마스" }
+    "0":{1:"신정"}, "1":{28:"설날전날",29:"설날",30:"설날연휴"},
+    "2":{1:"삼일절"}, "4":{5:"어린이날",6:"대체공휴일"},
+    "5":{6:"현충일"}, "7":{15:"광복절"},
+    "9":{3:"개천절",5:"추석연휴",6:"추석",7:"추석연휴",8:"대체공휴일",9:"한글날"},
+    "11":{25:"크리스마스"}
   },
   "2026": {
-    "0": { 1: "신정" },
-    "1": { 16: "설날 연휴", 17: "설날", 18: "설날 연휴" },
-    "2": { 1: "삼일절" },
-    "4": { 5: "어린이날", 25: "부처님오신날" },
-    "5": { 6: "현충일" },
-    "7": { 15: "광복절" },
-    "8": { 24: "추석연휴", 25: "추석", 26: "추석연휴" },
-    "9": { 3: "개천절", 9: "한글날" },
-    "11": { 25: "크리스마스" }
+    "0":{1:"신정"}, "1":{16:"설날연휴",17:"설날",18:"설날연휴"},
+    "2":{1:"삼일절"}, "4":{5:"어린이날",25:"부처님오신날"},
+    "5":{6:"현충일"}, "7":{15:"광복절"},
+    "8":{24:"추석연휴",25:"추석",26:"추석연휴"},
+    "9":{3:"개천절",9:"한글날"}, "11":{25:"크리스마스"}
   }
 };
-function getHoliday(y, m, d) { return HOLIDAYS[String(y)]?.[String(m)]?.[d] || null; }
-
-// ── 멤버 목록 (가나다 순) ──────────────────────────
-const MEMBERS = [
-  "귀엽동이만학도(치/한)",
-  "긍정(메디컬)",
-  "도르르(메디컬)",
-  "두콩(약대)",
-  "루비(메디컬)",
-  "미농(한/약)",
-  "사라(약대)",
-  "스카피(메디컬)",
-  "연우(경한)",
-  "음악듣는 어피치",
-  "지니(의대)",
-  "진인사/남/금/시/협",
-  "청소오리/의한약"
-];
+function getHoliday(y,m,d){ return HOLIDAYS[String(y)]?.[String(m)]?.[d]||null; }
 
 // ── 상태 ───────────────────────────────────────────
 const now = new Date();
 let curYear = now.getFullYear();
 let curMonth = now.getMonth();
-let allData = {}; // allData[docId][memberKey] = true
+let allData = {};
 let myName = localStorage.getItem('att_myname') || '';
-const todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
+const todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
 
-// ── Firestore 키 변환 ─────────────────────────────
-function mKey(name) { return name.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g, '_'); }
-function docId(y, m) { return `${y}_${String(m).padStart(2,'0')}`; } // e.g. "2026_02"
+function mKey(name){ return name.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
+function docId(y,m){ return `${y}_${String(m).padStart(2,'0')}`; }
+function memberEmoji(name){ return MEMBERS.find(m=>m.name===name)?.emoji||'👤'; }
 
-// ── Firestore 리스너 (월 단위) ─────────────────────
+// ── Firestore ─────────────────────────────────────
 let unsubscribe = null;
-
-function subscribeMonth(y, m) {
-  if (unsubscribe) unsubscribe();
-  const ref = doc(db, 'attendance', docId(y, m));
-  unsubscribe = onSnapshot(ref, (snap) => {
+function subscribeMonth(y,m){
+  if(unsubscribe) unsubscribe();
+  const r = doc(db,'attendance',docId(y,m));
+  unsubscribe = onSnapshot(r,(snap)=>{
     allData = snap.exists() ? snap.data() : {};
     render();
     document.getElementById('loading').classList.add('hidden');
     setSyncStatus(true);
-  }, () => {
-    document.getElementById('loading').classList.add('hidden');
-    setSyncStatus(false);
-  });
+  },()=>{ document.getElementById('loading').classList.add('hidden'); setSyncStatus(false); });
 }
-
-function setSyncStatus(ok) {
-  const el = document.getElementById('syncBadge');
-  el.textContent = ok ? '● 실시간 연결됨' : '● 연결 오류';
-  el.classList.toggle('err', !ok);
+function setSyncStatus(ok){
+  const el=document.getElementById('syncBadge');
+  el.textContent=ok?'● 실시간 연결됨':'● 연결 오류';
+  el.classList.toggle('err',!ok);
 }
+async function saveCheck(y,m,d,name,checked){
+  const r=doc(db,'attendance',docId(y,m));
+  const field=`d${d}_${mKey(name)}`;
+  const snap=await getDoc(r);
+  const data=snap.exists()?snap.data():{};
+  if(checked) data[field]=true; else delete data[field];
+  await setDoc(r,data);
+}
+function isChecked(d,name){ return !!(allData[`d${d}_${mKey(name)}`]); }
+function dayCheckedMembers(d){ return MEMBERS.filter(m=>isChecked(d,m.name)); }
 
-// ── 저장 (Firestore) ──────────────────────────────
-// 구조: attendance/{year_month}/{day_memberKey} = true/false
-async function saveCheck(y, m, d, member, checked) {
-  const ref = doc(db, 'attendance', docId(y, m));
-  const field = `d${d}_${mKey(member)}`;
-  // 기존 문서 가져와서 병합
-  const snap = await getDoc(ref);
-  const data = snap.exists() ? snap.data() : {};
-  if (checked) {
-    data[field] = true;
+// ── 이름 칩 렌더 ──────────────────────────────────
+function renderNameGrid(){
+  const grid=document.getElementById('nameGrid');
+  grid.innerHTML = MEMBERS.map(m=>`
+    <div class="name-chip${m.name===myName?' selected':''}" onclick="selectName('${m.name.replace(/'/g,"\\'")}')">
+      <span class="chip-emoji">${m.emoji}</span>${m.name}
+    </div>
+  `).join('');
+
+  const info=document.getElementById('selectedInfo');
+  const infoTxt=document.getElementById('selectedInfoText');
+  if(myName){
+    info.classList.add('show');
+    infoTxt.textContent=`${memberEmoji(myName)} ${myName}`;
   } else {
-    delete data[field];
+    info.classList.remove('show');
   }
-  await setDoc(ref, data);
 }
 
-// ── 체크 여부 ─────────────────────────────────────
-function isChecked(d, member) {
-  return !!(allData[`d${d}_${mKey(member)}`]);
-}
-function dayCount(d) {
-  return MEMBERS.filter(m => isChecked(d, m)).length;
-}
-
-// ── 이름 선택 ─────────────────────────────────────
-function initNameSelect() {
-  const sel = document.getElementById('nameSelect');
-  MEMBERS.forEach(name => {
-    const opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    if (name === myName) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  updateBadge();
-}
-
-window.onNameChange = function() {
-  myName = document.getElementById('nameSelect').value;
+window.selectName = function(name){
+  myName = (myName===name) ? '' : name; // 같은거 누르면 해제
   localStorage.setItem('att_myname', myName);
-  updateBadge();
+  renderNameGrid();
   render();
 };
 
-function updateBadge() {
-  const badge = document.getElementById('myBadge');
-  const hint = document.getElementById('hintTxt');
-  if (myName) {
-    badge.style.display = ''; badge.textContent = myName + ' 으로 체크 중 ✓';
-    hint.style.display = 'none';
-  } else {
-    badge.style.display = 'none'; hint.style.display = '';
-  }
-}
-
 // ── 월 변경 ───────────────────────────────────────
-window.changeMonth = function(dir) {
-  curMonth += dir;
-  if (curMonth > 11) { curMonth = 0; curYear++; }
-  if (curMonth < 0) { curMonth = 11; curYear--; }
+window.changeMonth = function(dir){
+  curMonth+=dir;
+  if(curMonth>11){curMonth=0;curYear++;}
+  if(curMonth<0){curMonth=11;curYear--;}
   document.getElementById('loading').classList.remove('hidden');
-  subscribeMonth(curYear, curMonth);
+  subscribeMonth(curYear,curMonth);
 };
 
 // ── 전체 렌더 ─────────────────────────────────────
-function render() {
-  const mn = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  document.getElementById('monthLabel').textContent = `${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').textContent = `${curYear}년 ${mn[curMonth]} 출석 달력 — 클릭하면 바로 체크!`;
+function render(){
+  const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 출석 달력 &nbsp;<span class="cal-guide">👆 닉네임 선택 후 날짜 클릭 = 자동 출석체크!</span>`;
+  renderNameGrid();
   renderCalendar();
   renderTable();
 }
 
 // ── 달력 렌더 ─────────────────────────────────────
-function renderCalendar() {
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-  const firstDow = new Date(curYear, curMonth, 1).getDay();
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+function renderCalendar(){
+  const grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  const firstDow=new Date(curYear,curMonth,1).getDay();
+  const dim=new Date(curYear,curMonth+1,0).getDate();
 
-  for (let i = 0; i < firstDow; i++) {
-    const e = document.createElement('div'); e.className = 'cal-cell empty'; grid.appendChild(e);
+  for(let i=0;i<firstDow;i++){
+    const e=document.createElement('div'); e.className='cal-cell empty'; grid.appendChild(e);
   }
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(curYear, curMonth, d).getDay();
-    const cnt = dayCount(d);
-    const isTod = curYear===todayY && curMonth===todayM && d===todayD;
-    const amIChecked = myName && isChecked(d, myName);
-    const holiday = getHoliday(curYear, curMonth, d);
+  for(let d=1;d<=dim;d++){
+    const dow=new Date(curYear,curMonth,d).getDay();
+    const checked=dayCheckedMembers(d);
+    const cnt=checked.length;
+    const isTod=curYear===todayY&&curMonth===todayM&&d===todayD;
+    const amI=myName&&isChecked(d,myName);
+    const holiday=getHoliday(curYear,curMonth,d);
 
-    const cell = document.createElement('div');
-    let cls = 'cal-cell';
-    if (dow===0) cls += ' sun';
-    if (dow===6) cls += ' sat';
-    if (isTod) cls += ' today';
-    if (amIChecked) cls += ' my-checked';
-    if (holiday) cls += ' holiday';
-    cell.className = cls;
+    const cell=document.createElement('div');
+    let cls='cal-cell';
+    if(dow===0) cls+=' sun';
+    if(dow===6) cls+=' sat';
+    if(isTod) cls+=' today';
+    if(amI) cls+=' my-checked';
+    if(holiday) cls+=' holiday';
+    cell.className=cls;
 
-    const dots = Math.min(cnt, 9);
-    cell.innerHTML = `
+    const emojisHtml = checked.map(m=>
+      `<span class="cal-emoji" title="${m.name}">${m.emoji}</span>`
+    ).join('');
+
+    cell.innerHTML=`
       <span class="cal-day">${d}</span>
-      ${holiday ? `<span class="cal-holiday">${holiday}</span>` : ''}
-      <span class="cal-count${cnt===0?' zero':''}">${cnt}명</span>
-      <div class="cal-dots">${'<div class="cal-dot"></div>'.repeat(dots)}</div>
+      ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
+      <span class="cal-count${cnt===0?' zero':''}">${cnt>0?cnt+'명':'·'}</span>
+      <div class="cal-emojis">${emojisHtml}</div>
     `;
-    cell.addEventListener('click', () => calCellClick(d));
+    cell.addEventListener('click',()=>calClick(d));
     grid.appendChild(cell);
   }
 }
 
-// ── 달력 클릭 → 내 체크 토글 ─────────────────────
-async function calCellClick(day) {
-  if (!myName) { alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
-  const current = isChecked(day, myName);
-  await saveCheck(curYear, curMonth, day, myName, !current);
+async function calClick(day){
+  if(!myName){ alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
+  await saveCheck(curYear,curMonth,day,myName,!isChecked(day,myName));
   scrollToDay(day);
 }
 
-function scrollToDay(day) {
-  document.getElementById('divider').scrollIntoView({ behavior:'smooth', block:'start' });
-  const badge = document.getElementById('selectedBadge');
-  badge.style.display = ''; badge.textContent = `${curYear}년 ${curMonth+1}월 ${day}일`;
-  setTimeout(() => {
-    const th = document.querySelector(`#tableHead th[data-day="${day}"]`);
-    if (th) th.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
-  }, 350);
+function scrollToDay(day){
+  document.getElementById('divider').scrollIntoView({behavior:'smooth',block:'start'});
+  const badge=document.getElementById('selectedBadge');
+  badge.style.display=''; badge.textContent=`${curYear}년 ${curMonth+1}월 ${day}일`;
+  setTimeout(()=>{
+    const th=document.querySelector(`#tableHead th[data-day="${day}"]`);
+    if(th) th.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },350);
 }
 
 // ── 테이블 렌더 ───────────────────────────────────
-function renderTable() {
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
-  const head = document.getElementById('tableHead');
-  const body = document.getElementById('tableBody');
+function renderTable(){
+  const dim=new Date(curYear,curMonth+1,0).getDate();
+  const head=document.getElementById('tableHead');
+  const body=document.getElementById('tableBody');
 
-  // 헤더
-  let hHtml = '<tr><th class="name-col">이름</th>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(curYear, curMonth, d).getDay();
-    const isTod = curYear===todayY && curMonth===todayM && d===todayD;
-    const holiday = getHoliday(curYear, curMonth, d);
-    let cls = 'day-col';
-    if (dow===0 || holiday) cls += ' sun-col';
-    if (dow===6) cls += ' sat-col';
-    if (isTod) cls += ' today-col';
-    if (holiday) cls += ' holiday-col';
-    hHtml += `<th class="${cls}" data-day="${d}" title="${holiday||''}">${d}${holiday?'🔴':''}</th>`;
+  let hHtml='<tr><th class="name-col">이름</th>';
+  for(let d=1;d<=dim;d++){
+    const dow=new Date(curYear,curMonth,d).getDay();
+    const isTod=curYear===todayY&&curMonth===todayM&&d===todayD;
+    const holiday=getHoliday(curYear,curMonth,d);
+    let cls='day-col';
+    if(dow===0||holiday) cls+=' sun-col';
+    if(dow===6) cls+=' sat-col';
+    if(isTod) cls+=' today-col';
+    if(holiday) cls+=' holiday-col';
+    hHtml+=`<th class="${cls}" data-day="${d}" title="${holiday||''}">${d}${holiday?'🔴':''}</th>`;
   }
-  hHtml += '<th class="total-col">이번달</th></tr>';
-  head.innerHTML = hHtml;
+  hHtml+='<th class="total-col">이번달</th></tr>';
+  head.innerHTML=hHtml;
 
-  // 멤버 행
-  let bHtml = '';
-  MEMBERS.forEach(member => {
-    const isMe = member === myName;
-    let total = 0;
-    bHtml += `<tr class="${isMe?'my-row':''}">`;
-    bHtml += `<td class="name-cell${isMe?' my-name':''}">${member}</td>`;
-    for (let d = 1; d <= daysInMonth; d++) {
-      const checked = isChecked(d, member);
-      if (checked) total++;
-      bHtml += `<td><input type="checkbox" class="check-box"
+  let bHtml='';
+  MEMBERS.forEach(({name,emoji})=>{
+    const isMe=name===myName;
+    let total=0;
+    bHtml+=`<tr class="${isMe?'my-row':''}">`;
+    bHtml+=`<td class="name-cell${isMe?' my-name':''}"><span class="name-emoji-inline">${emoji}</span>${name}</td>`;
+    for(let d=1;d<=dim;d++){
+      const checked=isChecked(d,name);
+      if(checked) total++;
+      bHtml+=`<td><input type="checkbox" class="check-box"
         ${checked?'checked':''}
         ${!isMe?'disabled':''}
-        data-member="${member.replace(/"/g,'&quot;')}"
+        data-member="${name.replace(/"/g,'&quot;')}"
         data-day="${d}"
         onchange="handleTableCheck(this)"
       ></td>`;
     }
-    bHtml += `<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
-    bHtml += '</tr>';
+    bHtml+=`<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
+    bHtml+='</tr>';
   });
 
-  // 합계 행
-  let grandTotal = 0;
-  bHtml += '<tr class="stats-row"><td class="name-cell" style="font-size:0.7rem;color:var(--muted);font-family:\'DM Mono\',monospace">합계</td>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const cnt = dayCount(d);
-    grandTotal += cnt;
-    bHtml += `<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
+  let grand=0;
+  bHtml+='<tr class="stats-row"><td class="name-cell" style="font-size:0.68rem;color:var(--muted);font-family:\'DM Mono\',monospace">합계</td>';
+  for(let d=1;d<=dim;d++){
+    const cnt=dayCheckedMembers(d).length; grand+=cnt;
+    bHtml+=`<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
   }
-  bHtml += `<td class="stat-cell has-cnt">${grandTotal}회</td>`;
-  bHtml += '</tr>';
-
-  body.innerHTML = bHtml;
+  bHtml+=`<td class="stat-cell has-cnt">${grand}회</td></tr>`;
+  body.innerHTML=bHtml;
 }
 
-// ── 테이블 직접 체크 ──────────────────────────────
-window.handleTableCheck = async function(el) {
-  if (!myName) { el.checked = !el.checked; alert('먼저 이름을 선택해주세요!'); return; }
-  await saveCheck(curYear, curMonth, parseInt(el.dataset.day), el.dataset.member, el.checked);
+window.handleTableCheck = async function(el){
+  if(!myName){ el.checked=!el.checked; alert('먼저 이름을 선택해주세요!'); return; }
+  await saveCheck(curYear,curMonth,parseInt(el.dataset.day),el.dataset.member,el.checked);
 };
 
 // ── 초기화 ────────────────────────────────────────
-initNameSelect();
-subscribeMonth(curYear, curMonth);
+subscribeMonth(curYear,curMonth);
 </script>
 </body>
 </html>
