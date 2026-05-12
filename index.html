@@ -7,184 +7,148 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0d0f1a;
-  --surface: #141726;
-  --surface2: #1c2035;
-  --border: #2a2f4a;
-  --accent: #00e5a0;
-  --accent2: #4d96ff;
-  --accent3: #ffd93d;
-  --danger: #ff6b6b;
-  --text: #e8eaf0;
-  --muted: #5a6080;
+  --bg: #0d0f1a; --surface: #141726; --surface2: #1c2035;
+  --border: #2a2f4a; --accent: #00e5a0; --accent2: #4d96ff;
+  --accent3: #ffd93d; --danger: #ff6b6b; --text: #e8eaf0; --muted: #5a6080;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior:smooth; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
 /* NAV */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(13,15,26,0.95); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.7rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-}
-.nav-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
-.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+.nav { position:sticky; top:0; z-index:100; background:rgba(13,15,26,0.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0.7rem 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.nav-title { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:0.5rem; }
+.nav-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.nav-month { display: flex; align-items: center; gap: 0.5rem; }
-.month-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 7px; cursor: pointer; font-size: 1rem; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-.month-btn:hover { border-color: var(--accent); color: var(--accent); }
-.month-label { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--accent); min-width: 88px; text-align: center; }
-.sync-badge { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--accent); background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); padding: 0.18rem 0.6rem; border-radius: 100px; }
-.sync-badge.err { color: var(--danger); background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.2); }
+.nav-month { display:flex; align-items:center; gap:0.5rem; }
+.month-btn { background:var(--surface); border:1px solid var(--border); color:var(--text); width:28px; height:28px; border-radius:7px; cursor:pointer; font-size:1rem; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+.month-btn:hover { border-color:var(--accent); color:var(--accent); }
+.month-label { font-family:'DM Mono',monospace; font-size:0.85rem; color:var(--accent); min-width:88px; text-align:center; }
+.sync-badge { font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--accent); background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.2); padding:0.18rem 0.6rem; border-radius:100px; }
+.sync-badge.err { color:var(--danger); background:rgba(255,107,107,0.1); border-color:rgba(255,107,107,0.2); }
 
-.main { max-width: 1200px; margin: 0 auto; padding: 1.2rem 1.5rem; }
+.main { max-width:1200px; margin:0 auto; padding:1.2rem 1.5rem; }
 
-/* 이름 선택 그리드 */
-.name-section {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem;
-}
-.name-section-label {
-  font-family: 'DM Mono', monospace; font-size: 0.65rem;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--muted); margin-bottom: 0.7rem;
-}
-.name-grid {
-  display: flex; flex-wrap: wrap; gap: 0.45rem;
-}
-.name-chip {
-  display: flex; align-items: center; gap: 0.4rem;
-  padding: 0.38rem 0.75rem;
-  background: var(--surface2); border: 1.5px solid var(--border);
-  border-radius: 8px; cursor: pointer;
-  font-size: 0.78rem; font-weight: 500;
-  transition: all 0.15s; user-select: none;
-  white-space: nowrap;
-}
-.name-chip:hover { border-color: #444b70; color: var(--text); transform: translateY(-1px); }
-.name-chip.selected {
-  border-color: var(--accent); background: rgba(0,229,160,0.1);
-  color: var(--accent); font-weight: 700;
-  box-shadow: 0 0 0 1px rgba(0,229,160,0.2);
-}
-.chip-emoji { font-size: 1rem; line-height: 1; }
+/* 이름 선택 */
+.name-section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; }
+.name-section-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.7rem; }
+.name-grid { display:flex; flex-wrap:wrap; gap:0.45rem; }
+.name-chip { display:flex; align-items:center; gap:0.4rem; padding:0.38rem 0.75rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.78rem; font-weight:500; transition:all 0.15s; user-select:none; white-space:nowrap; }
+.name-chip:hover { border-color:#444b70; transform:translateY(-1px); }
+.name-chip.selected { border-color:var(--accent); background:rgba(0,229,160,0.1); color:var(--accent); font-weight:700; }
+.chip-emoji { font-size:1rem; line-height:1; }
+.selected-info { margin-top:0.7rem; padding-top:0.7rem; border-top:1px solid var(--border); font-size:0.75rem; color:var(--muted); display:none; align-items:center; gap:0.5rem; }
+.selected-info.show { display:flex; }
+.selected-info strong { color:var(--accent); }
 
-/* 선택된 멤버 표시 */
-.selected-info {
-  margin-top: 0.7rem; padding-top: 0.7rem;
-  border-top: 1px solid var(--border);
-  font-size: 0.75rem; color: var(--muted);
-  display: none; align-items: center; gap: 0.5rem;
-}
-.selected-info.show { display: flex; }
-.selected-info strong { color: var(--accent); }
+/* 멤버 관리 */
+.member-mgmt { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:1.4rem; overflow:hidden; }
+.mgmt-toggle { display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1.2rem; cursor:pointer; transition:background 0.15s; font-size:0.82rem; font-weight:600; color:var(--muted); }
+.mgmt-toggle:hover { background:var(--surface2); color:var(--text); }
+.mgmt-arrow { font-size:0.7rem; transition:transform 0.2s; }
+.mgmt-arrow.open { transform:rotate(180deg); }
+.mgmt-body { padding:0 1.2rem 1.2rem; border-top:1px solid var(--border); }
+.mgmt-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:0.6rem; margin-top:0.9rem; }
+.mgmt-row { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; }
+.mgmt-input { background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.45rem 0.8rem; border-radius:8px; font-family:'Noto Sans KR',sans-serif; font-size:0.82rem; outline:none; transition:border-color 0.15s; min-width:140px; flex:1; }
+.mgmt-input:focus { border-color:var(--accent); }
+.mgmt-btn { padding:0.45rem 1rem; border-radius:8px; border:none; cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-size:0.8rem; font-weight:600; transition:all 0.15s; white-space:nowrap; }
+.add-btn { background:var(--accent); color:#0d0f1a; }
+.add-btn:hover { background:#00c98a; }
+
+/* 이모지 피커 */
+.emoji-picker { position:relative; }
+.emoji-pick-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.45rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.82rem; display:flex; align-items:center; gap:0.4rem; white-space:nowrap; transition:border-color 0.15s; }
+.emoji-pick-btn:hover { border-color:var(--accent); }
+.emoji-grid { position:absolute; top:110%; left:0; z-index:200; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:0.6rem; display:grid; grid-template-columns:repeat(8,1fr); gap:3px; box-shadow:0 8px 24px rgba(0,0,0,0.4); min-width:240px; }
+.emoji-opt { font-size:1.3rem; padding:0.3rem; border-radius:6px; cursor:pointer; text-align:center; transition:background 0.1s; }
+.emoji-opt:hover { background:var(--border); }
+.emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); }
+
+/* 멤버 목록 */
+.mgmt-list { display:flex; flex-direction:column; gap:0.4rem; max-height:280px; overflow-y:auto; }
+.mgmt-member-row { display:flex; align-items:center; gap:0.7rem; background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:0.5rem 0.8rem; }
+.mgmt-member-emoji { font-size:1.1rem; }
+.mgmt-member-name { flex:1; font-size:0.82rem; }
+.del-btn { background:transparent; border:1px solid rgba(255,107,107,0.3); color:rgba(255,107,107,0.6); padding:0.2rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.72rem; transition:all 0.15s; }
+.del-btn:hover { border-color:var(--danger); color:var(--danger); }
+.drag-handle { color:var(--muted); cursor:grab; font-size:0.9rem; padding:0 0.2rem; }
 
 /* 달력 */
-.calendar-section { margin-bottom: 2rem; }
-.section-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 0.7rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; }
-.cal-guide {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 0.82rem; font-weight: 700;
-  letter-spacing: 0; text-transform: none;
-  color: var(--accent);
-  background: rgba(0,229,160,0.1);
-  border: 1px solid rgba(0,229,160,0.3);
-  padding: 0.25rem 0.8rem;
-  border-radius: 100px;
-  white-space: nowrap;
-}
-.weekday-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
-.weekday { text-align: center; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted); padding: 0.2rem; }
-.weekday:first-child { color: #ff6b6b88; }
-.weekday:last-child { color: #4d96ff88; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.calendar-section { margin-bottom:2rem; }
+.section-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.7rem; display:flex; align-items:center; flex-wrap:wrap; gap:0.6rem; }
+.cal-guide { font-family:'Noto Sans KR',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0; text-transform:none; color:var(--accent); background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3); padding:0.25rem 0.8rem; border-radius:100px; white-space:nowrap; }
+.weekday-row { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
+.weekday { text-align:center; font-size:0.65rem; font-family:'DM Mono',monospace; color:var(--muted); padding:0.2rem; }
+.weekday:first-child { color:#ff6b6b88; }
+.weekday:last-child { color:#4d96ff88; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.3rem; min-height:82px; cursor:pointer; transition:all 0.17s; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.cal-cell:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,229,160,0.1); }
+.cal-cell.today { border-color:var(--accent); }
+.cal-cell.today .cal-day { color:var(--accent); }
+.cal-cell.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.cal-cell.my-checked { background:rgba(0,229,160,0.05); border-color:rgba(0,229,160,0.4); }
+.cal-cell.holiday .cal-day { color:#ff6b6b; }
+.cal-cell.holiday { border-color:rgba(255,107,107,0.25); }
+.cal-day { font-size:0.88rem; font-weight:700; line-height:1; }
+.cal-cell.sun .cal-day { color:#ff6b6b; }
+.cal-cell.sat .cal-day { color:var(--accent2); }
+.cal-holiday { font-size:0.5rem; color:#ff6b6b; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
+.cal-count { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent); background:rgba(0,229,160,0.1); padding:0.06rem 0.35rem; border-radius:100px; }
+.cal-count.zero { color:var(--muted); background:transparent; }
+.cal-emojis { display:flex; flex-wrap:wrap; justify-content:center; gap:1px; max-width:58px; margin-top:1px; line-height:1; }
+.cal-emoji { font-size:0.75rem; transition:transform 0.12s; position:relative; cursor:default; }
+.cal-emoji:hover { transform:scale(1.5); z-index:5; }
 
-.cal-cell {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.5rem 0.3rem; min-height: 82px;
-  cursor: pointer; transition: all 0.17s;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-}
-.cal-cell:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,229,160,0.1); }
-.cal-cell.today { border-color: var(--accent); }
-.cal-cell.today .cal-day { color: var(--accent); }
-.cal-cell.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.cal-cell.my-checked { background: rgba(0,229,160,0.05); border-color: rgba(0,229,160,0.4); }
-.cal-cell.holiday .cal-day { color: #ff6b6b; }
-.cal-cell.holiday { border-color: rgba(255,107,107,0.25); }
-.cal-day { font-size: 0.88rem; font-weight: 700; line-height: 1; }
-.cal-cell.sun .cal-day { color: #ff6b6b; }
-.cal-cell.sat .cal-day { color: var(--accent2); }
-.cal-holiday { font-size: 0.5rem; color: #ff6b6b; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
-.cal-count { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--accent); background: rgba(0,229,160,0.1); padding: 0.06rem 0.35rem; border-radius: 100px; }
-.cal-count.zero { color: var(--muted); background: transparent; }
+hr.divider { border:none; border-top:1px solid var(--border); margin:0.4rem 0 1.3rem; }
 
-/* 이모지 점들 */
-.cal-emojis {
-  display: flex; flex-wrap: wrap; justify-content: center;
-  gap: 1px; max-width: 58px; margin-top: 1px; line-height: 1;
-}
-.cal-emoji {
-  font-size: 0.75rem; cursor: default;
-  transition: transform 0.12s;
-  position: relative;
-}
-.cal-emoji:hover { transform: scale(1.5); z-index: 5; }
+/* 테이블 */
+.att-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem; }
+.att-title { font-size:1.05rem; font-weight:700; }
+.selected-badge { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent3); background:rgba(255,217,61,0.1); border:1px solid rgba(255,217,61,0.2); padding:0.25rem 0.75rem; border-radius:100px; }
+.table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; }
+thead tr th { background:var(--surface2); padding:0.6rem 0.35rem; font-size:0.65rem; font-family:'DM Mono',monospace; color:var(--muted); border-bottom:2px solid var(--border); white-space:nowrap; text-align:center; }
+thead tr th.name-col { text-align:left; padding-left:0.9rem; min-width:145px; color:var(--text); font-size:0.72rem; }
+thead tr th.total-col { color:var(--accent3); min-width:52px; }
+thead tr th.day-col { min-width:28px; cursor:pointer; transition:color 0.15s; }
+thead tr th.day-col:hover { color:var(--accent); }
+thead tr th.today-col { color:var(--accent) !important; }
+thead tr th.sun-col { color:#ff6b6b55; }
+thead tr th.sat-col { color:#4d96ff55; }
+thead tr th.holiday-col { color:#ff6b6b88 !important; }
+tbody tr { border-bottom:1px solid rgba(42,47,74,0.5); transition:background 0.1s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr.my-row { background:rgba(0,229,160,0.03); }
+tbody tr:hover { background:rgba(255,255,255,0.015); }
+tbody tr.stats-row { background:var(--surface2) !important; border-top:2px solid var(--border); }
+td { padding:0.45rem 0.35rem; text-align:center; }
+td.name-cell { text-align:left; padding-left:0.9rem; font-size:0.8rem; font-weight:500; white-space:nowrap; }
+td.name-cell.my-name { color:var(--accent); font-weight:700; }
+.name-emoji-inline { font-size:0.95rem; margin-right:5px; }
+td.stat-cell { font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--muted); }
+td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
+.member-total { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--accent3); background:rgba(255,217,61,0.1); border:1px solid rgba(255,217,61,0.18); padding:0.08rem 0.4rem; border-radius:100px; white-space:nowrap; }
+.member-total.zero { color:var(--muted); background:transparent; border-color:transparent; }
+.check-box { width:17px; height:17px; border-radius:4px; border:1.5px solid var(--border); background:transparent; cursor:pointer; appearance:none; -webkit-appearance:none; transition:all 0.13s; position:relative; display:block; margin:0 auto; }
+.check-box:checked { background:var(--accent); border-color:var(--accent); }
+.check-box:checked::after { content:''; position:absolute; top:2px; left:3px; width:5px; height:8px; border:2px solid #0d0f1a; border-top:none; border-left:none; transform:rotate(45deg); }
+.check-box:disabled { opacity:0.13; cursor:not-allowed; }
+.check-box:hover:not(:checked):not(:disabled) { border-color:var(--accent); background:rgba(0,229,160,0.08); }
 
-hr.divider { border: none; border-top: 1px solid var(--border); margin: 0.4rem 0 1.3rem; }
+/* 로딩 */
+.loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
+.loading.hidden { opacity:0; pointer-events:none; }
+.spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
+.loading-txt { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-.att-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
-.att-title { font-size: 1.05rem; font-weight: 700; }
-.selected-badge { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.2); padding: 0.25rem 0.75rem; border-radius: 100px; }
-
-.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
-table { width: 100%; border-collapse: collapse; }
-thead tr th { background: var(--surface2); padding: 0.6rem 0.35rem; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; text-align: center; }
-thead tr th.name-col { text-align: left; padding-left: 0.9rem; min-width: 145px; color: var(--text); font-size: 0.72rem; }
-thead tr th.total-col { color: var(--accent3); min-width: 52px; }
-thead tr th.day-col { min-width: 28px; cursor: pointer; transition: color 0.15s; }
-thead tr th.day-col:hover { color: var(--accent); }
-thead tr th.today-col { color: var(--accent) !important; }
-thead tr th.sun-col { color: #ff6b6b55; }
-thead tr th.sat-col { color: #4d96ff55; }
-thead tr th.holiday-col { color: #ff6b6b88 !important; }
-
-tbody tr { border-bottom: 1px solid rgba(42,47,74,0.5); transition: background 0.1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr.my-row { background: rgba(0,229,160,0.03); }
-tbody tr:hover { background: rgba(255,255,255,0.015); }
-tbody tr.stats-row { background: var(--surface2) !important; border-top: 2px solid var(--border); }
-
-td { padding: 0.45rem 0.35rem; text-align: center; }
-td.name-cell { text-align: left; padding-left: 0.9rem; font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
-td.name-cell.my-name { color: var(--accent); font-weight: 700; }
-.name-emoji-inline { font-size: 0.95rem; margin-right: 5px; }
-td.stat-cell { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--muted); }
-td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
-.member-total { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent3); background: rgba(255,217,61,0.1); border: 1px solid rgba(255,217,61,0.18); padding: 0.08rem 0.4rem; border-radius: 100px; white-space: nowrap; }
-.member-total.zero { color: var(--muted); background: transparent; border-color: transparent; }
-
-.check-box { width: 17px; height: 17px; border-radius: 4px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; transition: all 0.13s; position: relative; display: block; margin: 0 auto; }
-.check-box:checked { background: var(--accent); border-color: var(--accent); }
-.check-box:checked::after { content: ''; position: absolute; top: 2px; left: 3px; width: 5px; height: 8px; border: 2px solid #0d0f1a; border-top: none; border-left: none; transform: rotate(45deg); }
-.check-box:disabled { opacity: 0.13; cursor: not-allowed; }
-.check-box:hover:not(:checked):not(:disabled) { border-color: var(--accent); background: rgba(0,229,160,0.08); }
-
-.loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
-.loading.hidden { opacity: 0; pointer-events: none; }
-.spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
-.loading-txt { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 600px) {
-  .main { padding: 0.9rem 1rem; }
-  .cal-cell { min-height: 68px; }
-  .cal-day { font-size: 0.8rem; }
-  .cal-emoji { font-size: 0.65rem; }
-  .name-chip { font-size: 0.72rem; padding: 0.32rem 0.6rem; }
+@media (max-width:600px) {
+  .main { padding:0.9rem 1rem; }
+  .cal-cell { min-height:68px; }
+  .mgmt-row { flex-direction:column; align-items:stretch; }
+  .emoji-grid { grid-template-columns:repeat(6,1fr); }
 }
 </style>
 </head>
@@ -215,6 +179,29 @@ td.stat-cell.has-cnt { color: var(--accent); font-weight: 500; }
       <span>선택됨:</span>
       <strong id="selectedInfoText"></strong>
       <span style="color:var(--muted)">— 달력 날짜를 클릭하면 바로 체크돼요</span>
+    </div>
+  </div>
+
+  <!-- 멤버 관리 -->
+  <div class="member-mgmt">
+    <div class="mgmt-toggle" onclick="toggleMgmt()">
+      <span>⚙️ 멤버 관리 (추가 / 삭제)</span>
+      <span class="mgmt-arrow" id="mgmtArrow">▼</span>
+    </div>
+    <div class="mgmt-body" id="mgmtBody" style="display:none">
+      <div class="mgmt-label">새 멤버 추가</div>
+      <div class="mgmt-row">
+        <input type="text" id="newName" placeholder="닉네임 입력" class="mgmt-input" maxlength="20">
+        <div class="emoji-picker">
+          <button class="emoji-pick-btn" onclick="toggleEmojiPicker(event)">
+            <span id="pickedEmoji">🌸</span> 이모지 선택 ▾
+          </button>
+          <div class="emoji-grid" id="emojiGrid" style="display:none"></div>
+        </div>
+        <button class="mgmt-btn add-btn" onclick="addMember()">+ 추가</button>
+      </div>
+      <div class="mgmt-label" style="margin-top:1.2rem">현재 멤버 — <span id="memberCount"></span>명</div>
+      <div class="mgmt-list" id="mgmtList"></div>
     </div>
   </div>
 
@@ -259,72 +246,86 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ── 멤버 + 이모지 (가나다순) ──────────────────────
-const MEMBERS = [
-  { name: "귀염둥이만학도(치/한)", emoji: "🐰" },
-  { name: "긍정(메디컬)",          emoji: "🌻" },
-  { name: "도로로(메디컬)",         emoji: "🐻" },
-  { name: "두콩(약대)",             emoji: "🟢" },
-  { name: "루비(메디컬)",           emoji: "💎" },
-  { name: "Rachel",                emoji: "🌸" },
-  { name: "사라(약대)",             emoji: "⭐" },
-  { name: "스카피(메디컬)",         emoji: "🌙" },
-  { name: "연우(경한)",             emoji: "🍀" },
-  { name: "음악듣는 어피치",        emoji: "🎀" },
-  { name: "진인사/남/남구/시험",    emoji: "🌈" },
-  { name: "청소오리(의한약)",       emoji: "🐥" },
-  { name: "크롱(한의대)",           emoji: "🍵" },
-  { name: "피카츄(의대)",           emoji: "✨" }
+// ── 이모지 목록 ───────────────────────────────────
+const EMOJI_LIST = [
+  '🌸','🌺','🌻','🌹','🌷','🌼','💐','🍀','🍃','🌿',
+  '🦋','🐰','🐻','🐼','🐨','🐸','🐥','🦊','🐧','🐙',
+  '⭐','✨','🌙','☀️','🌈','❄️','🔥','💫','🌟','💥',
+  '💎','🫐','🍵','🎀','🎵','🎶','🎸','🎹','🎨','🎭',
+  '🍓','🍒','🍑','🥝','🍋','🫧','🧊','🌊','🍄','🌙'
 ];
+let pickedEmoji = '🌸';
 
 // ── 공휴일 ────────────────────────────────────────
 const HOLIDAYS = {
-  "2025": {
-    "0":{1:"신정"}, "1":{28:"설날전날",29:"설날",30:"설날연휴"},
-    "2":{1:"삼일절"}, "4":{5:"어린이날",6:"대체공휴일"},
-    "5":{6:"현충일"}, "7":{15:"광복절"},
-    "9":{3:"개천절",5:"추석연휴",6:"추석",7:"추석연휴",8:"대체공휴일",9:"한글날"},
-    "11":{25:"크리스마스"}
-  },
-  "2026": {
-    "0":{1:"신정"}, "1":{16:"설날연휴",17:"설날",18:"설날연휴"},
-    "2":{1:"삼일절"}, "4":{5:"어린이날",25:"부처님오신날"},
-    "5":{6:"현충일"}, "7":{15:"광복절"},
-    "8":{24:"추석연휴",25:"추석",26:"추석연휴"},
-    "9":{3:"개천절",9:"한글날"}, "11":{25:"크리스마스"}
-  }
+  "2025": { "0":{1:"신정"}, "1":{28:"설날전날",29:"설날",30:"설날연휴"}, "2":{1:"삼일절"}, "4":{5:"어린이날",6:"대체공휴일"}, "5":{6:"현충일"}, "7":{15:"광복절"}, "9":{3:"개천절",5:"추석연휴",6:"추석",7:"추석연휴",8:"대체공휴일",9:"한글날"}, "11":{25:"크리스마스"} },
+  "2026": { "0":{1:"신정"}, "1":{16:"설날연휴",17:"설날",18:"설날연휴"}, "2":{1:"삼일절"}, "4":{5:"어린이날",25:"부처님오신날"}, "5":{6:"현충일"}, "7":{15:"광복절"}, "8":{24:"추석연휴",25:"추석",26:"추석연휴"}, "9":{3:"개천절",9:"한글날"}, "11":{25:"크리스마스"} }
 };
 function getHoliday(y,m,d){ return HOLIDAYS[String(y)]?.[String(m)]?.[d]||null; }
 
 // ── 상태 ───────────────────────────────────────────
 const now = new Date();
-let curYear = now.getFullYear();
-let curMonth = now.getMonth();
-let allData = {};
-let myName = localStorage.getItem('att_myname') || '';
+let curYear = now.getFullYear(), curMonth = now.getMonth();
+let allData = {}, members = []; // members: [{name, emoji}]
+let myName = localStorage.getItem('att_myname')||'';
 const todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
 
-function mKey(name){ return name.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
+function mKey(n){ return n.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
 function docId(y,m){ return `${y}_${String(m).padStart(2,'0')}`; }
-function memberEmoji(name){ return MEMBERS.find(m=>m.name===name)?.emoji||'👤'; }
+function memberEmoji(name){ return members.find(m=>m.name===name)?.emoji||'👤'; }
 
-// ── Firestore ─────────────────────────────────────
-let unsubscribe = null;
+// ── Firebase 멤버 리스너 ───────────────────────────
+const membersRef = doc(db,'config','members');
+onSnapshot(membersRef, (snap)=>{
+  members = snap.exists() ? (snap.data().list||[]) : getDefaultMembers();
+  if(!snap.exists()) saveMembersToFirestore();
+  renderNameGrid();
+  renderMgmtList();
+  render();
+});
+
+function getDefaultMembers(){
+  return [
+    {name:"귀염둥이만학도(치/한)", emoji:"🐰"},
+    {name:"긍정(메디컬)",          emoji:"🌻"},
+    {name:"도로로(메디컬)",        emoji:"🐻"},
+    {name:"두콩(약대)",            emoji:"🟢"},
+    {name:"루비(메디컬)",          emoji:"💎"},
+    {name:"Rachel",               emoji:"🌸"},
+    {name:"사라(약대)",            emoji:"⭐"},
+    {name:"스카피(메디컬)",        emoji:"🌙"},
+    {name:"연우(경한)",            emoji:"🍀"},
+    {name:"음악듣는 어피치",       emoji:"🎀"},
+    {name:"진인사/남/남구/시험",   emoji:"🌈"},
+    {name:"청소오리(의한약)",      emoji:"🐥"},
+    {name:"크롱(한의대)",          emoji:"🍵"},
+    {name:"피카츄(의대)",          emoji:"✨"},
+  ];
+}
+
+async function saveMembersToFirestore(){
+  await setDoc(membersRef, { list: members });
+}
+
+// ── Firestore 출석 리스너 ─────────────────────────
+let unsubscribeAtt = null;
 function subscribeMonth(y,m){
-  if(unsubscribe) unsubscribe();
-  const r = doc(db,'attendance',docId(y,m));
-  unsubscribe = onSnapshot(r,(snap)=>{
-    allData = snap.exists() ? snap.data() : {};
+  if(unsubscribeAtt) unsubscribeAtt();
+  const r=doc(db,'attendance',docId(y,m));
+  unsubscribeAtt = onSnapshot(r,(snap)=>{
+    allData=snap.exists()?snap.data():{};
     render();
     document.getElementById('loading').classList.add('hidden');
     setSyncStatus(true);
   },()=>{ document.getElementById('loading').classList.add('hidden'); setSyncStatus(false); });
 }
+
 function setSyncStatus(ok){
   const el=document.getElementById('syncBadge');
   el.textContent=ok?'● 실시간 연결됨':'● 연결 오류';
   el.classList.toggle('err',!ok);
 }
+
 async function saveCheck(y,m,d,name,checked){
   const r=doc(db,'attendance',docId(y,m));
   const field=`d${d}_${mKey(name)}`;
@@ -333,21 +334,93 @@ async function saveCheck(y,m,d,name,checked){
   if(checked) data[field]=true; else delete data[field];
   await setDoc(r,data);
 }
-function isChecked(d,name){ return !!(allData[`d${d}_${mKey(name)}`]); }
-function dayCheckedMembers(d){ return MEMBERS.filter(m=>isChecked(d,m.name)); }
 
-// ── 이름 칩 렌더 ──────────────────────────────────
+function isChecked(d,name){ return !!(allData[`d${d}_${mKey(name)}`]); }
+function dayCheckedMembers(d){ return members.filter(m=>isChecked(d,m.name)); }
+
+// ── 멤버 관리 UI ──────────────────────────────────
+window.toggleMgmt = function(){
+  const body=document.getElementById('mgmtBody');
+  const arrow=document.getElementById('mgmtArrow');
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  arrow.classList.toggle('open',open);
+};
+
+// 이모지 그리드 초기화
+function initEmojiGrid(){
+  const grid=document.getElementById('emojiGrid');
+  grid.innerHTML=EMOJI_LIST.map(e=>
+    `<div class="emoji-opt${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}')">${e}</div>`
+  ).join('');
+}
+
+window.toggleEmojiPicker = function(e){
+  e.stopPropagation();
+  const grid=document.getElementById('emojiGrid');
+  const open=grid.style.display==='none';
+  grid.style.display=open?'grid':'none';
+  if(open) initEmojiGrid();
+};
+
+window.pickEmoji = function(emoji){
+  pickedEmoji=emoji;
+  document.getElementById('pickedEmoji').textContent=emoji;
+  document.getElementById('emojiGrid').style.display='none';
+  initEmojiGrid();
+};
+
+// 외부 클릭 시 이모지 그리드 닫기
+document.addEventListener('click',()=>{
+  document.getElementById('emojiGrid').style.display='none';
+});
+
+window.addMember = async function(){
+  const nameInput=document.getElementById('newName');
+  const name=nameInput.value.trim();
+  if(!name){ nameInput.focus(); return; }
+  if(members.find(m=>m.name===name)){ alert('이미 있는 이름이에요!'); return; }
+  members=[...members,{name,emoji:pickedEmoji}].sort((a,b)=>a.name.localeCompare(b.name,'ko'));
+  await saveMembersToFirestore();
+  nameInput.value='';
+};
+
+window.deleteMember = async function(name){
+  if(!confirm(`"${name}" 을(를) 삭제할까요?`)) return;
+  members=members.filter(m=>m.name!==name);
+  await saveMembersToFirestore();
+  if(myName===name){
+    myName='';
+    localStorage.setItem('att_myname','');
+  }
+};
+
+function renderMgmtList(){
+  const list=document.getElementById('mgmtList');
+  const count=document.getElementById('memberCount');
+  if(count) count.textContent=members.length;
+  if(!list) return;
+  list.innerHTML=members.map(m=>`
+    <div class="mgmt-member-row">
+      <span class="mgmt-member-emoji">${m.emoji}</span>
+      <span class="mgmt-member-name">${m.name}</span>
+      <button class="del-btn" onclick="deleteMember('${m.name.replace(/'/g,"\\'")}')">삭제</button>
+    </div>
+  `).join('');
+}
+
+// ── 이름 선택 ─────────────────────────────────────
 function renderNameGrid(){
   const grid=document.getElementById('nameGrid');
-  grid.innerHTML = MEMBERS.map(m=>`
+  if(!grid) return;
+  grid.innerHTML=members.map(m=>`
     <div class="name-chip${m.name===myName?' selected':''}" onclick="selectName('${m.name.replace(/'/g,"\\'")}')">
       <span class="chip-emoji">${m.emoji}</span>${m.name}
     </div>
   `).join('');
-
   const info=document.getElementById('selectedInfo');
   const infoTxt=document.getElementById('selectedInfoText');
-  if(myName){
+  if(myName && members.find(m=>m.name===myName)){
     info.classList.add('show');
     infoTxt.textContent=`${memberEmoji(myName)} ${myName}`;
   } else {
@@ -355,15 +428,15 @@ function renderNameGrid(){
   }
 }
 
-window.selectName = function(name){
-  myName = (myName===name) ? '' : name; // 같은거 누르면 해제
-  localStorage.setItem('att_myname', myName);
+window.selectName=function(name){
+  myName=(myName===name)?'':name;
+  localStorage.setItem('att_myname',myName);
   renderNameGrid();
   render();
 };
 
 // ── 월 변경 ───────────────────────────────────────
-window.changeMonth = function(dir){
+window.changeMonth=function(dir){
   curMonth+=dir;
   if(curMonth>11){curMonth=0;curYear++;}
   if(curMonth<0){curMonth=11;curYear--;}
@@ -377,6 +450,7 @@ function render(){
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
   document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 출석 달력 &nbsp;<span class="cal-guide">👆 닉네임 선택 후 날짜 클릭 = 자동 출석체크!</span>`;
   renderNameGrid();
+  renderMgmtList();
   renderCalendar();
   renderTable();
 }
@@ -387,11 +461,9 @@ function renderCalendar(){
   grid.innerHTML='';
   const firstDow=new Date(curYear,curMonth,1).getDay();
   const dim=new Date(curYear,curMonth+1,0).getDate();
-
   for(let i=0;i<firstDow;i++){
     const e=document.createElement('div'); e.className='cal-cell empty'; grid.appendChild(e);
   }
-
   for(let d=1;d<=dim;d++){
     const dow=new Date(curYear,curMonth,d).getDay();
     const checked=dayCheckedMembers(d);
@@ -399,7 +471,6 @@ function renderCalendar(){
     const isTod=curYear===todayY&&curMonth===todayM&&d===todayD;
     const amI=myName&&isChecked(d,myName);
     const holiday=getHoliday(curYear,curMonth,d);
-
     const cell=document.createElement('div');
     let cls='cal-cell';
     if(dow===0) cls+=' sun';
@@ -408,11 +479,7 @@ function renderCalendar(){
     if(amI) cls+=' my-checked';
     if(holiday) cls+=' holiday';
     cell.className=cls;
-
-    const emojisHtml = checked.map(m=>
-      `<span class="cal-emoji" title="${m.name}">${m.emoji}</span>`
-    ).join('');
-
+    const emojisHtml=checked.map(m=>`<span class="cal-emoji" title="${m.name}">${m.emoji}</span>`).join('');
     cell.innerHTML=`
       <span class="cal-day">${d}</span>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
@@ -431,13 +498,20 @@ async function calClick(day){
 }
 
 function scrollToDay(day){
-  document.getElementById('divider').scrollIntoView({behavior:'smooth',block:'start'});
   const badge=document.getElementById('selectedBadge');
   badge.style.display=''; badge.textContent=`${curYear}년 ${curMonth+1}월 ${day}일`;
+  const myRow=myName
+    ? Array.from(document.querySelectorAll('#tableBody tr')).find(tr=>{
+        const cell=tr.querySelector('td.name-cell');
+        return cell&&cell.textContent.trim().includes(myName);
+      })
+    : null;
+  const target=myRow||document.getElementById('attSection');
+  target.scrollIntoView({behavior:'smooth',block:'center'});
   setTimeout(()=>{
     const th=document.querySelector(`#tableHead th[data-day="${day}"]`);
     if(th) th.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-  },350);
+  },400);
 }
 
 // ── 테이블 렌더 ───────────────────────────────────
@@ -445,7 +519,6 @@ function renderTable(){
   const dim=new Date(curYear,curMonth+1,0).getDate();
   const head=document.getElementById('tableHead');
   const body=document.getElementById('tableBody');
-
   let hHtml='<tr><th class="name-col">이름</th>';
   for(let d=1;d<=dim;d++){
     const dow=new Date(curYear,curMonth,d).getDay();
@@ -462,7 +535,7 @@ function renderTable(){
   head.innerHTML=hHtml;
 
   let bHtml='';
-  MEMBERS.forEach(({name,emoji})=>{
+  members.forEach(({name,emoji})=>{
     const isMe=name===myName;
     let total=0;
     bHtml+=`<tr class="${isMe?'my-row':''}">`;
@@ -492,7 +565,7 @@ function renderTable(){
   body.innerHTML=bHtml;
 }
 
-window.handleTableCheck = async function(el){
+window.handleTableCheck=async function(el){
   if(!myName){ el.checked=!el.checked; alert('먼저 이름을 선택해주세요!'); return; }
   await saveCheck(curYear,curMonth,parseInt(el.dataset.day),el.dataset.member,el.checked);
 };
