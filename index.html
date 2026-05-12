@@ -515,7 +515,7 @@ window.changeMonth=function(dir){
 function render(){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 공부했다면 날짜 클릭! 1번=🟢 2번=🔵 3번=🟡 다시 클릭하면 초기화</span>`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 공부했다면 날짜 클릭!<br>1번=🟢 2번=🔵 3번=🟡 · 다시 클릭하면 초기화</span>`;
   renderNameGrid();
   renderMgmtList();
   renderCalendar();
