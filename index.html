@@ -60,7 +60,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .emoji-picker { position:relative; }
 .emoji-pick-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.45rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.82rem; display:flex; align-items:center; gap:0.4rem; white-space:nowrap; transition:border-color 0.15s; }
 .emoji-pick-btn:hover { border-color:var(--accent); }
-.emoji-grid { position:absolute; top:110%; left:0; z-index:200; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:0.6rem; display:grid; grid-template-columns:repeat(8,1fr); gap:3px; box-shadow:0 8px 24px rgba(0,0,0,0.4); min-width:240px; }
+.emoji-grid { position:absolute; top:110%; left:0; z-index:200; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:0.6rem; display:none; grid-template-columns:repeat(8,1fr); gap:3px; box-shadow:0 8px 24px rgba(0,0,0,0.4); min-width:240px; }
 .emoji-opt { font-size:1.3rem; padding:0.3rem; border-radius:6px; cursor:pointer; text-align:center; transition:background 0.1s; }
 .emoji-opt:hover { background:var(--border); }
 .emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); }
@@ -293,15 +293,11 @@ onSnapshot(membersRef, (snap)=>{
     members = getDefaultMembers();
     saveMembersToFirestore(); // 최초 1회 저장 시도
   }
-  renderNameGrid();
-  renderMgmtList();
   render();
 }, (err)=>{
-  // Firestore 읽기 실패 시에도 기본 멤버로 표시
   console.warn('Firestore 읽기 실패, 기본 멤버 사용:', err);
   members = getDefaultMembers();
-  renderNameGrid();
-  renderMgmtList();
+  saveMembersToFirestore();
   render();
   document.getElementById('loading').classList.add('hidden');
 });
@@ -388,8 +384,7 @@ function updateEmojiPicked(){
 window.toggleEmojiPicker = function(e){
   e.stopPropagation();
   const grid=document.getElementById('emojiGrid');
-  const isHidden = grid.style.display==='' || grid.style.display==='none';
-  grid.style.display = isHidden ? 'grid' : 'none';
+  grid.style.display = (grid.style.display==='grid') ? 'none' : 'grid';
 };
 
 window.pickEmoji = function(el){
