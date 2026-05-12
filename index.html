@@ -553,14 +553,12 @@ function renderCalendar(){
 async function calClick(day){
   if(!myName){ alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
   const current = getCount(day,myName);
-  const newVal = (current+1) % 4; // 0→1→2→3→0 순환
+  const newVal = (current+1) % 4;
   await saveCount(curYear,curMonth,day,myName,newVal);
-  scrollToDay(day);
 }
 
 function scrollToDay(day){
-  const badge=document.getElementById('selectedBadge');
-  badge.style.display=''; badge.textContent=`${curYear}년 ${curMonth+1}월 ${day}일`;
+  // 스크롤 없음
   const myRow=myName
     ? Array.from(document.querySelectorAll('#tableBody tr')).find(tr=>{
         const cell=tr.querySelector('td.name-cell');
