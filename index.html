@@ -591,7 +591,6 @@ function renderTable(){
     for(let d=1;d<=dim;d++){
       const cnt_=getCount(d,name);
       total+=cnt_;
-      const cnt_=getCount(d,name);
       if(isMe){
         bHtml+=`<td><button class="cnt-btn cnt-${cnt_}" onclick="handleCntClick('${name.replace(/'/g,"\'")}',${d})" title="클릭할 때마다 +1 (3회 후 초기화)">${cnt_>0?cnt_:'·'}</button></td>`;
       } else {
