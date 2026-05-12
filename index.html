@@ -512,7 +512,32 @@ window.selectName=function(name){
   localStorage.setItem('att_myname',myName);
   renderNameGrid();
   render();
+  // 이름 선택 시 오늘 날짜 칸으로 스크롤
+  if(myName) setTimeout(scrollToToday, 300);
 };
+
+function scrollToToday(){
+  // 현재 보는 달이 오늘과 같은 달일 때만
+  if(curYear!==todayY || curMonth!==todayM) return;
+  const wrap = document.querySelector('.cal-scroll-wrap');
+  const grid = document.getElementById('calGrid');
+  if(!wrap || !grid) return;
+
+  // 달력 칸 너비 계산해서 오늘 칸 위치 찾기
+  const cells = grid.querySelectorAll('.cal-cell:not(.empty)');
+  const firstDay = new Date(curYear, curMonth, 1).getDay();
+  // 오늘은 firstDay + todayD - 1번째 칸
+  const todayIndex = firstDay + todayD - 1;
+  const allCells = grid.children; // empty 포함
+  const todayCell = allCells[todayIndex];
+  if(!todayCell) return;
+
+  // 오늘 칸의 left 위치 계산
+  const wrapRect = wrap.getBoundingClientRect();
+  const cellRect = todayCell.getBoundingClientRect();
+  const scrollLeft = wrap.scrollLeft + cellRect.left - wrapRect.left - (wrapRect.width / 2) + (cellRect.width / 2);
+  wrap.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+}
 
 // ── 월 변경 ───────────────────────────────────────
 window.changeMonth=function(dir){
