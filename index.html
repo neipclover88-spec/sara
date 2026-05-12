@@ -98,42 +98,15 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .cal-count { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent); background:rgba(0,229,160,0.1); padding:0.06rem 0.35rem; border-radius:100px; }
 .cal-count.zero { color:var(--muted); background:transparent; }
 .cal-emojis { display:flex; flex-direction:row; flex-wrap:wrap; justify-content:center; align-items:center; gap:1px; width:100%; margin-top:2px; }
-.desktop-only { display:block; }
-.mobile-only { display:none; }
-@media (max-width:600px) {
-  .desktop-only { display:none !important; }
-  .mobile-only { display:block !important; }
+.cal-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
+.weekday-row { min-width: 560px; }
+.calendar-grid { min-width: 560px; }
 
 /* 모바일 세로 달력 */
-.rot-grid {
-  display:grid; gap:2px; width:100%;
-}
-.rot-header-empty { }
-.rot-week-header {
-  font-family:'DM Mono',monospace; font-size:0.6rem;
-  color:var(--muted); text-align:center; padding:0.2rem 0;
-}
-.rot-dow-label {
-  font-family:'DM Mono',monospace; font-size:0.65rem;
-  color:var(--muted); display:flex; align-items:center;
-  justify-content:center; font-weight:700;
-}
-.rot-cell {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:8px; padding:0.3rem 0.2rem;
-  cursor:pointer; transition:all 0.15s;
-  display:flex; flex-direction:column; align-items:center; gap:2px;
-  min-height:52px;
-}
-.rot-cell:hover { border-color:var(--accent); }
-.rot-cell.today { border-color:var(--accent); }
-.rot-cell.today .rot-day { color:var(--accent); }
-.rot-cell.my-checked { background:rgba(0,229,160,0.06); border-color:rgba(0,229,160,0.35); }
-.rot-cell.holiday .rot-day { color:#ff6b6b; }
-.rot-cell.empty { background:transparent; border-color:transparent; cursor:default; }
-.rot-day { font-size:0.78rem; font-weight:700; line-height:1; }
-.rot-emojis { display:flex; flex-wrap:wrap; justify-content:center; gap:1px; }
+
 
 .cal-emoji { font-size:1.05rem; }
 .cal-emoji:hover { transform:scale(1.5); z-index:5; }
@@ -259,14 +232,13 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   <!-- 달력 -->
   <div class="calendar-section">
     <div class="section-label" id="calLabel"></div>
-    <!-- 데스크탑: 기존 7열 가로 -->
-    <div class="weekday-row desktop-only">
-      <div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div>
-      <div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>
+    <div class="cal-scroll-wrap">
+      <div class="weekday-row">
+        <div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div>
+        <div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
     </div>
-    <div class="calendar-grid desktop-only" id="calGrid"></div>
-    <!-- 모바일: 요일 세로, 주차 가로 -->
-    <div class="cal-rotated mobile-only" id="calRotated"></div>
   </div>
 
   <hr class="divider" id="divider">
@@ -598,53 +570,6 @@ function renderCalendar(){
     grid.appendChild(cell);
   }
 
-  // 모바일: 요일 세로, 주차 가로 달력
-  const rotated = document.getElementById('calRotated');
-  if(rotated){
-    const firstDow2 = new Date(curYear,curMonth,1).getDay();
-    const dowNames = ['일','월','화','수','목','금','토'];
-    const dowColors = ['#ff6b6b','','','','','','var(--accent2)'];
-
-    // 주차 계산 (몇 주?)
-    const totalWeeks = Math.ceil((firstDow2 + dim) / 7);
-
-    // 날짜를 [요일][주차] 2D 배열로 배치
-    const grid2d = Array.from({length:7}, ()=>Array(totalWeeks).fill(null));
-    for(let d=1;d<=dim;d++){
-      const dow = new Date(curYear,curMonth,d).getDay();
-      const weekIdx = Math.floor((firstDow2 + d - 1) / 7);
-      grid2d[dow][weekIdx] = d;
-    }
-
-    // 헤더행 (주차)
-    let html = '<div class="rot-grid" style="grid-template-columns: 28px repeat('+totalWeeks+',1fr)">';
-    html += '<div class="rot-header-empty"></div>';
-    for(let w=0;w<totalWeeks;w++) html += `<div class="rot-week-header">${w+1}주</div>`;
-
-    // 요일별 행
-    for(let dow=0;dow<7;dow++){
-      const color = dowColors[dow];
-      html += `<div class="rot-dow-label" style="${color?'color:'+color:''}">${dowNames[dow]}</div>`;
-      for(let w=0;w<totalWeeks;w++){
-        const d = grid2d[dow][w];
-        if(!d){ html += '<div class="rot-cell empty"></div>'; continue; }
-        const isTod = curYear===todayY&&curMonth===todayM&&d===todayD;
-        const amI = myName&&isChecked(d,myName);
-        const holiday = getHoliday(curYear,curMonth,d);
-        const emojisHtml = members.map(m=>{ const c=getCount(d,m.name); return c>0?`<span class="cal-emoji-ring ring-${c}" title="${m.name}">${m.emoji}</span>`:''; }).join('');
-        let cls='rot-cell';
-        if(isTod) cls+=' today';
-        if(amI) cls+=' my-checked';
-        if(holiday) cls+=' holiday';
-        html += `<div class="${cls}" onclick="calClick(${d})">
-          <span class="rot-day">${d}</span>
-          <div class="rot-emojis">${emojisHtml}</div>
-        </div>`;
-      }
-    }
-    html += '</div>';
-    rotated.innerHTML = html;
-  }
 }
 
 async function calClick(day){
