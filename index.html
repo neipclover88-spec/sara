@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>출석체크</title>
+<title>인증기록</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -171,7 +171,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 </div>
 
 <nav class="nav">
-  <div class="nav-title"><span class="nav-dot"></span>출석체크</div>
+  <div class="nav-title"><span class="nav-dot"></span>인증기록</div>
   <div class="nav-month">
     <button class="month-btn" onclick="changeMonth(-1)">‹</button>
     <span class="month-label" id="monthLabel"></span>
@@ -425,13 +425,18 @@ function renderMgmtList(){
   const count=document.getElementById('memberCount');
   if(count) count.textContent=members.length;
   if(!list) return;
-  list.innerHTML=members.map(m=>`
-    <div class="mgmt-member-row">
-      <span class="mgmt-member-emoji">${m.emoji}</span>
+  list.innerHTML = members.map(m=>`
+    <div class="mgmt-member-row" id="row_${mKey(m.name)}">
+      <span class="mgmt-member-emoji emoji-trigger" onclick="openEmojiPicker('${m.name.replace(/'/g,"\'")}',this)" title="클릭해서 이모지 변경">${m.emoji}</span>
       <span class="mgmt-member-name">${m.name}</span>
-      <button class="del-btn" onclick="deleteMember('${m.name.replace(/'/g,"\\'")}')">삭제</button>
+      <button class="emoji-change-btn" onclick="openEmojiPicker('${m.name.replace(/'/g,"\'")}',this)">✎ 이모지</button>
+      <button class="del-btn" onclick="deleteMember('${m.name.replace(/'/g,"\'")}')">삭제</button>
     </div>
-  `).join('');
+  `).join('') + `<div class="emoji-popup" id="emojiPopup" style="display:none">
+    <div style="font-size:0.7rem;color:var(--muted);margin-bottom:0.5rem">이모지 선택</div>
+    <div class="emoji-popup-grid" id="emojiPopupGrid"></div>
+    <button class="emoji-popup-close" onclick="closeEmojiPicker()">✕ 닫기</button>
+  </div>\`;
 }
 
 // ── 이름 선택 ─────────────────────────────────────
@@ -473,7 +478,7 @@ window.changeMonth=function(dir){
 function render(){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 출석 달력 &nbsp;<span class="cal-guide">👆 닉네임 선택 후 날짜 클릭 = 자동 출석체크!</span>`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">👆 닉네임 선택 후 날짜 클릭 = 자동 출석체크!</span>`;
   renderNameGrid();
   renderMgmtList();
   renderCalendar();
