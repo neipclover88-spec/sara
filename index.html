@@ -358,26 +358,32 @@ window.toggleMgmt = function(){
 };
 
 // 이모지 그리드 초기화
+// 이모지 그리드 최초 1회만 렌더
 function initEmojiGrid(){
   const grid=document.getElementById('emojiGrid');
   grid.innerHTML=EMOJI_LIST.map(e=>
-    `<div class="emoji-opt${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}')">${e}</div>`
+    `<div class="emoji-opt" data-emoji="${e}" onclick="pickEmoji(this)">${e}</div>`
   ).join('');
+  updateEmojiPicked();
+}
+
+function updateEmojiPicked(){
+  document.querySelectorAll('.emoji-opt').forEach(el=>{
+    el.classList.toggle('picked', el.dataset.emoji===pickedEmoji);
+  });
 }
 
 window.toggleEmojiPicker = function(e){
   e.stopPropagation();
   const grid=document.getElementById('emojiGrid');
-  const open=grid.style.display==='none';
-  grid.style.display=open?'grid':'none';
-  if(open) initEmojiGrid();
+  grid.style.display = grid.style.display==='none' ? 'grid' : 'none';
 };
 
-window.pickEmoji = function(emoji){
-  pickedEmoji=emoji;
-  document.getElementById('pickedEmoji').textContent=emoji;
+window.pickEmoji = function(el){
+  pickedEmoji = el.dataset.emoji;
+  document.getElementById('pickedEmoji').textContent=pickedEmoji;
   document.getElementById('emojiGrid').style.display='none';
-  initEmojiGrid();
+  updateEmojiPicked();
 };
 
 // 외부 클릭 시 이모지 그리드 닫기
@@ -581,6 +587,7 @@ window.handleTableCheck=async function(el){
 };
 
 // ── 초기화 ────────────────────────────────────────
+initEmojiGrid();
 subscribeMonth(curYear,curMonth);
 </script>
 </body>
