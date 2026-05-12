@@ -97,8 +97,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .cal-holiday { font-size:0.5rem; color:#ff6b6b; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
 .cal-count { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent); background:rgba(0,229,160,0.1); padding:0.06rem 0.35rem; border-radius:100px; }
 .cal-count.zero { color:var(--muted); background:transparent; }
-.cal-emojis { display:flex; flex-wrap:wrap; justify-content:center; gap:1px; max-width:58px; margin-top:1px; line-height:1; }
-.cal-emoji { font-size:0.75rem; transition:transform 0.12s; position:relative; cursor:default; }
+.cal-emojis { display:flex; flex-wrap:wrap; justify-content:center; gap:2px; width:100%; margin-top:3px; line-height:1; }
+.cal-emoji { font-size:1.05rem; transition:transform 0.12s; position:relative; cursor:default; }
 .cal-emoji:hover { transform:scale(1.5); z-index:5; }
 
 hr.divider { border:none; border-top:1px solid var(--border); margin:0.4rem 0 1.3rem; }
@@ -193,24 +193,6 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
   </div>
 
-  <!-- 멤버 관리 -->
-  <div class="member-mgmt">
-    <div class="mgmt-toggle" onclick="toggleMgmt()">
-      <span>⚙️ 멤버 관리 (추가 / 삭제)</span>
-      <span class="mgmt-arrow" id="mgmtArrow">▼</span>
-    </div>
-    <div class="mgmt-body" id="mgmtBody" style="display:none">
-      <div class="mgmt-label">새 멤버 추가</div>
-      <div class="mgmt-row">
-        <input type="text" id="newName" placeholder="닉네임 입력 후 엔터 or + 추가" class="mgmt-input" maxlength="20" onkeydown="if(event.key==='Enter')addMember()">
-        <button class="mgmt-btn add-btn" onclick="addMember()">+ 추가</button>
-      </div>
-      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">이모지는 추가 후 멤버 목록에서 변경할 수 있어요</div>
-      <div class="mgmt-label" style="margin-top:1.2rem">현재 멤버 — <span id="memberCount"></span>명</div>
-      <div class="mgmt-list" id="mgmtList"></div>
-    </div>
-  </div>
-
   <!-- 달력 -->
   <div class="calendar-section">
     <div class="section-label" id="calLabel"></div>
@@ -225,7 +207,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 
   <div id="attSection">
     <div class="att-header">
-      <div class="att-title">전체 출석 관리</div>
+      <div class="att-title">📋 월 인증 내역</div>
       <span class="selected-badge" id="selectedBadge" style="display:none"></span>
     </div>
     <div class="table-wrap">
@@ -235,6 +217,26 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
       </table>
     </div>
   </div>
+  <!-- 멤버 관리 (맨 아래) -->
+  <div class="member-mgmt" style="margin-top:2rem">
+    <div class="mgmt-toggle" onclick="toggleMgmt()">
+      <span>⚙️ 멤버 관리 (추가 / 삭제)</span>
+      <span class="mgmt-arrow" id="mgmtArrow">▼</span>
+    </div>
+    <div class="mgmt-body" id="mgmtBody" style="display:none">
+      <div class="mgmt-label">새 멤버 추가</div>
+      <div class="mgmt-add-wrap">
+        <div class="mgmt-row">
+          <input type="text" id="newName" placeholder="닉네임 입력 후 엔터 or + 추가" class="mgmt-input" maxlength="20" onkeydown="if(event.key==='Enter')addMember()">
+          <button class="mgmt-btn add-btn" onclick="addMember()">+ 추가</button>
+        </div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">이모지는 추가 후 멤버 목록에서 변경할 수 있어요</div>
+      </div>
+      <div class="mgmt-label" style="margin-top:1.2rem">현재 멤버 — <span id="memberCount"></span>명</div>
+      <div class="mgmt-list" id="mgmtList"></div>
+    </div>
+  </div>
+
 </div>
 
 <script type="module">
@@ -478,7 +480,7 @@ window.changeMonth=function(dir){
 function render(){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">👆 닉네임 선택 후 날짜 클릭 = 자동 출석체크!</span>`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 오늘도 공부했다면 닉네임 선택 후 날짜를 클릭하세요!</span>`;
   renderNameGrid();
   renderMgmtList();
   renderCalendar();
