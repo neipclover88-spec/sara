@@ -544,10 +544,7 @@ function renderCalendar(){
     if(amI) cls+=' my-checked';
     if(holiday) cls+=' holiday';
     cell.className=cls;
-    const emojisHtml=members.map(m=>{
-      const c=getCount(d,m.name);
-      return `<span class="cal-emoji-ring ring-${c}" title="${m.name} (${c}회)">${m.emoji}</span>`;
-    }).join('');
+    const emojisHtml=members.map(m=>{ const c=getCount(d,m.name); return c>0?`<span class="cal-emoji-ring ring-${c}" title="${m.name} (${c}회)">${m.emoji}</span>`:''; }).join('');
     cell.innerHTML=`
       <span class="cal-day">${d}</span>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
