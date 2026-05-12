@@ -83,7 +83,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .weekday:first-child { color:#ff6b6b88; }
 .weekday:last-child { color:#4d96ff88; }
 .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-.cal-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.3rem; min-height:82px; cursor:pointer; transition:all 0.17s; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.cal-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.3rem; min-height:110px; cursor:pointer; transition:all 0.17s; display:flex; flex-direction:column; align-items:center; gap:2px; }
 .cal-cell:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,229,160,0.1); }
 .cal-cell.today { border-color:var(--accent); }
 .cal-cell.today .cal-day { color:var(--accent); }
@@ -97,8 +97,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .cal-holiday { font-size:0.5rem; color:#ff6b6b; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
 .cal-count { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent); background:rgba(0,229,160,0.1); padding:0.06rem 0.35rem; border-radius:100px; }
 .cal-count.zero { color:var(--muted); background:transparent; }
-.cal-emojis { display:flex; flex-wrap:wrap; justify-content:center; gap:2px; width:100%; margin-top:3px; line-height:1; }
-.cal-emoji { font-size:1.05rem; transition:transform 0.12s; position:relative; cursor:default; }
+.cal-emojis { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:3px; width:100%; margin-top:4px; }
+.cal-emoji { font-size:1.05rem; }
 .cal-emoji:hover { transform:scale(1.5); z-index:5; }
 
 hr.divider { border:none; border-top:1px solid var(--border); margin:0.4rem 0 1.3rem; }
@@ -142,11 +142,16 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); border-radius:6px; }
 .emoji-popup-close { background:var(--surface2); border:1px solid var(--border); color:var(--muted); padding:0.3rem 1rem; border-radius:7px; cursor:pointer; font-size:0.75rem; width:100%; transition:all 0.15s; }
 .emoji-popup-close:hover { border-color:var(--danger); color:var(--danger); }
-.cal-emoji-wrap { position:relative; display:inline-flex; align-items:center; justify-content:center; }
-.cal-emoji-ring { display:inline-block; border-radius:50%; padding:2px; line-height:1; }
-.cal-emoji-ring.ring-1 { box-shadow:0 0 0 2px #00e5a0; }
-.cal-emoji-ring.ring-2 { box-shadow:0 0 0 2px #4d96ff; }
-.cal-emoji-ring.ring-3 { box-shadow:0 0 0 2px #ffd93d; background:rgba(255,217,61,0.1); }
+.cal-emoji-ring {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:50%;
+  font-size:1.1rem; line-height:1; cursor:default;
+  border: 2.5px solid transparent;
+}
+.cal-emoji-ring.ring-0 { border-color:var(--border); background:var(--surface2); opacity:0.5; }
+.cal-emoji-ring.ring-1 { border-color:#00e5a0; background:rgba(0,229,160,0.15); }
+.cal-emoji-ring.ring-2 { border-color:#4d96ff; background:rgba(77,150,255,0.15); }
+.cal-emoji-ring.ring-3 { border-color:#ffd93d; background:rgba(255,217,61,0.15); }
 .cnt-btn { background:transparent; border:1px solid var(--border); color:var(--muted); width:20px; height:20px; border-radius:5px; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; transition:all 0.13s; display:flex; align-items:center; justify-content:center; margin:0 auto; }
 .cnt-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,229,160,0.08); }
 .cnt-btn.cnt-1 { background:#00e5a0; border-color:#00e5a0; color:#0d0f1a; }
