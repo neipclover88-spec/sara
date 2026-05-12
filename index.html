@@ -587,7 +587,6 @@ function renderCalendar(){
     cell.innerHTML=`
       <span class="cal-day">${d}</span>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
-      <span class="cal-count${cnt===0?' zero':''}">${cnt>0?cnt+'명':'·'}</span>
       <div class="cal-emojis">${emojisHtml}</div>
     `;
     cell.addEventListener('click',()=>calClick(d));
