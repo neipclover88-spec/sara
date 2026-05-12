@@ -49,7 +49,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .mgmt-arrow.open { transform:rotate(180deg); }
 .mgmt-body { padding:0 1.2rem 1.2rem; border-top:1px solid var(--border); }
 .mgmt-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:0.6rem; margin-top:0.9rem; }
-.mgmt-row { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; }
+.mgmt-row { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; } .mgmt-add-wrap { display:flex; flex-direction:column; gap:0.5rem; width:100%; }
 .mgmt-input { background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.45rem 0.8rem; border-radius:8px; font-family:'Noto Sans KR',sans-serif; font-size:0.82rem; outline:none; transition:border-color 0.15s; min-width:140px; flex:1; }
 .mgmt-input:focus { border-color:var(--accent); }
 .mgmt-btn { padding:0.45rem 1rem; border-radius:8px; border:none; cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-size:0.8rem; font-weight:600; transition:all 0.15s; white-space:nowrap; }
@@ -57,10 +57,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .add-btn:hover { background:#00c98a; }
 
 /* 이모지 피커 */
-.emoji-picker { position:relative; }
-.emoji-pick-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.45rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.82rem; display:flex; align-items:center; gap:0.4rem; white-space:nowrap; transition:border-color 0.15s; }
-.emoji-pick-btn:hover { border-color:var(--accent); }
-.emoji-grid { position:absolute; top:110%; left:0; z-index:200; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:0.6rem; display:none; grid-template-columns:repeat(8,1fr); gap:3px; box-shadow:0 8px 24px rgba(0,0,0,0.4); min-width:240px; }
+.emoji-picker { width:100%; }
+.emoji-pick-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
+.emoji-pick-label span { color:var(--accent); font-size:0.85rem; }
+.emoji-grid { display:grid; grid-template-columns:repeat(10,1fr); gap:4px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:0.7rem; margin-top:0.5rem; max-height:220px; overflow-y:auto; }
 .emoji-opt { font-size:1.3rem; padding:0.3rem; border-radius:6px; cursor:pointer; text-align:center; transition:background 0.1s; }
 .emoji-opt:hover { background:var(--border); }
 .emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); }
@@ -148,7 +148,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   .main { padding:0.9rem 1rem; }
   .cal-cell { min-height:68px; }
   .mgmt-row { flex-direction:column; align-items:stretch; }
-  .emoji-grid { grid-template-columns:repeat(6,1fr); }
+  .emoji-grid { grid-template-columns:repeat(7,1fr); }
 }
 </style>
 </head>
@@ -190,15 +190,15 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="mgmt-body" id="mgmtBody" style="display:none">
       <div class="mgmt-label">새 멤버 추가</div>
-      <div class="mgmt-row">
-        <input type="text" id="newName" placeholder="닉네임 입력" class="mgmt-input" maxlength="20">
-        <div class="emoji-picker">
-          <button class="emoji-pick-btn" onclick="toggleEmojiPicker(event)">
-            <span id="pickedEmoji">🌸</span> 이모지 선택 ▾
-          </button>
-          <div class="emoji-grid" id="emojiGrid" style="display:none"></div>
+      <div class="mgmt-add-wrap">
+        <div class="mgmt-row">
+          <input type="text" id="newName" placeholder="닉네임 입력" class="mgmt-input" maxlength="20">
+          <button class="mgmt-btn add-btn" onclick="addMember()">+ 추가</button>
         </div>
-        <button class="mgmt-btn add-btn" onclick="addMember()">+ 추가</button>
+        <div class="emoji-picker">
+          <div class="emoji-pick-label">이모지 선택 → <span id="pickedEmoji">🌸</span></div>
+          <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
       </div>
       <div class="mgmt-label" style="margin-top:1.2rem">현재 멤버 — <span id="memberCount"></span>명</div>
       <div class="mgmt-list" id="mgmtList"></div>
@@ -381,23 +381,15 @@ function updateEmojiPicked(){
   });
 }
 
-window.toggleEmojiPicker = function(e){
-  e.stopPropagation();
-  const grid=document.getElementById('emojiGrid');
-  grid.style.display = (grid.style.display==='grid') ? 'none' : 'grid';
-};
+// 이모지 그리드 항상 표시 — 토글 불필요
 
 window.pickEmoji = function(el){
   pickedEmoji = el.dataset.emoji;
   document.getElementById('pickedEmoji').textContent=pickedEmoji;
-  document.getElementById('emojiGrid').style.display='none';
   updateEmojiPicked();
 };
 
-// 외부 클릭 시 이모지 그리드 닫기
-document.addEventListener('click',()=>{
-  document.getElementById('emojiGrid').style.display='none';
-});
+// 이모지 그리드 항상 표시
 
 window.addMember = async function(){
   const nameInput=document.getElementById('newName');
