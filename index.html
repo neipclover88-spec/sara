@@ -110,9 +110,9 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0.4rem 0 1.
 .table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--border); }
 table { width:100%; border-collapse:collapse; }
 thead tr th { background:var(--surface2); padding:0.6rem 0.35rem; font-size:0.65rem; font-family:'DM Mono',monospace; color:var(--muted); border-bottom:2px solid var(--border); white-space:nowrap; text-align:center; }
-thead tr th.name-col { text-align:left; padding-left:0.9rem; min-width:145px; color:var(--text); font-size:0.72rem; }
+thead tr th.name-col { text-align:left; padding-left:0.7rem; min-width:110px; color:var(--text); font-size:0.72rem; }
 thead tr th.total-col { color:var(--accent3); min-width:52px; }
-thead tr th.day-col { min-width:28px; cursor:pointer; transition:color 0.15s; }
+thead tr th.day-col { min-width:22px; width:22px; cursor:pointer; transition:color 0.15s; font-size:0.6rem; padding:0.5rem 0.1rem; }
 thead tr th.day-col:hover { color:var(--accent); }
 thead tr th.today-col { color:var(--accent) !important; }
 thead tr th.sun-col { color:#ff6b6b55; }
@@ -123,8 +123,8 @@ tbody tr:last-child { border-bottom:none; }
 tbody tr.my-row { background:rgba(0,229,160,0.03); }
 tbody tr:hover { background:rgba(255,255,255,0.015); }
 tbody tr.stats-row { background:var(--surface2) !important; border-top:2px solid var(--border); }
-td { padding:0.45rem 0.35rem; text-align:center; }
-td.name-cell { text-align:left; padding-left:0.9rem; font-size:0.8rem; font-weight:500; white-space:nowrap; }
+td { padding:0.4rem 0.1rem; text-align:center; }
+td.name-cell { text-align:left; padding-left:0.7rem; font-size:0.75rem; font-weight:500; white-space:nowrap; }
 td.name-cell.my-name { color:var(--accent); font-weight:700; }
 .name-emoji-inline { font-size:0.95rem; margin-right:5px; }
 td.stat-cell { font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--muted); }
@@ -142,8 +142,12 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); border-radius:6px; }
 .emoji-popup-close { background:var(--surface2); border:1px solid var(--border); color:var(--muted); padding:0.3rem 1rem; border-radius:7px; cursor:pointer; font-size:0.75rem; width:100%; transition:all 0.15s; }
 .emoji-popup-close:hover { border-color:var(--danger); color:var(--danger); }
-.cal-cnt-badge { font-size:0.45rem; background:#ff6b6b; color:#fff; border-radius:100px; padding:0 2px; vertical-align:top; font-family:'DM Mono',monospace; font-weight:700; }
-.cnt-btn { background:transparent; border:1px solid var(--border); color:var(--muted); width:24px; height:24px; border-radius:6px; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; transition:all 0.13s; display:flex; align-items:center; justify-content:center; margin:0 auto; }
+.cal-emoji-wrap { position:relative; display:inline-flex; align-items:center; justify-content:center; }
+.cal-emoji-ring { display:inline-block; border-radius:50%; padding:2px; line-height:1; }
+.cal-emoji-ring.ring-1 { box-shadow:0 0 0 2px #00e5a0; }
+.cal-emoji-ring.ring-2 { box-shadow:0 0 0 2px #4d96ff; }
+.cal-emoji-ring.ring-3 { box-shadow:0 0 0 2px #ffd93d; background:rgba(255,217,61,0.1); }
+.cnt-btn { background:transparent; border:1px solid var(--border); color:var(--muted); width:20px; height:20px; border-radius:5px; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; transition:all 0.13s; display:flex; align-items:center; justify-content:center; margin:0 auto; }
 .cnt-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,229,160,0.08); }
 .cnt-btn.cnt-1 { background:#00e5a0; border-color:#00e5a0; color:#0d0f1a; }
 .cnt-btn.cnt-2 { background:#4d96ff; border-color:#4d96ff; color:#fff; }
@@ -370,7 +374,7 @@ async function saveCheck(y,m,d,name,checked){
   await setDoc(r,data);
 }
 
-function getCount(d,name){ return allData[`d${d}_${mKey(name)}`]||0; }
+function getCount(d,name){ const v=allData[`d${d}_${mKey(name)}`]; return v===true?1:(v||0); }
 async function saveCount(y,m,d,name,count){
   const r=doc(db,'attendance',docId(y,m));
   const field=`d${d}_${mKey(name)}`;
