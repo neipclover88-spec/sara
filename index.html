@@ -287,11 +287,23 @@ function memberEmoji(name){ return members.find(m=>m.name===name)?.emoji||'👤'
 // ── Firebase 멤버 리스너 ───────────────────────────
 const membersRef = doc(db,'config','members');
 onSnapshot(membersRef, (snap)=>{
-  members = snap.exists() ? (snap.data().list||[]) : getDefaultMembers();
-  if(!snap.exists()) saveMembersToFirestore();
+  if(snap.exists() && snap.data().list && snap.data().list.length > 0){
+    members = snap.data().list;
+  } else {
+    members = getDefaultMembers();
+    saveMembersToFirestore(); // 최초 1회 저장 시도
+  }
   renderNameGrid();
   renderMgmtList();
   render();
+}, (err)=>{
+  // Firestore 읽기 실패 시에도 기본 멤버로 표시
+  console.warn('Firestore 읽기 실패, 기본 멤버 사용:', err);
+  members = getDefaultMembers();
+  renderNameGrid();
+  renderMgmtList();
+  render();
+  document.getElementById('loading').classList.add('hidden');
 });
 
 function getDefaultMembers(){
@@ -376,7 +388,8 @@ function updateEmojiPicked(){
 window.toggleEmojiPicker = function(e){
   e.stopPropagation();
   const grid=document.getElementById('emojiGrid');
-  grid.style.display = grid.style.display==='none' ? 'grid' : 'none';
+  const isHidden = grid.style.display==='' || grid.style.display==='none';
+  grid.style.display = isHidden ? 'grid' : 'none';
 };
 
 window.pickEmoji = function(el){
