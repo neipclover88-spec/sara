@@ -142,6 +142,15 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .emoji-opt.picked { background:rgba(0,229,160,0.15); outline:1px solid var(--accent); border-radius:6px; }
 .emoji-popup-close { background:var(--surface2); border:1px solid var(--border); color:var(--muted); padding:0.3rem 1rem; border-radius:7px; cursor:pointer; font-size:0.75rem; width:100%; transition:all 0.15s; }
 .emoji-popup-close:hover { border-color:var(--danger); color:var(--danger); }
+.cal-cnt-badge { font-size:0.45rem; background:#ff6b6b; color:#fff; border-radius:100px; padding:0 2px; vertical-align:top; font-family:'DM Mono',monospace; font-weight:700; }
+.cnt-btn { background:transparent; border:1px solid var(--border); color:var(--muted); width:24px; height:24px; border-radius:6px; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; transition:all 0.13s; display:flex; align-items:center; justify-content:center; margin:0 auto; }
+.cnt-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,229,160,0.08); }
+.cnt-btn.cnt-1 { background:#00e5a0; border-color:#00e5a0; color:#0d0f1a; }
+.cnt-btn.cnt-2 { background:#4d96ff; border-color:#4d96ff; color:#fff; }
+.cnt-btn.cnt-3 { background:#ffd93d; border-color:#ffd93d; color:#0d0f1a; }
+.cnt-btn.cnt-0 { background:transparent; color:var(--muted); }
+.cnt-display { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); }
+.cnt-display.cnt-active { color:var(--accent); font-weight:700; }
 .check-box { width:17px; height:17px; border-radius:4px; border:1.5px solid var(--border); background:transparent; cursor:pointer; appearance:none; -webkit-appearance:none; transition:all 0.13s; position:relative; display:block; margin:0 auto; }
 .check-box:checked { background:var(--accent); border-color:var(--accent); }
 .check-box:checked::after { content:''; position:absolute; top:2px; left:3px; width:5px; height:8px; border:2px solid #0d0f1a; border-top:none; border-left:none; transform:rotate(45deg); }
@@ -480,7 +489,7 @@ window.changeMonth=function(dir){
 function render(){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 오늘도 공부했다면 닉네임 선택 후 날짜를 클릭하세요!</span>`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 공부했다면 날짜 클릭! 1번=🟢 2번=🔵 3번=🟡 다시 클릭하면 초기화</span>`;
   renderNameGrid();
   renderMgmtList();
   renderCalendar();
@@ -511,7 +520,11 @@ function renderCalendar(){
     if(amI) cls+=' my-checked';
     if(holiday) cls+=' holiday';
     cell.className=cls;
-    const emojisHtml=checked.map(m=>`<span class="cal-emoji" title="${m.name}">${m.emoji}</span>`).join('');
+    const emojisHtml=checked.map(m=>{
+      const c=getCount(d,m.name);
+      const badgeColor = c===1?'#00e5a0':c===2?'#4d96ff':'#ffd93d';
+      return `<span class="cal-emoji" title="${m.name} (${c}회)">${m.emoji}${c>0?`<span class="cal-cnt-badge" style="background:${badgeColor}">${c}</span>`:''}</span>`;
+    }).join('');
     cell.innerHTML=`
       <span class="cal-day">${d}</span>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
@@ -519,13 +532,16 @@ function renderCalendar(){
       <div class="cal-emojis">${emojisHtml}</div>
     `;
     cell.addEventListener('click',()=>calClick(d));
+    cell.addEventListener('contextmenu',(e)=>e.preventDefault()); // 우클릭 메뉴 방지만
     grid.appendChild(cell);
   }
 }
 
 async function calClick(day){
   if(!myName){ alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
-  await saveCheck(curYear,curMonth,day,myName,!isChecked(day,myName));
+  const current = getCount(day,myName);
+  const newVal = (current+1) % 4; // 0→1→2→3→0 순환
+  await saveCount(curYear,curMonth,day,myName,newVal);
   scrollToDay(day);
 }
 
@@ -570,18 +586,18 @@ function renderTable(){
   members.forEach(({name,emoji})=>{
     const isMe=name===myName;
     let total=0;
-    bHtml+=`<tr class="${isMe?'my-row':''}">`;
-    bHtml+=`<td class="name-cell${isMe?' my-name':''}"><span class="name-emoji-inline">${emoji}</span>${name}</td>`;
+    bHtml+=`<tr class="${isMe?'my-row':''}" data-name="${name}">`;
+    bHtml+=`<td class="name-cell${isMe?' my-name':''}" data-name="${name}"><span class="name-emoji-inline">${emoji}</span>${name}</td>`;
     for(let d=1;d<=dim;d++){
-      const checked=isChecked(d,name);
-      if(checked) total++;
-      bHtml+=`<td><input type="checkbox" class="check-box"
-        ${checked?'checked':''}
-        ${!isMe?'disabled':''}
-        data-member="${name.replace(/"/g,'&quot;')}"
-        data-day="${d}"
-        onchange="handleTableCheck(this)"
-      ></td>`;
+      const cnt_=getCount(d,name);
+      total+=cnt_;
+      const cnt_=getCount(d,name);
+      if(isMe){
+        bHtml+=`<td><button class="cnt-btn cnt-${cnt_}" onclick="handleCntClick('${name.replace(/'/g,"\'")}',${d})" title="클릭할 때마다 +1 (3회 후 초기화)">${cnt_>0?cnt_:'·'}</button></td>`;
+      } else {
+        const dColor_=cnt_===1?'#00e5a0':cnt_===2?'#4d96ff':cnt_===3?'#ffd93d':'var(--muted)';
+        bHtml+=`<td><span class="cnt-display" style="color:${dColor_};${cnt_>0?'font-weight:700':''}">${cnt_>0?cnt_:'·'}</span></td>`;
+      }
     }
     bHtml+=`<td><span class="member-total${total===0?' zero':''}">${total===0?'-':total+'회'}</span></td>`;
     bHtml+='</tr>';
@@ -590,17 +606,31 @@ function renderTable(){
   let grand=0;
   bHtml+='<tr class="stats-row"><td class="name-cell" style="font-size:0.68rem;color:var(--muted);font-family:\'DM Mono\',monospace">합계</td>';
   for(let d=1;d<=dim;d++){
-    const cnt=dayCheckedMembers(d).length; grand+=cnt;
-    bHtml+=`<td class="stat-cell${cnt>0?' has-cnt':''}">${cnt||''}</td>`;
+    const dayTotal=members.reduce((s,m)=>s+getCount(d,m.name),0); grand+=dayTotal;
+    bHtml+=`<td class="stat-cell${dayTotal>0?' has-cnt':''}">${dayTotal||''}</td>`;
   }
   bHtml+=`<td class="stat-cell has-cnt">${grand}회</td></tr>`;
   body.innerHTML=bHtml;
 }
 
-window.handleTableCheck=async function(el){
-  if(!myName){ el.checked=!el.checked; alert('먼저 이름을 선택해주세요!'); return; }
-  await saveCheck(curYear,curMonth,parseInt(el.dataset.day),el.dataset.member,el.checked);
+window.handleCntClick=async function(name,day){
+  const current=getCount(day,name);
+  const newVal=(current+1)%4; // 0→1→2→3→0 순환
+  await saveCount(curYear,curMonth,day,name,newVal);
 };
+
+// 길게 누르면 취소 (0으로)
+let pressTimer=null;
+document.addEventListener('mousedown', function(e){
+  const btn=e.target.closest('.cnt-btn');
+  if(!btn) return;
+  pressTimer=setTimeout(async()=>{
+    const name=btn.closest('tr').querySelector('.name-cell').dataset.name;
+    const day=parseInt(btn.dataset.day||btn.closest('td').cellIndex);
+    // 직접 data attribute 사용
+  },600);
+});
+document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }});
 
 // ── 초기화 ────────────────────────────────────────
 subscribeMonth(curYear,curMonth);
