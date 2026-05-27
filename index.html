@@ -183,6 +183,77 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .check-box:hover:not(:checked):not(:disabled) { border-color:var(--accent); background:rgba(0,229,160,0.08); }
 
 /* 로딩 */
+.summary-btn {
+  font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
+  background:rgba(255,217,61,0.15); border:1px solid rgba(255,217,61,0.4);
+  color:var(--accent3); padding:0.35rem 0.9rem; border-radius:100px;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.summary-btn:hover { background:rgba(255,217,61,0.25); }
+.summary-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:#0a0c14;
+  overflow-y:auto;
+  display:flex; flex-direction:column;
+}
+.summary-modal {
+  width:100%; min-height:100vh;
+  max-width:600px; margin:0 auto;
+  padding:2rem 1.5rem;
+  display:flex; flex-direction:column; gap:1rem;
+}
+.summary-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:0.5rem;
+}
+.summary-date {
+  font-family:"DM Mono",monospace;
+  font-size:clamp(1.4rem,5vw,2.2rem);
+  font-weight:900; color:#fff; line-height:1.1;
+  letter-spacing:-0.02em;
+}
+.summary-subtitle {
+  font-size:0.8rem; color:var(--muted); margin-top:0.3rem;
+  font-family:"DM Mono",monospace;
+}
+.summary-close {
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--muted); padding:0.4rem 0.9rem; border-radius:100px;
+  cursor:pointer; font-size:0.78rem; transition:all 0.15s;
+  white-space:nowrap; font-family:"Noto Sans KR",sans-serif;
+}
+.summary-close:hover { border-color:var(--danger); color:var(--danger); }
+.summary-body { display:flex; flex-direction:column; gap:0.6rem; flex:1; }
+.summary-member-row {
+  display:flex; align-items:center; gap:0.9rem;
+  border-radius:14px; padding:0.9rem 1.1rem;
+  border:1px solid var(--border); background:var(--surface);
+  transition:all 0.2s;
+}
+.summary-member-row.tier-1 { border-color:rgba(255,140,0,0.5); background:rgba(255,140,0,0.07); }
+.summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.05); }
+.summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
+.summary-member-row.tier-low { opacity:0.55; }
+.summary-emoji { font-size:1.8rem; flex-shrink:0; }
+.summary-info { flex:1; display:flex; flex-direction:column; gap:0.2rem; }
+.summary-name { font-size:0.92rem; font-weight:700; }
+.summary-msg { font-size:0.78rem; color:var(--muted); line-height:1.4; }
+.summary-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.2rem; }
+.summary-cnt-badge {
+  font-family:"DM Mono",monospace; font-size:0.7rem; font-weight:700;
+  padding:0.2rem 0.6rem; border-radius:100px;
+}
+.summary-streak-txt { font-size:0.72rem; color:var(--muted); text-align:right; white-space:nowrap; }
+.summary-streak-txt.hot { color:var(--accent3); font-weight:700; }
+.summary-footer {
+  text-align:center; padding:1rem 0 0.5rem;
+  border-top:1px solid var(--border);
+}
+.summary-tip { font-size:0.72rem; color:var(--muted); }
+.summary-watermark {
+  text-align:center; font-family:"DM Mono",monospace;
+  font-size:0.62rem; color:#2a2f4a; margin-top:0.5rem;
+}
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -214,6 +285,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     <button class="month-btn" onclick="changeMonth(1)">›</button>
   </div>
   <span class="sync-badge" id="syncBadge">연결 중...</span>
+  <button class="summary-btn" onclick="openSummary()">📊 오늘의 결산</button>
 </nav>
 
 <div class="main">
@@ -275,6 +347,24 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
   </div>
 
+</div>
+
+<!-- 결산 전체화면 -->
+<div class="summary-overlay" id="summaryOverlay" style="display:none">
+  <div class="summary-modal">
+    <div class="summary-header">
+      <div>
+        <div class="summary-date" id="summaryDate"></div>
+        <div class="summary-subtitle" id="summarySubtitle"></div>
+      </div>
+      <button class="summary-close" onclick="closeSummary()">← 돌아가기</button>
+    </div>
+    <div class="summary-body" id="summaryBody"></div>
+    <div class="summary-footer">
+      <div class="summary-tip">📸 스크린샷 후 카톡방에 공유하세요!</div>
+      <div class="summary-watermark">직장인 수능준비생 1일 1인증방</div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -687,6 +777,93 @@ document.addEventListener('mousedown', function(e){
   },600);
 });
 document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }});
+
+// ── 결산 ──────────────────────────────────────────
+window.openSummary = function(){
+  const overlay = document.getElementById('summaryOverlay');
+  const body = document.getElementById('summaryBody');
+  const dateEl = document.getElementById('summaryDate');
+  const subtitleEl = document.getElementById('summarySubtitle');
+  const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+  const now = new Date();
+  const yesterday = todayD - 1; // 어제까지 기준
+
+  dateEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
+  subtitleEl.textContent = `어제(${now.getMonth()+1}/${yesterday})까지 기준 · 이번 달 참여 현황`;
+
+  // 어제까지 연속 개근 (오늘 제외)
+  function calcStreak(name){
+    let s=0;
+    const start = yesterday;
+    for(let d=start;d>=1;d--){ if(getCount(d,name)>0) s++; else break; }
+    return s;
+  }
+
+  // 이번 달 어제까지 총 인증 횟수
+  function calcMonthTotal(name){
+    let t=0;
+    for(let d=1;d<=yesterday;d++) t+=getCount(d,name);
+    return t;
+  }
+
+  // 참여율 (어제까지 인증한 날 / 어제까지 지난 날)
+  function calcRate(name){
+    if(yesterday<=0) return 0;
+    let days=0;
+    for(let d=1;d<=yesterday;d++) if(getCount(d,name)>0) days++;
+    return Math.round(days/yesterday*100);
+  }
+
+  // 참여도 등급 & 메시지
+  function getGrade(name, streak, total, rate){
+    if(yesterday<=0) return {tier:'tier-2', msg:'이번 달 첫날이에요! 오늘 인증 시작해봐요 🌱', badge:''};
+    if(streak>=7) return {tier:'tier-1', msg:`🔥 ${streak}일 연속 개근 중! 이 기세를 이어가요!`, badge:`👑 ${streak}일 연속`};
+    if(streak>=3) return {tier:'tier-1', msg:`⚡ ${streak}일 연속 개근! 페이스 좋아요!`, badge:`🔥 ${streak}일 연속`};
+    if(streak>=1) return {tier:'tier-2', msg:`✅ ${streak}일 연속 중 · 이번 달 ${total}회 인증`, badge:`✅ ${total}회`};
+    if(rate>=70) return {tier:'tier-3', msg:`📚 이번 달 ${rate}% 참여 · 오늘 다시 시작해봐요!`, badge:`${rate}%`};
+    if(rate>=40) return {tier:'tier-3', msg:`📖 이번 달 ${total}회 인증 · 조금 더 힘내봐요`, badge:`${total}회`};
+    if(total>0)  return {tier:'tier-low', msg:`🌱 이번 달 ${total}회 인증 · 꾸준히 해봐요`, badge:`${total}회`};
+    return {tier:'tier-low', msg:'😴 아직 이번 달 인증이 없어요 · 오늘부터 시작!', badge:'0회'};
+  }
+
+  // 연속 개근 기준으로 내림차순 정렬
+  const ranked = [...members].map(m=>{
+    const streak=calcStreak(m.name);
+    const total=calcMonthTotal(m.name);
+    const rate=calcRate(m.name);
+    const grade=getGrade(m.name,streak,total,rate);
+    return {...m, streak, total, rate, ...grade};
+  }).sort((a,b)=>b.streak-a.streak||b.total-a.total);
+
+  const cntBadgeColor = {
+    'tier-1':'#ff8c00',
+    'tier-2':'#00e5a0',
+    'tier-3':'#ffd93d',
+    'tier-low':'#5a6080'
+  };
+
+  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,tier,msg,badge})=>{
+    const color = cntBadgeColor[tier];
+    return `<div class="summary-member-row ${tier}">
+      <span class="summary-emoji">${emoji}</span>
+      <div class="summary-info">
+        <span class="summary-name">${name}</span>
+        <span class="summary-msg">${msg}</span>
+      </div>
+      <div class="summary-right">
+        ${badge?`<span class="summary-cnt-badge" style="background:${color}22;color:${color};border:1px solid ${color}55">${badge}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  overlay.style.display='flex';
+  document.body.style.overflow='hidden';
+};
+
+window.closeSummary=function(){
+  document.getElementById('summaryOverlay').style.display='none';
+  document.body.style.overflow='';
+};
 
 // ── 초기화 ────────────────────────────────────────
 subscribeMonth(curYear,curMonth);
