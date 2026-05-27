@@ -192,67 +192,81 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-btn:hover { background:rgba(255,217,61,0.25); }
 .summary-overlay {
   position:fixed; inset:0; z-index:500;
-  background:#0a0c14;
-  overflow-y:auto;
+  background:#0a0c14; overflow-y:auto;
   display:flex; flex-direction:column;
 }
 .summary-modal {
   width:100%; min-height:100vh;
-  max-width:600px; margin:0 auto;
-  padding:2rem 1.5rem;
-  display:flex; flex-direction:column; gap:1rem;
+  max-width:640px; margin:0 auto;
+  padding:1.2rem 1.2rem 1.5rem;
+  display:flex; flex-direction:column; gap:0.7rem;
 }
-.summary-header {
-  display:flex; align-items:flex-start; justify-content:space-between;
-  margin-bottom:0.5rem;
-}
-.summary-date {
-  font-family:"DM Mono",monospace;
-  font-size:clamp(1.4rem,5vw,2.2rem);
-  font-weight:900; color:#fff; line-height:1.1;
-  letter-spacing:-0.02em;
-}
-.summary-subtitle {
-  font-size:0.8rem; color:var(--muted); margin-top:0.3rem;
-  font-family:"DM Mono",monospace;
+.summary-top-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:0.2rem;
 }
 .summary-close {
   background:var(--surface); border:1px solid var(--border);
-  color:var(--muted); padding:0.4rem 0.9rem; border-radius:100px;
-  cursor:pointer; font-size:0.78rem; transition:all 0.15s;
+  color:var(--muted); padding:0.35rem 0.8rem; border-radius:100px;
+  cursor:pointer; font-size:0.75rem; transition:all 0.15s;
   white-space:nowrap; font-family:"Noto Sans KR",sans-serif;
 }
 .summary-close:hover { border-color:var(--danger); color:var(--danger); }
-.summary-body { display:flex; flex-direction:column; gap:0.6rem; flex:1; }
+.summary-date-block { margin-bottom:0.2rem; }
+.summary-date {
+  font-size:clamp(2rem,8vw,3rem);
+  font-weight:900; color:#fff; line-height:1;
+  letter-spacing:-0.03em; display:block;
+}
+.summary-headline {
+  font-size:clamp(1rem,3.5vw,1.4rem);
+  font-weight:900; color:var(--accent3);
+  margin-top:0.2rem; display:block;
+}
+.summary-subtitle {
+  font-size:0.72rem; color:var(--muted); margin-top:0.3rem;
+  font-family:"DM Mono",monospace; display:block;
+}
+.summary-body { display:flex; flex-direction:column; gap:0.45rem; flex:1; }
 .summary-member-row {
-  display:flex; align-items:center; gap:0.9rem;
-  border-radius:14px; padding:0.9rem 1.1rem;
+  display:flex; align-items:center; gap:0.7rem;
+  border-radius:12px; padding:0.6rem 0.85rem;
   border:1px solid var(--border); background:var(--surface);
-  transition:all 0.2s;
 }
-.summary-member-row.tier-1 { border-color:rgba(255,140,0,0.5); background:rgba(255,140,0,0.07); }
-.summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.05); }
+.summary-member-row.tier-1 { border-color:rgba(255,140,0,0.5); background:rgba(255,140,0,0.08); }
+.summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.06); }
 .summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
-.summary-member-row.tier-low { opacity:0.55; }
-.summary-emoji { font-size:1.8rem; flex-shrink:0; }
-.summary-info { flex:1; display:flex; flex-direction:column; gap:0.2rem; }
-.summary-name { font-size:0.92rem; font-weight:700; }
-.summary-msg { font-size:0.78rem; color:var(--muted); line-height:1.4; }
-.summary-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.2rem; }
-.summary-cnt-badge {
-  font-family:"DM Mono",monospace; font-size:0.7rem; font-weight:700;
-  padding:0.2rem 0.6rem; border-radius:100px;
+.summary-member-row.tier-low { opacity:0.5; }
+.summary-emoji { font-size:1.5rem; flex-shrink:0; }
+.summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
+.summary-name { font-size:0.88rem; font-weight:700; }
+.summary-msg { font-size:0.72rem; color:var(--muted); line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.summary-badge {
+  font-family:"DM Mono",monospace; font-size:0.68rem; font-weight:700;
+  padding:0.18rem 0.55rem; border-radius:100px; white-space:nowrap; flex-shrink:0;
 }
-.summary-streak-txt { font-size:0.72rem; color:var(--muted); text-align:right; white-space:nowrap; }
-.summary-streak-txt.hot { color:var(--accent3); font-weight:700; }
+.summary-reaction-box {
+  background:var(--surface); border:1px solid rgba(255,217,61,0.25);
+  border-radius:12px; padding:0.7rem 1rem;
+  display:flex; flex-direction:column; gap:0.35rem;
+}
+.summary-reaction-title {
+  font-size:0.78rem; font-weight:700; color:var(--accent3);
+}
+.summary-reaction-emojis {
+  font-size:1.3rem; letter-spacing:0.15rem; line-height:1.6;
+}
+.summary-reaction-desc {
+  font-size:0.68rem; color:var(--muted); line-height:1.5;
+}
 .summary-footer {
-  text-align:center; padding:1rem 0 0.5rem;
+  text-align:center; padding:0.6rem 0 0.3rem;
   border-top:1px solid var(--border);
 }
-.summary-tip { font-size:0.72rem; color:var(--muted); }
+.summary-tip { font-size:0.7rem; color:var(--muted); }
 .summary-watermark {
   text-align:center; font-family:"DM Mono",monospace;
-  font-size:0.62rem; color:#2a2f4a; margin-top:0.5rem;
+  font-size:0.58rem; color:#252840; margin-top:0.4rem;
 }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
@@ -352,14 +366,24 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 <!-- 결산 전체화면 -->
 <div class="summary-overlay" id="summaryOverlay" style="display:none">
   <div class="summary-modal">
-    <div class="summary-header">
-      <div>
-        <div class="summary-date" id="summaryDate"></div>
-        <div class="summary-subtitle" id="summarySubtitle"></div>
-      </div>
+    <div class="summary-top-bar">
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace" id="summarySubtitle"></span>
       <button class="summary-close" onclick="closeSummary()">← 돌아가기</button>
     </div>
+    <div class="summary-date-block">
+      <span class="summary-date" id="summaryDate"></span>
+      <span class="summary-headline">오늘의 결산! 🎯</span>
+      <span class="summary-subtitle" id="summarySubtitle2"></span>
+    </div>
     <div class="summary-body" id="summaryBody"></div>
+    <div class="summary-reaction-box">
+      <div class="summary-reaction-title">💬 오늘 못 하신 분들도 아래 이모지로 리액션 달아주세요!</div>
+      <div class="summary-reaction-emojis">💪 🔥 👍 😅 😭 🙏 💀 ✅</div>
+      <div class="summary-reaction-desc">
+        💪 나도 했어요! &nbsp;🔥 파이팅! &nbsp;😅 오늘은 쉬었어요 &nbsp;😭 나도 할걸<br>
+        🙏 내일은 꼭! &nbsp;💀 오늘 너무 바빴어요 &nbsp;✅ 인증 완료!
+      </div>
+    </div>
     <div class="summary-footer">
       <div class="summary-tip">📸 스크린샷 후 카톡방에 공유하세요!</div>
       <div class="summary-watermark">직장인 수능준비생 1일 1인증방</div>
@@ -789,7 +813,9 @@ window.openSummary = function(){
   const yesterday = todayD - 1; // 어제까지 기준
 
   dateEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
-  subtitleEl.textContent = `어제(${now.getMonth()+1}/${yesterday})까지 기준 · 이번 달 참여 현황`;
+  subtitleEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
+  const subtitle2 = document.getElementById('summarySubtitle2');
+  if(subtitle2) subtitle2.textContent = `어제(${now.getMonth()+1}/${yesterday})까지 기준 · 이번 달 참여 현황`;
 
   // 어제까지 연속 개근 (오늘 제외)
   function calcStreak(name){
@@ -850,9 +876,7 @@ window.openSummary = function(){
         <span class="summary-name">${name}</span>
         <span class="summary-msg">${msg}</span>
       </div>
-      <div class="summary-right">
-        ${badge?`<span class="summary-cnt-badge" style="background:${color}22;color:${color};border:1px solid ${color}55">${badge}</span>`:''}
-      </div>
+      ${badge?`<span class="summary-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${badge}</span>`:''}
     </div>`;
   }).join('');
 
