@@ -214,17 +214,17 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-close:hover { border-color:var(--danger); color:var(--danger); }
 .summary-date-block { margin-bottom:0.2rem; }
 .summary-date {
-  font-size:clamp(2rem,8vw,3rem);
+  font-size:clamp(2.4rem,9vw,3.5rem);
   font-weight:900; color:#fff; line-height:1;
   letter-spacing:-0.03em; display:block;
 }
 .summary-headline {
-  font-size:clamp(1rem,3.5vw,1.4rem);
+  font-size:clamp(1.2rem,4vw,1.6rem);
   font-weight:900; color:var(--accent3);
   margin-top:0.2rem; display:block;
 }
 .summary-subtitle {
-  font-size:0.72rem; color:var(--muted); margin-top:0.3rem;
+  font-size:0.88rem; color:var(--muted); margin-top:0.3rem;
   font-family:"DM Mono",monospace; display:block;
 }
 .summary-body { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; flex:1; }
@@ -239,11 +239,11 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-member-row.tier-low { opacity:0.5; }
 .summary-emoji { font-size:1.6rem; flex-shrink:0; }
 .summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
-.summary-name { font-size:0.92rem; font-weight:700; }
-.summary-msg { font-size:0.73rem; color:var(--muted); line-height:1.4; white-space:normal; }
+.summary-name { font-size:1rem; font-weight:700; }
+.summary-msg { font-size:0.82rem; color:var(--muted); line-height:1.4; white-space:normal; }
 .summary-badge {
-  font-family:"DM Mono",monospace; font-size:0.68rem; font-weight:700;
-  padding:0.18rem 0.55rem; border-radius:100px; white-space:nowrap; flex-shrink:0;
+  font-family:"DM Mono",monospace; font-size:0.78rem; font-weight:700;
+  padding:0.22rem 0.65rem; border-radius:100px; white-space:nowrap; flex-shrink:0;
 }
 .summary-reaction-box {
   background:var(--surface); border:1px solid rgba(255,217,61,0.25);
@@ -251,19 +251,19 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   display:flex; flex-direction:column; gap:0.35rem;
 }
 .summary-reaction-title {
-  font-size:0.78rem; font-weight:700; color:var(--accent3);
+  font-size:0.9rem; font-weight:700; color:var(--accent3);
 }
 .summary-reaction-emojis {
-  font-size:1.3rem; letter-spacing:0.15rem; line-height:1.6;
+  font-size:1.6rem; letter-spacing:0.2rem; line-height:1.7;
 }
 .summary-reaction-desc {
-  font-size:0.68rem; color:var(--muted); line-height:1.5;
+  font-size:0.82rem; color:var(--muted); line-height:1.7;
 }
 .summary-footer {
   text-align:center; padding:0.6rem 0 0.3rem;
   border-top:1px solid var(--border);
 }
-.summary-tip { font-size:0.7rem; color:var(--muted); }
+.summary-tip { font-size:0.85rem; color:var(--muted); }
 .summary-watermark {
   text-align:center; font-family:"DM Mono",monospace;
   font-size:0.58rem; color:#252840; margin-top:0.4rem;
@@ -367,7 +367,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 <div class="summary-overlay" id="summaryOverlay" style="display:none">
   <div class="summary-modal">
     <div class="summary-top-bar">
-      <span style="font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace" id="summarySubtitle"></span>
+      <span style="font-size:0.82rem;color:var(--muted);font-family:'DM Mono',monospace" id="summarySubtitle"></span>
       <button class="summary-close" onclick="closeSummary()">← 돌아가기</button>
     </div>
     <div class="summary-date-block">
@@ -377,7 +377,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="summary-body" id="summaryBody"></div>
     <div class="summary-reaction-box">
-      <div class="summary-reaction-title">💬 카톡 이모지로 리액션 달아주세요! <span style="font-size:0.65rem;color:var(--muted);font-weight:400">(예시)</span></div>
+      <div class="summary-reaction-title">💬 카톡 이모지로 리액션 달아주세요! <span style="font-size:0.78rem;color:var(--muted);font-weight:400">(예시)</span></div>
       <div class="summary-reaction-emojis">✅ 💪 🔥 😅 🍺 💤 💊 😭 🙏</div>
       <div class="summary-reaction-desc">
         ✅ 인증 완료! &nbsp;&nbsp;💪 나도 했어요! &nbsp;&nbsp;🔥 파이팅!<br>
