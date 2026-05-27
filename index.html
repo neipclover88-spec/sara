@@ -806,14 +806,14 @@ window.openSummary = function(){
   const subtitleEl = document.getElementById('summarySubtitle');
   const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
   const now = new Date();
-  const yesterday = todayD - 1; // 어제까지 기준
+  const yesterday = todayD; // 오늘 현재까지 기준
 
   dateEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
   subtitleEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
   const subtitle2 = document.getElementById('summarySubtitle2');
-  if(subtitle2) subtitle2.textContent = `어제(${now.getMonth()+1}/${yesterday})까지 기준 · 이번 달 참여 현황`;
+  if(subtitle2) subtitle2.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 현재 기준 · 이번 달 참여 현황`;
 
-  // 어제까지 연속 개근 (오늘 제외)
+  // 현재까지 연속 개근
   function calcStreak(name){
     let s=0;
     const start = yesterday;
@@ -821,7 +821,7 @@ window.openSummary = function(){
     return s;
   }
 
-  // 이번 달 어제까지 총 인증 횟수
+  // 이번 달 현재까지 총 인증 횟수
   function calcMonthTotal(name){
     let t=0;
     for(let d=1;d<=yesterday;d++) t+=getCount(d,name);
