@@ -227,20 +227,20 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   font-size:0.72rem; color:var(--muted); margin-top:0.3rem;
   font-family:"DM Mono",monospace; display:block;
 }
-.summary-body { display:flex; flex-direction:column; gap:0.45rem; flex:1; }
+.summary-body { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; flex:1; }
 .summary-member-row {
-  display:flex; align-items:center; gap:0.7rem;
-  border-radius:12px; padding:0.6rem 0.85rem;
+  display:flex; align-items:flex-start; gap:0.6rem;
+  border-radius:12px; padding:0.75rem 0.85rem;
   border:1px solid var(--border); background:var(--surface);
 }
 .summary-member-row.tier-1 { border-color:rgba(255,140,0,0.5); background:rgba(255,140,0,0.08); }
 .summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.06); }
 .summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
 .summary-member-row.tier-low { opacity:0.5; }
-.summary-emoji { font-size:1.5rem; flex-shrink:0; }
+.summary-emoji { font-size:1.6rem; flex-shrink:0; }
 .summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
-.summary-name { font-size:0.88rem; font-weight:700; }
-.summary-msg { font-size:0.72rem; color:var(--muted); line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.summary-name { font-size:0.92rem; font-weight:700; }
+.summary-msg { font-size:0.73rem; color:var(--muted); line-height:1.4; white-space:normal; }
 .summary-badge {
   font-family:"DM Mono",monospace; font-size:0.68rem; font-weight:700;
   padding:0.18rem 0.55rem; border-radius:100px; white-space:nowrap; flex-shrink:0;
@@ -377,11 +377,13 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="summary-body" id="summaryBody"></div>
     <div class="summary-reaction-box">
-      <div class="summary-reaction-title">💬 오늘 못 하신 분들도 아래 이모지로 리액션 달아주세요!</div>
-      <div class="summary-reaction-emojis">💪 🔥 👍 😅 😭 🙏 💀 ✅</div>
+      <div class="summary-reaction-title">💬 카톡 이모지로 리액션 달아주세요! <span style="font-size:0.65rem;color:var(--muted);font-weight:400">(예시)</span></div>
+      <div class="summary-reaction-emojis">✅ 💪 🔥 😅 🍺 💤 💊 😭 🙏</div>
       <div class="summary-reaction-desc">
-        💪 나도 했어요! &nbsp;🔥 파이팅! &nbsp;😅 오늘은 쉬었어요 &nbsp;😭 나도 할걸<br>
-        🙏 내일은 꼭! &nbsp;💀 오늘 너무 바빴어요 &nbsp;✅ 인증 완료!
+        ✅ 인증 완료! &nbsp;&nbsp;💪 나도 했어요! &nbsp;&nbsp;🔥 파이팅!<br>
+        😅 오늘은 쉬었어요 &nbsp;&nbsp;🍺 술 먹어서 못 했어요<br>
+        💤 하루종일 자느라 못 했어요 &nbsp;&nbsp;💊 아파서 못 했어요<br>
+        😭 나도 할걸 &nbsp;&nbsp;🙏 내일은 꼭!
       </div>
     </div>
     <div class="summary-footer">
