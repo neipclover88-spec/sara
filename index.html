@@ -192,81 +192,130 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-btn:hover { background:rgba(255,217,61,0.25); }
 .summary-overlay {
   position:fixed; inset:0; z-index:500;
-  background:#0a0c14; overflow-y:auto;
+  background:#050711; overflow-y:auto;
   display:flex; flex-direction:column;
 }
 .summary-modal {
   width:100%; min-height:100vh;
   max-width:640px; margin:0 auto;
-  padding:1.2rem 1.2rem 1.5rem;
-  display:flex; flex-direction:column; gap:0.7rem;
+  padding:0;
+  display:flex; flex-direction:column;
+}
+
+/* 상단 그라디언트 헤더 */
+.summary-hero {
+  background:linear-gradient(135deg, #1a0533 0%, #0d1f4a 50%, #0a2a1f 100%);
+  padding:1.2rem 1.4rem 1.4rem;
+  position:relative; overflow:hidden;
+}
+.summary-hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at 20% 50%, rgba(255,140,0,0.12) 0%, transparent 60%),
+             radial-gradient(ellipse at 80% 20%, rgba(0,229,160,0.1) 0%, transparent 50%);
+  pointer-events:none;
 }
 .summary-top-bar {
   display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:0.2rem;
+  margin-bottom:0.8rem; position:relative; z-index:1;
 }
 .summary-close {
-  background:var(--surface); border:1px solid var(--border);
-  color:var(--muted); padding:0.35rem 0.8rem; border-radius:100px;
-  cursor:pointer; font-size:0.75rem; transition:all 0.15s;
+  background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.7); padding:0.4rem 1rem; border-radius:100px;
+  cursor:pointer; font-size:0.8rem; transition:all 0.15s;
   white-space:nowrap; font-family:"Noto Sans KR",sans-serif;
+  backdrop-filter:blur(4px);
 }
-.summary-close:hover { border-color:var(--danger); color:var(--danger); }
-.summary-date-block { margin-bottom:0.2rem; }
+.summary-close:hover { background:rgba(255,255,255,0.18); color:#fff; }
+.summary-date-block { position:relative; z-index:1; }
 .summary-date {
-  font-size:clamp(2.4rem,9vw,3.5rem);
+  font-size:clamp(2.6rem,10vw,3.8rem);
   font-weight:900; color:#fff; line-height:1;
   letter-spacing:-0.03em; display:block;
+  text-shadow:0 2px 20px rgba(0,0,0,0.4);
 }
 .summary-headline {
-  font-size:clamp(1.2rem,4vw,1.6rem);
-  font-weight:900; color:var(--accent3);
-  margin-top:0.2rem; display:block;
+  font-size:clamp(1.3rem,4.5vw,1.8rem);
+  font-weight:900;
+  background:linear-gradient(90deg, #ffd93d, #ff8c00);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-top:0.25rem; display:block;
 }
 .summary-subtitle {
-  font-size:0.88rem; color:var(--muted); margin-top:0.3rem;
+  font-size:0.85rem; color:rgba(255,255,255,0.45); margin-top:0.4rem;
   font-family:"DM Mono",monospace; display:block;
 }
-.summary-body { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; flex:1; }
+
+/* 멤버 그리드 */
+.summary-body {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:0.55rem; padding:1.1rem 1.1rem 0.8rem; flex:1;
+}
+
+/* 1위 카드 - 전체 너비 */
+.summary-member-row.rank-1 {
+  grid-column: 1 / -1;
+  background:linear-gradient(135deg, rgba(255,140,0,0.2), rgba(255,60,0,0.1));
+  border:1.5px solid rgba(255,140,0,0.6);
+  box-shadow:0 4px 20px rgba(255,140,0,0.15);
+}
+
 .summary-member-row {
-  display:flex; align-items:flex-start; gap:0.6rem;
-  border-radius:12px; padding:0.75rem 0.85rem;
-  border:1px solid var(--border); background:var(--surface);
+  display:flex; align-items:flex-start; gap:0.7rem;
+  border-radius:14px; padding:0.85rem 0.9rem;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.04);
+  transition:all 0.2s;
 }
-.summary-member-row.tier-1 { border-color:rgba(255,140,0,0.5); background:rgba(255,140,0,0.08); }
-.summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.06); }
-.summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
-.summary-member-row.tier-low { opacity:0.5; }
-.summary-emoji { font-size:1.6rem; flex-shrink:0; }
-.summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
-.summary-name { font-size:1rem; font-weight:700; }
-.summary-msg { font-size:0.82rem; color:var(--muted); line-height:1.4; white-space:normal; }
+.summary-member-row.tier-1 {
+  border-color:rgba(255,140,0,0.4);
+  background:linear-gradient(135deg,rgba(255,140,0,0.12),rgba(255,60,0,0.06));
+}
+.summary-member-row.tier-2 {
+  border-color:rgba(0,229,160,0.35);
+  background:rgba(0,229,160,0.07);
+}
+.summary-member-row.tier-3 {
+  border-color:rgba(255,217,61,0.3);
+  background:rgba(255,217,61,0.06);
+}
+.summary-member-row.tier-low {
+  border-color:rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.02);
+  opacity:0.6;
+}
+.summary-emoji { font-size:1.7rem; flex-shrink:0; }
+.summary-info { flex:1; display:flex; flex-direction:column; gap:0.15rem; min-width:0; }
+.summary-name { font-size:1rem; font-weight:800; color:#fff; }
+.summary-msg { font-size:0.8rem; color:rgba(255,255,255,0.55); line-height:1.4; }
 .summary-badge {
-  font-family:"DM Mono",monospace; font-size:0.78rem; font-weight:700;
-  padding:0.22rem 0.65rem; border-radius:100px; white-space:nowrap; flex-shrink:0;
+  font-family:"DM Mono",monospace; font-size:0.78rem; font-weight:800;
+  padding:0.25rem 0.65rem; border-radius:100px;
+  white-space:nowrap; flex-shrink:0; align-self:flex-start;
 }
+
+/* 리액션 박스 */
 .summary-reaction-box {
-  background:var(--surface); border:1px solid rgba(255,217,61,0.25);
-  border-radius:12px; padding:0.7rem 1rem;
-  display:flex; flex-direction:column; gap:0.35rem;
+  margin:0 1.1rem 1rem;
+  background:rgba(255,217,61,0.06);
+  border:1px solid rgba(255,217,61,0.2);
+  border-radius:14px; padding:0.9rem 1.1rem;
+  display:flex; flex-direction:column; gap:0.4rem;
 }
-.summary-reaction-title {
-  font-size:0.9rem; font-weight:700; color:var(--accent3);
-}
-.summary-reaction-emojis {
-  font-size:1.6rem; letter-spacing:0.2rem; line-height:1.7;
-}
-.summary-reaction-desc {
-  font-size:0.82rem; color:var(--muted); line-height:1.7;
-}
+.summary-reaction-title { font-size:0.92rem; font-weight:700; color:#ffd93d; }
+.summary-reaction-emojis { font-size:1.7rem; letter-spacing:0.2rem; line-height:1.8; }
+.summary-reaction-desc { font-size:0.82rem; color:rgba(255,255,255,0.45); line-height:1.75; }
+
+/* 푸터 */
 .summary-footer {
-  text-align:center; padding:0.6rem 0 0.3rem;
-  border-top:1px solid var(--border);
+  text-align:center; padding:0.7rem 1rem 1.2rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+  margin-top:auto;
 }
-.summary-tip { font-size:0.85rem; color:var(--muted); }
+.summary-tip { font-size:0.85rem; color:rgba(255,255,255,0.35); }
 .summary-watermark {
-  text-align:center; font-family:"DM Mono",monospace;
-  font-size:0.58rem; color:#252840; margin-top:0.4rem;
+  font-family:"DM Mono",monospace; font-size:0.6rem;
+  color:rgba(255,255,255,0.12); margin-top:0.4rem;
 }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
@@ -366,14 +415,16 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 <!-- 결산 전체화면 -->
 <div class="summary-overlay" id="summaryOverlay" style="display:none">
   <div class="summary-modal">
-    <div class="summary-top-bar">
-      <span style="font-size:0.82rem;color:var(--muted);font-family:'DM Mono',monospace" id="summarySubtitle"></span>
-      <button class="summary-close" onclick="closeSummary()">← 돌아가기</button>
-    </div>
-    <div class="summary-date-block">
-      <span class="summary-date" id="summaryDate"></span>
-      <span class="summary-headline">오늘의 결산! 🎯</span>
-      <span class="summary-subtitle" id="summarySubtitle2"></span>
+    <div class="summary-hero">
+      <div class="summary-top-bar">
+        <span style="font-size:0.82rem;color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace" id="summarySubtitle"></span>
+        <button class="summary-close" onclick="closeSummary()">← 돌아가기</button>
+      </div>
+      <div class="summary-date-block">
+        <span class="summary-date" id="summaryDate"></span>
+        <span class="summary-headline">오늘의 결산! 🎯</span>
+        <span class="summary-subtitle" id="summarySubtitle2"></span>
+      </div>
     </div>
     <div class="summary-body" id="summaryBody"></div>
     <div class="summary-reaction-box">
@@ -870,9 +921,10 @@ window.openSummary = function(){
     'tier-low':'#5a6080'
   };
 
-  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,tier,msg,badge})=>{
+  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,tier,msg,badge},idx)=>{
     const color = cntBadgeColor[tier];
-    return `<div class="summary-member-row ${tier}">
+    const rankCls = idx===0 && streak>0 ? ' rank-1' : '';
+    return `<div class="summary-member-row ${tier}${rankCls}">
       <span class="summary-emoji">${emoji}</span>
       <div class="summary-info">
         <span class="summary-name">${name}</span>
