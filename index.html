@@ -942,6 +942,8 @@ document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTime
 
 // ── 목표 ──────────────────────────────────────────
 let goalSelectedName = '';
+let goalRows = [''];
+const GOAL_NUM_EMOJI = ['①','②','③','④','⑤'];
 
 window.openGoal = function(){
   const overlay = document.getElementById('goalOverlay');
@@ -949,16 +951,17 @@ window.openGoal = function(){
   const dateLabel = document.getElementById('goalDateLabel');
   const now = new Date();
   const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-  dateEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
+  dateEl.textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
   dateLabel.textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
+  const pdEl = document.getElementById('goalPreviewDate');
+  if(pdEl) pdEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]} 목표`;
 
   goalSelectedName = myName || '';
-  renderGoalNameGrid();
+  goalRows = [''];
+  renderGoalNameBox();
   updateGoalInputSection();
-
-  document.getElementById('goalTextarea').value = '';
-  document.getElementById('goalCharCount').textContent = '0';
-  document.getElementById('goalPreview').style.display = 'none';
+  renderGoalRows();
+  updateGoalPreview();
 
   overlay.style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -969,18 +972,36 @@ window.closeGoal = function(){
   document.body.style.overflow = '';
 };
 
-function renderGoalNameGrid(){
-  const grid = document.getElementById('goalNameGrid');
-  grid.innerHTML = members.map(m => `
-    <div class="goal-name-chip${m.name===goalSelectedName?' selected':''}" onclick="selectGoalName('${m.name.replace(/'/g,"\'")}')">
-      <span>${m.emoji}</span>${m.name}
-    </div>
-  `).join('');
+function renderGoalNameBox(){
+  const selected = document.getElementById('goalNameSelected');
+  const gridWrap = document.getElementById('goalNameGridWrap');
+  if(!selected || !gridWrap) return;
+  if(goalSelectedName){
+    const m = members.find(m=>m.name===goalSelectedName);
+    document.getElementById('goalSelEmoji').textContent = m?.emoji||'👤';
+    document.getElementById('goalSelText').textContent = goalSelectedName;
+    selected.style.display = 'block';
+    gridWrap.style.display = 'none';
+  } else {
+    selected.style.display = 'none';
+    gridWrap.style.display = 'block';
+    const grid = document.getElementById('goalNameGrid');
+    grid.innerHTML = members.map(m =>
+      `<div class="goal-name-chip" onclick="selectGoalName('${m.name.replace(/'/g,"\'")}')"><span>${m.emoji}</span>${m.name}</div>`
+    ).join('');
+  }
 }
+
+window.changeGoalName = function(){
+  goalSelectedName = '';
+  renderGoalNameBox();
+  updateGoalInputSection();
+  updateGoalPreview();
+};
 
 window.selectGoalName = function(name){
   goalSelectedName = name;
-  renderGoalNameGrid();
+  renderGoalNameBox();
   updateGoalInputSection();
   updateGoalPreview();
 };
@@ -988,28 +1009,64 @@ window.selectGoalName = function(name){
 function updateGoalInputSection(){
   const section = document.getElementById('goalInputSection');
   const label = document.getElementById('goalInputLabel');
+  if(!section) return;
   if(goalSelectedName){
     const m = members.find(m=>m.name===goalSelectedName);
-    label.textContent = `${m?.emoji||''} ${goalSelectedName}의 오늘 목표`;
+    if(label) label.textContent = `${m?.emoji||''} ${goalSelectedName}의 오늘 목표`;
     section.style.display = 'flex';
+    renderGoalRows();
   } else {
     section.style.display = 'none';
-    document.getElementById('goalPreview').style.display = 'none';
+    const preview = document.getElementById('goalPreview');
+    if(preview) preview.style.display = 'none';
   }
 }
 
+function renderGoalRows(){
+  const container = document.getElementById('goalRows');
+  const addBtn = document.getElementById('goalAddBtn');
+  if(!container) return;
+  container.innerHTML = goalRows.map((val, i) => `
+    <div class="goal-row">
+      <span class="goal-num">${GOAL_NUM_EMOJI[i]}</span>
+      <input class="goal-input" type="text" value="${val.replace(/"/g,'&quot;')}"
+        placeholder="목표 ${i+1} 입력"
+        maxlength="60"
+        oninput="updateGoalRow(${i}, this.value)">
+      <button class="goal-del-btn" onclick="removeGoalRow(${i})">✕</button>
+    </div>
+  `).join('');
+  if(addBtn) addBtn.style.display = goalRows.length >= 5 ? 'none' : 'block';
+  updateGoalPreview();
+}
+
+window.updateGoalRow = function(i, val){
+  goalRows[i] = val;
+  updateGoalPreview();
+};
+
+window.addGoalRow = function(){
+  if(goalRows.length < 5){ goalRows.push(''); renderGoalRows(); }
+};
+
+window.removeGoalRow = function(i){
+  if(goalRows.length === 1){ goalRows[0]=''; renderGoalRows(); return; }
+  goalRows.splice(i, 1);
+  renderGoalRows();
+};
+
 window.updateGoalPreview = function(){
-  const text = document.getElementById('goalTextarea').value.trim();
-  const charCount = document.getElementById('goalTextarea').value.length;
-  document.getElementById('goalCharCount').textContent = charCount;
-
+  const filled = goalRows.filter(g=>g.trim());
   const preview = document.getElementById('goalPreview');
-  if(!goalSelectedName || !text){ preview.style.display='none'; return; }
-
+  if(!preview) return;
+  if(!goalSelectedName || filled.length===0){ preview.style.display='none'; return; }
   const m = members.find(m=>m.name===goalSelectedName);
   document.getElementById('goalPreviewEmoji').textContent = m?.emoji||'👤';
   document.getElementById('goalPreviewName').textContent = goalSelectedName;
-  document.getElementById('goalPreviewText').textContent = text;
+  const list = document.getElementById('goalPreviewList');
+  if(list) list.innerHTML = filled.map((g,i) =>
+    `<div class="goal-preview-item"><span class="goal-preview-num">${GOAL_NUM_EMOJI[i]}</span><span class="goal-preview-text">${g}</span></div>`
+  ).join('');
   preview.style.display = 'flex';
 };
 
