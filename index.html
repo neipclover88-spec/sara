@@ -922,18 +922,18 @@ function renderCalendar(){
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
       <div class="cal-emojis">${emojisHtml}</div>
     `;
-    cell.addEventListener('click',()=>calClick(d));
+    cell.addEventListener('click', (e)=>{ if(!e.target.closest('.cal-goal-icon')) doCheck(d); });
     cell.addEventListener('contextmenu',(e)=>e.preventDefault());
     grid.appendChild(cell);
   }
 
 }
 
-async function calClick(day, e){
-  if(e && e.type==='contextmenu'){ e.preventDefault(); return; }
-  // 길게 누르면 목표 모아보기, 짧게 누르면 체크
-  openDayGoals(day);
-}
+// calClick 제거 - doCheck로 대체
+
+
+
+
 
 async function doCheck(day){
   if(!myName){ alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
