@@ -91,7 +91,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .cal-cell.my-checked { background:rgba(0,229,160,0.05); border-color:rgba(0,229,160,0.4); }
 .cal-cell.holiday .cal-day { color:#ff6b6b; }
 .cal-cell.holiday { border-color:rgba(255,107,107,0.25); }
+.cal-day-row { display:flex; align-items:center; justify-content:space-between; width:100%; }
 .cal-day { font-size:0.88rem; font-weight:700; line-height:1; }
+.cal-goal-icon { font-size:0.7rem; opacity:0.5; cursor:pointer; transition:opacity 0.15s; flex-shrink:0; }
+.cal-goal-icon:hover { opacity:1; }
 .cal-cell.sun .cal-day { color:#ff6b6b; }
 .cal-cell.sat .cal-day { color:var(--accent2); }
 .cal-holiday { font-size:0.5rem; color:#ff6b6b; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
@@ -910,8 +913,12 @@ function renderCalendar(){
     if(holiday) cls+=' holiday';
     cell.className=cls;
     const emojisHtml=members.map(m=>{ const c=getCount(d,m.name); return c>0?`<span class="cal-emoji-ring ring-${c}" title="${m.name} (${c}회)">${m.emoji}</span>`:''; }).join('');
+    const hasGoals = getDayAllGoals(d).length > 0;
     cell.innerHTML=`
-      <span class="cal-day">${d}</span>
+      <div class="cal-day-row">
+        <span class="cal-day">${d}</span>
+        <span class="cal-goal-icon" onclick="event.stopPropagation();openDayGoals(${d})" title="목표 보기">${hasGoals?'📋':'📝'}</span>
+      </div>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
       <div class="cal-emojis">${emojisHtml}</div>
     `;
