@@ -348,6 +348,34 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .goal-preview-num { font-size:1rem; color:var(--accent2); font-weight:700; flex-shrink:0; }
 .goal-preview-text { font-size:0.92rem; color:var(--text); line-height:1.5; }
 
+.day-goals-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.7);
+  z-index:400; display:flex; align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.day-goals-modal {
+  background:#141726; border:1px solid #2a2f4a;
+  border-radius:20px 20px 0 0; width:100%; max-width:640px;
+  max-height:75vh; overflow-y:auto;
+  padding:1.2rem 1.4rem 2rem;
+  animation:slideUp 0.25s ease;
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.day-goals-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.day-goals-title { font-size:1.1rem; font-weight:800; }
+.day-goals-close { background:transparent; border:1px solid #2a2f4a; color:#5a6080; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; }
+.day-goals-empty { font-size:0.85rem; color:#5a6080; text-align:center; padding:1.5rem 0; }
+.day-goals-member { display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.9rem; padding-bottom:0.9rem; border-bottom:1px solid #2a2f4a; }
+.day-goals-member:last-child { border-bottom:none; margin-bottom:0; }
+.day-goals-member-header { display:flex; align-items:center; gap:0.5rem; }
+.day-goals-member-emoji { font-size:1.3rem; }
+.day-goals-member-name { font-size:0.92rem; font-weight:700; }
+.day-goals-list { display:flex; flex-direction:column; gap:0.3rem; padding-left:0.5rem; }
+.day-goals-item { display:flex; align-items:baseline; gap:0.45rem; }
+.day-goals-num { font-size:0.88rem; color:var(--accent2); font-weight:700; flex-shrink:0; }
+.day-goals-text { font-size:0.85rem; color:var(--text); line-height:1.5; }
+.day-goals-add-btn { width:100%; margin-top:1rem; background:rgba(77,150,255,0.1); border:1px solid rgba(77,150,255,0.3); color:var(--accent2); padding:0.6rem; border-radius:10px; cursor:pointer; font-size:0.82rem; font-family:'Noto Sans KR',sans-serif; font-weight:600; transition:all 0.15s; }
+.day-goals-add-btn:hover { background:rgba(77,150,255,0.2); }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -499,6 +527,18 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
 </div>
 
+<!-- 날짜별 목표 모아보기 -->
+<div class="day-goals-overlay" id="dayGoalsOverlay" style="display:none" onclick="closeDayGoals(event)">
+  <div class="day-goals-modal">
+    <div class="day-goals-header">
+      <div class="day-goals-title" id="dayGoalsTitle"></div>
+      <button class="day-goals-close" onclick="closeDayGoals()">✕</button>
+    </div>
+    <div id="dayGoalsBody"></div>
+    <button class="day-goals-add-btn" id="dayGoalsAddBtn" onclick="openGoalFromDay()">✍️ 내 목표 입력하기</button>
+  </div>
+</div>
+
 <!-- 결산 전체화면 -->
 <div class="summary-overlay" id="summaryOverlay" style="display:none">
   <div class="summary-modal">
@@ -626,6 +666,7 @@ async function saveMembersToFirestore(){
 // ── Firestore 출석 리스너 ─────────────────────────
 let unsubscribeAtt = null;
 function subscribeMonth(y,m){
+  subscribeGoals(y,m);
   if(unsubscribeAtt) unsubscribeAtt();
   const r=doc(db,'attendance',docId(y,m));
   unsubscribeAtt = onSnapshot(r,(snap)=>{
@@ -652,6 +693,39 @@ async function saveCheck(y,m,d,name,checked){
 }
 
 function getCount(d,name){ const v=allData[`d${d}_${mKey(name)}`]; return v===true?1:(v||0); }
+
+// ── 목표 데이터 ───────────────────────────────────
+let goalsData = {}; // goalsData[field] = ["목표1","목표2"]
+let unsubscribeGoals = null;
+
+function subscribeGoals(y,m){
+  if(unsubscribeGoals) unsubscribeGoals();
+  const r = doc(db,'goals',docId(y,m));
+  unsubscribeGoals = onSnapshot(r,(snap)=>{
+    goalsData = snap.exists() ? snap.data() : {};
+  });
+}
+
+async function saveGoals(y,m,d,name,goals){
+  const r = doc(db,'goals',docId(y,m));
+  const field = `d${d}_${mKey(name)}`;
+  const snap = await getDoc(r);
+  const data = snap.exists() ? snap.data() : {};
+  if(goals.length > 0) data[field] = goals;
+  else delete data[field];
+  await setDoc(r, data);
+}
+
+function getDayGoals(d, name){
+  return goalsData[`d${d}_${mKey(name)}`] || [];
+}
+
+function getDayAllGoals(d){
+  // 해당 날짜의 모든 멤버 목표 반환
+  return members
+    .map(m => ({ name: m.name, emoji: m.emoji, goals: getDayGoals(d, m.name) }))
+    .filter(m => m.goals.length > 0);
+}
 async function saveCount(y,m,d,name,count){
   const r=doc(db,'attendance',docId(y,m));
   const field=`d${d}_${mKey(name)}`;
@@ -848,7 +922,13 @@ function renderCalendar(){
 
 }
 
-async function calClick(day){
+async function calClick(day, e){
+  if(e && e.type==='contextmenu'){ e.preventDefault(); return; }
+  // 길게 누르면 목표 모아보기, 짧게 누르면 체크
+  openDayGoals(day);
+}
+
+async function doCheck(day){
   if(!myName){ alert('먼저 위에서 내 이름을 선택해주세요!'); return; }
   const current = getCount(day,myName);
   const newVal = (current+1) % 4;
@@ -945,19 +1025,30 @@ let goalSelectedName = '';
 let goalRows = [''];
 const GOAL_NUM_EMOJI = ['①','②','③','④','⑤'];
 
-window.openGoal = function(){
+let goalTargetDay = null; // 목표 입력 대상 날짜 (null=오늘)
+
+window.openGoal = function(day){
+  goalTargetDay = day || todayD;
   const overlay = document.getElementById('goalOverlay');
   const dateEl = document.getElementById('goalDate');
   const dateLabel = document.getElementById('goalDateLabel');
   const now = new Date();
   const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-  dateEl.textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
-  dateLabel.textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
+  const d = new Date(curYear, curMonth, goalTargetDay);
+  const dStr = `${d.getMonth()+1}월 ${d.getDate()}일 ${dowNames[d.getDay()]}`;
+  dateEl.textContent = dStr;
+  dateLabel.textContent = `${d.getMonth()+1}월 ${d.getDate()}일`;
   const pdEl = document.getElementById('goalPreviewDate');
-  if(pdEl) pdEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]} 목표`;
+  if(pdEl) pdEl.textContent = `${dStr} 목표`;
 
   goalSelectedName = myName || '';
-  goalRows = [''];
+  // 기존 저장된 목표 불러오기
+  if(goalSelectedName){
+    const saved = getDayGoals(goalTargetDay, goalSelectedName);
+    goalRows = saved.length > 0 ? [...saved] : [''];
+  } else {
+    goalRows = [''];
+  }
   renderGoalNameBox();
   updateGoalInputSection();
   renderGoalRows();
@@ -1001,8 +1092,11 @@ window.changeGoalName = function(){
 
 window.selectGoalName = function(name){
   goalSelectedName = name;
+  const saved = getDayGoals(goalTargetDay||todayD, name);
+  goalRows = saved.length > 0 ? [...saved] : [''];
   renderGoalNameBox();
   updateGoalInputSection();
+  renderGoalRows();
   updateGoalPreview();
 };
 
@@ -1055,6 +1149,7 @@ window.removeGoalRow = function(i){
   renderGoalRows();
 };
 
+let goalSaveTimer = null;
 window.updateGoalPreview = function(){
   const filled = goalRows.filter(g=>g.trim());
   const preview = document.getElementById('goalPreview');
@@ -1068,6 +1163,59 @@ window.updateGoalPreview = function(){
     `<div class="goal-preview-item"><span class="goal-preview-num">${GOAL_NUM_EMOJI[i]}</span><span class="goal-preview-text">${g}</span></div>`
   ).join('');
   preview.style.display = 'flex';
+
+  // 0.8초 디바운스 후 Firebase 저장
+  if(goalSaveTimer) clearTimeout(goalSaveTimer);
+  goalSaveTimer = setTimeout(async()=>{
+    if(goalSelectedName && goalTargetDay){
+      await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, filled);
+    }
+  }, 800);
+};
+
+// ── 날짜별 목표 모아보기 ──────────────────────────
+let dayGoalsTargetDay = null;
+
+window.openDayGoals = function(day){
+  dayGoalsTargetDay = day;
+  const overlay = document.getElementById('dayGoalsOverlay');
+  const title = document.getElementById('dayGoalsTitle');
+  const body = document.getElementById('dayGoalsBody');
+  const d = new Date(curYear, curMonth, day);
+  const dowNames = ['일','월','화','수','목','금','토'];
+  title.textContent = `${curMonth+1}월 ${day}일 (${dowNames[d.getDay()]}) 목표 모아보기`;
+
+  const allGoals = getDayAllGoals(day);
+  if(allGoals.length === 0){
+    body.innerHTML = '<div class="day-goals-empty">아직 이날 입력된 목표가 없어요</div>';
+  } else {
+    body.innerHTML = allGoals.map(({name,emoji,goals})=>`
+      <div class="day-goals-member">
+        <div class="day-goals-member-header">
+          <span class="day-goals-member-emoji">${emoji}</span>
+          <span class="day-goals-member-name">${name}</span>
+        </div>
+        <div class="day-goals-list">
+          ${goals.map((g,i)=>`
+            <div class="day-goals-item">
+              <span class="day-goals-num">${GOAL_NUM_EMOJI[i]}</span>
+              <span class="day-goals-text">${g}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+  overlay.style.display = 'flex';
+};
+
+window.closeDayGoals = function(e){
+  if(e && e.target.id !== 'dayGoalsOverlay' && e.type==='click') return;
+  document.getElementById('dayGoalsOverlay').style.display = 'none';
+};
+
+window.openGoalFromDay = function(){
+  document.getElementById('dayGoalsOverlay').style.display = 'none';
+  openGoal(dayGoalsTargetDay);
 };
 
 // ── 결산 ──────────────────────────────────────────
