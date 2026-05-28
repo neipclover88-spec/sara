@@ -375,6 +375,21 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .day-goals-item { display:flex; align-items:baseline; gap:0.45rem; }
 .day-goals-num { font-size:0.88rem; color:var(--accent2); font-weight:700; flex-shrink:0; }
 .day-goals-text { font-size:0.85rem; color:var(--text); line-height:1.5; }
+.goal-row { display:flex; align-items:center; gap:0.4rem; }
+.goal-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); background:transparent; cursor:pointer; appearance:none; -webkit-appearance:none; flex-shrink:0; transition:all 0.15s; position:relative; }
+.goal-check:checked { background:#00e5a0; border-color:#00e5a0; }
+.goal-check:checked::after { content:''; position:absolute; top:3px; left:6px; width:5px; height:8px; border:2px solid #0d0f1a; border-top:none; border-left:none; transform:rotate(45deg); }
+.goal-input.done { text-decoration:line-through; color:var(--muted); }
+.goal-num.done { color:#00e5a0; }
+
+.goal-preview-item.done .goal-preview-text { text-decoration:line-through; color:var(--muted); }
+.goal-preview-item.done .goal-preview-num { color:#00e5a0; }
+.goal-preview-item.done { background:rgba(0,229,160,0.06); border-radius:8px; padding:0.2rem 0.4rem; margin-left:-0.4rem; }
+.goal-preview-done-label { font-size:0.65rem; color:#00e5a0; font-family:"DM Mono",monospace; margin-left:auto; }
+
+.day-goals-item.done .day-goals-text { text-decoration:line-through; color:var(--muted); }
+.day-goals-item.done .day-goals-num { color:#00e5a0; }
+.day-goals-item.done { background:rgba(0,229,160,0.06); border-radius:8px; padding:0.25rem 0.5rem; margin-left:-0.5rem; }
 .day-goals-add-btn { width:100%; margin-top:1rem; background:rgba(77,150,255,0.1); border:1px solid rgba(77,150,255,0.3); color:var(--accent2); padding:0.6rem; border-radius:10px; cursor:pointer; font-size:0.82rem; font-family:'Noto Sans KR',sans-serif; font-weight:600; transition:all 0.15s; }
 .day-goals-add-btn:hover { background:rgba(77,150,255,0.2); }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
@@ -720,11 +735,12 @@ function getDayGoals(d, name){
 }
 
 function getDayAllGoals(d){
-  // 해당 날짜의 모든 멤버 목표 반환
   return members
     .map(m => ({ name: m.name, emoji: m.emoji, goals: getDayGoals(d, m.name) }))
     .filter(m => m.goals.length > 0);
 }
+
+function getDayGoalText(g){ return typeof g==='object'?g.text:g; }
 async function saveCount(y,m,d,name,count){
   const r=doc(db,'attendance',docId(y,m));
   const field=`d${d}_${mKey(name)}`;
@@ -909,11 +925,13 @@ function renderCalendar(){
     if(holiday) cls+=' holiday';
     cell.className=cls;
     const emojisHtml=members.map(m=>{ const c=getCount(d,m.name); return c>0?`<span class="cal-emoji-ring ring-${c}" title="${m.name} (${c}회)">${m.emoji}</span>`:''; }).join('');
-    const hasGoals = getDayAllGoals(d).length > 0;
+    const allGoalsData = getDayAllGoals(d);
+    const hasGoals = allGoalsData.length > 0;
+    const hasAllDone = hasGoals && allGoalsData.every(m=>m.goals.every(g=>typeof g==='object'?g.done:false));
     cell.innerHTML=`
       <div class="cal-day-row">
         <span class="cal-day">${d}</span>
-        <span class="cal-goal-icon" onclick="event.stopPropagation();openDayGoals(${d})" title="목표 보기">${hasGoals?'📋':'📝'}</span>
+        <span class="cal-goal-icon" onclick="event.stopPropagation();openDayGoals(${d})" title="목표 보기">${hasAllDone?'✅':hasGoals?'📋':'📝'}</span>
       </div>
       ${holiday?`<span class="cal-holiday">${holiday}</span>`:''}
       <div class="cal-emojis">${emojisHtml}</div>
@@ -1025,7 +1043,7 @@ document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTime
 
 // ── 목표 ──────────────────────────────────────────
 let goalSelectedName = '';
-let goalRows = [''];
+let goalRows = [{text:'', done:false}];
 const GOAL_NUM_EMOJI = ['①','②','③','④','⑤'];
 
 let goalTargetDay = null; // 목표 입력 대상 날짜 (null=오늘)
@@ -1048,9 +1066,9 @@ window.openGoal = function(day){
   // 기존 저장된 목표 불러오기
   if(goalSelectedName){
     const saved = getDayGoals(goalTargetDay, goalSelectedName);
-    goalRows = saved.length > 0 ? [...saved] : [''];
+    goalRows = saved.length > 0 ? saved.map(g=>typeof g==='object'?g:{text:g,done:false}) : [{text:'',done:false}];
   } else {
-    goalRows = [''];
+    goalRows = [{text:'', done:false}];
   }
   renderGoalNameBox();
   updateGoalInputSection();
@@ -1123,10 +1141,11 @@ function renderGoalRows(){
   const container = document.getElementById('goalRows');
   const addBtn = document.getElementById('goalAddBtn');
   if(!container) return;
-  container.innerHTML = goalRows.map((val, i) => `
+  container.innerHTML = goalRows.map((g, i) => `
     <div class="goal-row">
-      <span class="goal-num">${GOAL_NUM_EMOJI[i]}</span>
-      <input class="goal-input" type="text" value="${val.replace(/"/g,'&quot;')}"
+      <input type="checkbox" class="goal-check" ${g.done?'checked':''} onchange="toggleGoalDone(${i}, this.checked)">
+      <span class="goal-num${g.done?' done':''}">${GOAL_NUM_EMOJI[i]}</span>
+      <input class="goal-input${g.done?' done':''}" type="text" value="${g.text.replace(/"/g,'&quot;')}"
         placeholder="목표 ${i+1} 입력"
         maxlength="60"
         oninput="updateGoalRow(${i}, this.value)">
@@ -1138,40 +1157,50 @@ function renderGoalRows(){
 }
 
 window.updateGoalRow = function(i, val){
-  goalRows[i] = val;
+  goalRows[i].text = val;
   updateGoalPreview();
 };
 
+window.toggleGoalDone = function(i, done){
+  goalRows[i].done = done;
+  renderGoalRows();
+};
+
 window.addGoalRow = function(){
-  if(goalRows.length < 5){ goalRows.push(''); renderGoalRows(); }
+  if(goalRows.length < 5){ goalRows.push({text:'',done:false}); renderGoalRows(); }
 };
 
 window.removeGoalRow = function(i){
-  if(goalRows.length === 1){ goalRows[0]=''; renderGoalRows(); return; }
+  if(goalRows.length === 1){ goalRows[0]={text:'',done:false}; renderGoalRows(); return; }
   goalRows.splice(i, 1);
   renderGoalRows();
 };
 
 let goalSaveTimer = null;
 window.updateGoalPreview = function(){
-  const filled = goalRows.filter(g=>g.trim());
+  const filled = goalRows.filter(g=>g.text.trim());
   const preview = document.getElementById('goalPreview');
   if(!preview) return;
   if(!goalSelectedName || filled.length===0){ preview.style.display='none'; return; }
   const m = members.find(m=>m.name===goalSelectedName);
   document.getElementById('goalPreviewEmoji').textContent = m?.emoji||'👤';
   document.getElementById('goalPreviewName').textContent = goalSelectedName;
+  const doneCount = filled.filter(g=>g.done).length;
   const list = document.getElementById('goalPreviewList');
   if(list) list.innerHTML = filled.map((g,i) =>
-    `<div class="goal-preview-item"><span class="goal-preview-num">${GOAL_NUM_EMOJI[i]}</span><span class="goal-preview-text">${g}</span></div>`
-  ).join('');
+    `<div class="goal-preview-item${g.done?' done':''}">
+      <span class="goal-preview-num">${g.done?'✅':GOAL_NUM_EMOJI[i]}</span>
+      <span class="goal-preview-text">${g.text}</span>
+      ${g.done?'<span class="goal-preview-done-label">완료!</span>':''}
+    </div>`
+  ).join('') + (doneCount>0&&doneCount===filled.length?'<div style="font-size:0.82rem;color:#00e5a0;font-weight:700;text-align:center;margin-top:0.4rem">🎉 오늘 목표 모두 완료!</div>':'');
   preview.style.display = 'flex';
 
   // 0.8초 디바운스 후 Firebase 저장
   if(goalSaveTimer) clearTimeout(goalSaveTimer);
   goalSaveTimer = setTimeout(async()=>{
     if(goalSelectedName && goalTargetDay){
-      await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, filled);
+      await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, filled.map(g=>({text:g.text,done:g.done})));
     }
   }, 800);
 };
@@ -1199,11 +1228,15 @@ window.openDayGoals = function(day){
           <span class="day-goals-member-name">${name}</span>
         </div>
         <div class="day-goals-list">
-          ${goals.map((g,i)=>`
-            <div class="day-goals-item">
-              <span class="day-goals-num">${GOAL_NUM_EMOJI[i]}</span>
-              <span class="day-goals-text">${g}</span>
-            </div>`).join('')}
+          ${goals.map((g,i)=>{
+            const isDone = typeof g==='object'?g.done:false;
+            const txt = typeof g==='object'?g.text:g;
+            return `<div class="day-goals-item${isDone?' done':''}">
+              <span class="day-goals-num">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>
+              <span class="day-goals-text">${txt}</span>
+              ${isDone?'<span style="font-size:0.65rem;color:#00e5a0;margin-left:auto;font-family:monospace">완료!</span>':''}
+            </div>`;
+          }).join('')}
         </div>
       </div>
     `).join('');
