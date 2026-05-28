@@ -262,6 +262,92 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   text-align:center; font-family:"DM Mono",monospace;
   font-size:0.58rem; color:#252840; margin-top:0.4rem;
 }
+.goal-btn {
+  font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
+  background:rgba(77,150,255,0.15); border:1px solid rgba(77,150,255,0.4);
+  color:var(--accent2); padding:0.35rem 0.9rem; border-radius:100px;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.goal-btn:hover { background:rgba(77,150,255,0.25); }
+
+.goal-name-box {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+}
+.goal-name-selected-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.65rem 0.9rem;
+}
+.goal-name-selected-inner { display:flex; align-items:center; gap:0.5rem; }
+.goal-name-selected-emoji { font-size:1.2rem; }
+.goal-name-selected-text { font-size:0.88rem; font-weight:700; color:var(--accent2); }
+.goal-name-change-btn {
+  background:transparent; border:1px solid var(--border); color:var(--muted);
+  padding:0.2rem 0.6rem; border-radius:100px; cursor:pointer; font-size:0.7rem;
+  font-family:'Noto Sans KR',sans-serif; transition:all 0.15s;
+}
+.goal-name-change-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+.goal-name-grid-label {
+  padding:0.5rem 0.9rem 0.3rem;
+  font-family:'DM Mono',monospace; font-size:0.62rem;
+  text-transform:uppercase; letter-spacing:0.1em; color:var(--muted);
+}
+.goal-name-grid { display:flex; flex-wrap:wrap; gap:0.35rem; padding:0 0.7rem 0.7rem; }
+.goal-name-chip {
+  display:flex; align-items:center; gap:0.3rem;
+  padding:0.3rem 0.6rem; background:var(--surface2);
+  border:1.5px solid var(--border); border-radius:8px;
+  cursor:pointer; font-size:0.73rem; font-weight:500;
+  transition:all 0.15s; user-select:none; color:var(--text);
+}
+.goal-name-chip:hover { border-color:#444b70; }
+
+.goal-section-label {
+  font-family:'DM Mono',monospace; font-size:0.65rem;
+  text-transform:uppercase; letter-spacing:0.1em; color:var(--muted);
+}
+.goal-input-section { display:flex; flex-direction:column; gap:0.5rem; }
+.goal-row { display:flex; align-items:center; gap:0.4rem; }
+.goal-num { font-size:1rem; color:var(--accent2); flex-shrink:0; min-width:1.2rem; font-weight:700; text-align:center; }
+.goal-input {
+  flex:1; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); border-radius:9px; padding:0.6rem 0.8rem;
+  font-family:'Noto Sans KR',sans-serif; font-size:0.88rem;
+  outline:none; transition:border-color 0.15s; box-sizing:border-box;
+}
+.goal-input:focus { border-color:var(--accent2); }
+.goal-del-btn {
+  background:transparent; border:1px solid var(--border); color:var(--muted);
+  width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:0.75rem;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s;
+}
+.goal-del-btn:hover { border-color:var(--danger); color:var(--danger); }
+.goal-add-btn {
+  background:transparent; border:1px dashed var(--border); color:var(--muted);
+  border-radius:9px; padding:0.5rem; font-size:0.78rem; cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif; transition:all 0.15s; width:100%;
+}
+.goal-add-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+
+.goal-preview {
+  background:var(--surface); border:1px solid rgba(77,150,255,0.35);
+  border-radius:16px; padding:1.1rem 1.2rem;
+  display:flex; flex-direction:column; gap:0.75rem;
+}
+.goal-preview-member { display:flex; align-items:center; gap:0.5rem; }
+.goal-preview-emoji { font-size:1.8rem; }
+.goal-preview-name-wrap { display:flex; flex-direction:column; }
+.goal-preview-name { font-size:1rem; font-weight:800; }
+.goal-preview-date { font-size:0.7rem; color:var(--muted); font-family:'DM Mono',monospace; }
+.goal-preview-list {
+  display:flex; flex-direction:column; gap:0.5rem;
+  border-left:3px solid var(--accent2); padding-left:0.9rem;
+}
+.goal-preview-item { display:flex; align-items:baseline; gap:0.5rem; }
+.goal-preview-num { font-size:1rem; color:var(--accent2); font-weight:700; flex-shrink:0; }
+.goal-preview-text { font-size:0.92rem; color:var(--text); line-height:1.5; }
+
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -294,6 +380,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
   <span class="sync-badge" id="syncBadge">연결 중...</span>
   <button class="summary-btn" onclick="openSummary()">📊 오늘의 결산</button>
+  <button class="goal-btn" onclick="openGoal()">🎯 오늘의 목표</button>
 </nav>
 
 <div class="main">
@@ -355,6 +442,61 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
   </div>
 
+</div>
+
+<!-- 목표 전체화면 -->
+<div class="summary-overlay" id="goalOverlay" style="display:none">
+  <div class="summary-modal">
+    <div class="summary-top-bar">
+      <span style="font-size:0.82rem;color:var(--muted);font-family:'DM Mono',monospace" id="goalDateLabel"></span>
+      <button class="summary-close" onclick="closeGoal()">← 돌아가기</button>
+    </div>
+    <div class="summary-date-block">
+      <span class="summary-date" id="goalDate"></span>
+      <span class="summary-headline">오늘의 인증 목표! ✍️</span>
+    </div>
+
+    <!-- 닉네임 선택 (접이식) -->
+    <div class="goal-name-box" id="goalNameBox">
+      <div id="goalNameSelected" style="display:none">
+        <div class="goal-name-selected-row">
+          <div class="goal-name-selected-inner">
+            <span class="goal-name-selected-emoji" id="goalSelEmoji"></span>
+            <span class="goal-name-selected-text" id="goalSelText"></span>
+          </div>
+          <button class="goal-name-change-btn" onclick="changeGoalName()">변경</button>
+        </div>
+      </div>
+      <div id="goalNameGridWrap">
+        <div class="goal-name-grid-label">닉네임 선택</div>
+        <div class="goal-name-grid" id="goalNameGrid"></div>
+      </div>
+    </div>
+
+    <!-- 목표 입력 -->
+    <div class="goal-input-section" id="goalInputSection" style="display:none">
+      <div class="goal-section-label" id="goalInputLabel"></div>
+      <div id="goalRows"></div>
+      <button class="goal-add-btn" id="goalAddBtn" onclick="addGoalRow()">+ 목표 추가 (최대 5개)</button>
+    </div>
+
+    <!-- 목표 미리보기 -->
+    <div class="goal-preview" id="goalPreview" style="display:none">
+      <div class="goal-preview-member">
+        <span class="goal-preview-emoji" id="goalPreviewEmoji"></span>
+        <div class="goal-preview-name-wrap">
+          <span class="goal-preview-name" id="goalPreviewName"></span>
+          <span class="goal-preview-date" id="goalPreviewDate"></span>
+        </div>
+      </div>
+      <div class="goal-preview-list" id="goalPreviewList"></div>
+    </div>
+
+    <div class="summary-footer" style="margin-top:auto">
+      <div class="summary-tip">📸 스크린샷 후 카톡방에 공유하세요!</div>
+      <div class="summary-watermark">직장인 수능준비생 1일 1인증방</div>
+    </div>
+  </div>
 </div>
 
 <!-- 결산 전체화면 -->
@@ -797,6 +939,79 @@ document.addEventListener('mousedown', function(e){
   },600);
 });
 document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }});
+
+// ── 목표 ──────────────────────────────────────────
+let goalSelectedName = '';
+
+window.openGoal = function(){
+  const overlay = document.getElementById('goalOverlay');
+  const dateEl = document.getElementById('goalDate');
+  const dateLabel = document.getElementById('goalDateLabel');
+  const now = new Date();
+  const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+  dateEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 ${dowNames[now.getDay()]}`;
+  dateLabel.textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
+
+  goalSelectedName = myName || '';
+  renderGoalNameGrid();
+  updateGoalInputSection();
+
+  document.getElementById('goalTextarea').value = '';
+  document.getElementById('goalCharCount').textContent = '0';
+  document.getElementById('goalPreview').style.display = 'none';
+
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeGoal = function(){
+  document.getElementById('goalOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+function renderGoalNameGrid(){
+  const grid = document.getElementById('goalNameGrid');
+  grid.innerHTML = members.map(m => `
+    <div class="goal-name-chip${m.name===goalSelectedName?' selected':''}" onclick="selectGoalName('${m.name.replace(/'/g,"\'")}')">
+      <span>${m.emoji}</span>${m.name}
+    </div>
+  `).join('');
+}
+
+window.selectGoalName = function(name){
+  goalSelectedName = name;
+  renderGoalNameGrid();
+  updateGoalInputSection();
+  updateGoalPreview();
+};
+
+function updateGoalInputSection(){
+  const section = document.getElementById('goalInputSection');
+  const label = document.getElementById('goalInputLabel');
+  if(goalSelectedName){
+    const m = members.find(m=>m.name===goalSelectedName);
+    label.textContent = `${m?.emoji||''} ${goalSelectedName}의 오늘 목표`;
+    section.style.display = 'flex';
+  } else {
+    section.style.display = 'none';
+    document.getElementById('goalPreview').style.display = 'none';
+  }
+}
+
+window.updateGoalPreview = function(){
+  const text = document.getElementById('goalTextarea').value.trim();
+  const charCount = document.getElementById('goalTextarea').value.length;
+  document.getElementById('goalCharCount').textContent = charCount;
+
+  const preview = document.getElementById('goalPreview');
+  if(!goalSelectedName || !text){ preview.style.display='none'; return; }
+
+  const m = members.find(m=>m.name===goalSelectedName);
+  document.getElementById('goalPreviewEmoji').textContent = m?.emoji||'👤';
+  document.getElementById('goalPreviewName').textContent = goalSelectedName;
+  document.getElementById('goalPreviewText').textContent = text;
+  preview.style.display = 'flex';
+};
 
 // ── 결산 ──────────────────────────────────────────
 window.openSummary = function(){
