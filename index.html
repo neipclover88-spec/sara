@@ -674,7 +674,7 @@ let myName = localStorage.getItem('att_myname')||'';
 const todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
 
 function mKey(n){ return n.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
-function dayDocId(y,m,d){ return `${y}-${m}-${d}`; } // Firebase 기존 형식 (0-indexed month)
+function docId(y,m){ return `${y}_${String(m).padStart(2,'0')}`; }
 
 // allData: allData[day] = { fieldKey: value }
 
@@ -721,27 +721,13 @@ let unsubscribeAtt = null;
 function subscribeMonth(y,m){
   subscribeGoals(y,m);
   if(unsubscribeAtt) unsubscribeAtt();
-  allData = {};
-  const dim = new Date(y, m+1, 0).getDate();
-  const unsubs = [];
-  let loaded = 0;
-
-  for(let d=1; d<=dim; d++){
-    const r = doc(db,'attendance', dayDocId(y,m,d));
-    const _d = d;
-    const unsub = onSnapshot(r,(snap)=>{
-      if(snap.exists()) allData[_d] = snap.data();
-      else delete allData[_d];
-      loaded++;
-      if(loaded >= dim){
-        document.getElementById('loading').classList.add('hidden');
-        setSyncStatus(true);
-      }
-      render();
-    },()=>{ setSyncStatus(false); document.getElementById('loading').classList.add('hidden'); });
-    unsubs.push(unsub);
-  }
-  unsubscribeAtt = ()=> unsubs.forEach(u=>u());
+  const r=doc(db,'attendance',docId(y,m));
+  unsubscribeAtt = onSnapshot(r,(snap)=>{
+    allData=snap.exists()?snap.data():{};
+    render();
+    document.getElementById('loading').classList.add('hidden');
+    setSyncStatus(true);
+  },()=>{ document.getElementById('loading').classList.add('hidden'); setSyncStatus(false); });
 }
 
 function setSyncStatus(ok){
@@ -759,11 +745,7 @@ async function saveCheck(y,m,d,name,checked){
 }
 
 function getCount(d,name){
-  const dayData = allData[d] || {};
-  // mKey 형식 먼저, 없으면 plain name, 없으면 이름 앞부분
-  const v = dayData[mKey(name)]
-    ?? dayData[name]
-    ?? dayData[name.split('(')[0].trim()];
+  const v=allData[`d${d}_${mKey(name)}`];
   return v===true?1:(v||0);
 }
 
@@ -773,34 +755,24 @@ let unsubscribeGoals = null;
 
 function subscribeGoals(y,m){
   if(unsubscribeGoals) unsubscribeGoals();
-  goalsData = {};
-  const dim = new Date(y, m+1, 0).getDate();
-  const unsubs = [];
-  for(let d=1; d<=dim; d++){
-    const r = doc(db,'goals', dayDocId(y,m,d));
-    const _d = d;
-    const unsub = onSnapshot(r,(snap)=>{
-      if(snap.exists()) goalsData[_d] = snap.data();
-      else delete goalsData[_d];
-    });
-    unsubs.push(unsub);
-  }
-  unsubscribeGoals = ()=> unsubs.forEach(u=>u());
+  const r=doc(db,'goals',docId(y,m));
+  unsubscribeGoals=onSnapshot(r,(snap)=>{
+    goalsData=snap.exists()?snap.data():{};
+  });
 }
 
 async function saveGoals(y,m,d,name,goals){
-  const r = doc(db,'goals', dayDocId(y,m,d));
-  const snap = await getDoc(r);
-  const data = snap.exists() ? snap.data() : {};
-  const key = mKey(name);
-  if(goals.length > 0) data[key] = goals;
-  else delete data[key];
-  await setDoc(r, data);
+  const r=doc(db,'goals',docId(y,m));
+  const field=`d${d}_${mKey(name)}`;
+  const snap=await getDoc(r);
+  const data=snap.exists()?snap.data():{};
+  if(goals.length>0) data[field]=goals;
+  else delete data[field];
+  await setDoc(r,data);
 }
 
-function getDayGoals(d, name){
-  const dayGoals = goalsData[d] || {};
-  return dayGoals[mKey(name)] || dayGoals[name] || [];
+function getDayGoals(d,name){
+  return goalsData[`d${d}_${mKey(name)}`]||[];
 }
 
 function getDayAllGoals(d){
@@ -811,12 +783,12 @@ function getDayAllGoals(d){
 
 function getDayGoalText(g){ return typeof g==='object'?g.text:g; }
 async function saveCount(y,m,d,name,count){
-  const r = doc(db,'attendance', dayDocId(y,m,d));
-  const snap = await getDoc(r);
-  const data = snap.exists() ? snap.data() : {};
-  const key = mKey(name);
-  if(count>0) data[key]=count; else delete data[key];
-  await setDoc(r, data);
+  const r=doc(db,'attendance',docId(y,m));
+  const field=`d${d}_${mKey(name)}`;
+  const snap=await getDoc(r);
+  const data=snap.exists()?snap.data():{};
+  if(count>0) data[field]=count; else delete data[field];
+  await setDoc(r,data);
 }
 function isChecked(d,name){ return !!(allData[`d${d}_${mKey(name)}`]); }
 function dayCheckedMembers(d){ return members.filter(m=>isChecked(d,m.name)); }
