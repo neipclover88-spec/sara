@@ -310,7 +310,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .goal-input-section { display:flex; flex-direction:column; gap:0.5rem; }
 .goal-row { display:flex; flex-direction:column; gap:0.35rem; background:var(--surface2); border:1px solid var(--border); border-radius:11px; padding:0.65rem 0.75rem; }
 .goal-row-top { display:flex; align-items:center; gap:0.4rem; }
-.goal-row-bottom { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
+.goal-row-sub { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
 .goal-type-btn { font-size:0.7rem; padding:0.2rem 0.55rem; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:"Noto Sans KR",sans-serif; transition:all 0.15s; white-space:nowrap; }
 .goal-type-btn.active-reach { border-color:#4d96ff; background:rgba(77,150,255,0.15); color:#4d96ff; }
 .goal-type-btn.active-consume { border-color:#ffd93d; background:rgba(255,217,61,0.15); color:#ffd93d; }
@@ -319,6 +319,8 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .goal-unit-input { width:60px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:7px; padding:0.25rem 0.5rem; font-size:0.82rem; outline:none; font-family:"Noto Sans KR",sans-serif; }
 .goal-unit-input:focus { border-color:var(--accent2); }
 .goal-val-label { font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+.goal-row-sub { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
+.goal-sub-sep { color:var(--border); }
 .goal-actual-wrap { display:flex; align-items:center; gap:0.3rem; margin-top:0.2rem; padding-left:1.8rem; flex-wrap:wrap; }
 .goal-actual-label { font-size:0.7rem; color:var(--muted); white-space:nowrap; }
 .goal-actual-input { width:60px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:7px; padding:0.25rem 0.5rem; font-size:0.82rem; font-family:"DM Mono",monospace; outline:none; text-align:center; }
@@ -395,7 +397,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .day-goals-text { font-size:0.85rem; color:var(--text); line-height:1.5; }
 .goal-row { display:flex; flex-direction:column; gap:0.35rem; background:var(--surface2); border:1px solid var(--border); border-radius:11px; padding:0.65rem 0.75rem; }
 .goal-row-top { display:flex; align-items:center; gap:0.4rem; }
-.goal-row-bottom { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
+.goal-row-sub { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
 .goal-type-btn { font-size:0.7rem; padding:0.2rem 0.55rem; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:"Noto Sans KR",sans-serif; transition:all 0.15s; white-space:nowrap; }
 .goal-type-btn.active-reach { border-color:#4d96ff; background:rgba(77,150,255,0.15); color:#4d96ff; }
 .goal-type-btn.active-consume { border-color:#ffd93d; background:rgba(255,217,61,0.15); color:#ffd93d; }
@@ -404,6 +406,8 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .goal-unit-input { width:60px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:7px; padding:0.25rem 0.5rem; font-size:0.82rem; outline:none; font-family:"Noto Sans KR",sans-serif; }
 .goal-unit-input:focus { border-color:var(--accent2); }
 .goal-val-label { font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+.goal-row-sub { display:flex; align-items:center; gap:0.35rem; padding-left:1.8rem; flex-wrap:wrap; }
+.goal-sub-sep { color:var(--border); }
 .goal-actual-wrap { display:flex; align-items:center; gap:0.3rem; margin-top:0.2rem; padding-left:1.8rem; flex-wrap:wrap; }
 .goal-actual-label { font-size:0.7rem; color:var(--muted); white-space:nowrap; }
 .goal-actual-input { width:60px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:7px; padding:0.25rem 0.5rem; font-size:0.82rem; font-family:"DM Mono",monospace; outline:none; text-align:center; }
@@ -1177,44 +1181,55 @@ function renderGoalRows(){
   const container = document.getElementById('goalRows');
   const addBtn = document.getElementById('goalAddBtn');
   if(!container) return;
+
   container.innerHTML = goalRows.map((g, i) => {
-    const valLabel = g.type==='reach' ? '📍 목표치:' : g.type==='consume' ? '⏱ 소모량:' : '';
-    const valPlaceholder = g.type==='reach' ? '150' : g.type==='consume' ? '40' : '';
-    const unitPlaceholder = g.type==='reach' ? '페이지' : g.type==='consume' ? '분' : '';
+    const typeReach = g.type==='reach';
+    const typeConsume = g.type==='consume';
+    const hasType = typeReach || typeConsume;
+    const hasValue = hasType && g.value;
+
+    // 목표값 라벨
+    const valLabel = typeReach ? '📍 목표치' : typeConsume ? '⏱ 소모량' : '';
+    const valPlaceholder = typeReach ? '150' : '40';
+    const unitPlaceholder = typeReach ? '페이지' : '분';
+
+    // 실제 달성값 라벨
+    const actualLabel = typeReach ? '📝 실제 달성' : '📝 실제 소모';
+
+    // 상태 뱃지
+    const badge = statusBadge(g);
+
     return `<div class="goal-row">
       <div class="goal-row-top">
         <input type="checkbox" class="goal-check" ${g.done?'checked':''} onchange="toggleGoalDone(${i}, this.checked)">
         <span class="goal-num${g.done?' done':''}">${GOAL_NUM_EMOJI[i]}</span>
-        <input class="goal-input${g.done?' done':''}" type="text" value="${g.text.replace(/"/g,'&quot;')}"
+        <input class="goal-input${g.done?' done':''}" type="text"
+          value="${g.text.replace(/"/g,'&quot;')}"
           placeholder="목표 ${i+1} 입력" maxlength="60"
-          oninput="updateGoalRowText(${i}, this.value)" style="flex:1">
+          oninput="updateGoalRowText(${i}, this.value)">
         <button class="goal-del-btn" onclick="removeGoalRow(${i})">✕</button>
       </div>
-      <div class="goal-row-bottom">
-        <button class="goal-type-btn${g.type==='reach'?' active-reach':''}" onclick="setGoalType(${i},'reach')">📍 도달</button>
-        <button class="goal-type-btn${g.type==='consume'?' active-consume':''}" onclick="setGoalType(${i},'consume')">⏱ 소모량</button>
-        ${g.type ? `
-          <span class="goal-val-label">${valLabel}</span>
-          <input class="goal-val-input" type="number" value="${g.value}"
-            placeholder="${valPlaceholder}" min="0"
-            oninput="updateGoalVal(${i}, this.value)">
-          <input class="goal-unit-input" type="text" value="${g.unit}"
-            placeholder="${unitPlaceholder}" maxlength="6"
-            oninput="updateGoalUnit(${i}, this.value)">
+      <div class="goal-row-sub">
+        <button class="goal-type-btn${typeReach?' active-reach':''}" onclick="setGoalType(${i},'reach')">📍 도달</button>
+        <button class="goal-type-btn${typeConsume?' active-consume':''}" onclick="setGoalType(${i},'consume')">⏱ 소모량</button>
+        ${hasType ? `
+          <span class="goal-sub-sep">|</span>
+          <span class="goal-val-label">${valLabel}:</span>
+          <input class="goal-val-input" type="number" value="${g.value}" placeholder="${valPlaceholder}" min="0" oninput="updateGoalVal(${i}, this.value)">
+          <input class="goal-unit-input" type="text" value="${g.unit}" placeholder="${unitPlaceholder}" maxlength="6" oninput="updateGoalUnit(${i}, this.value)">
         ` : ''}
-      ${g.type && g.value ? `
-      <div class="goal-actual-wrap">
-        <span class="goal-actual-label">${g.type==='reach'?'📝 실제 달성:':'📝 실제 소모:'}</span>
-        <input class="goal-actual-input" type="number" value="${g.actual}"
-          placeholder="?" min="0"
-          oninput="updateGoalActual(${i}, this.value)">
-        <span class="goal-actual-label">${g.unit||''}</span>
-        <span id="goal-badge-${i}">${statusBadge(g)}</span>
       </div>
-      ` : '<div style="display:none">'}
+      ${hasValue ? `
+      <div class="goal-row-sub">
+        <span class="goal-val-label">${actualLabel}:</span>
+        <input class="goal-actual-input" type="number" value="${g.actual}" placeholder="?" min="0" oninput="updateGoalActual(${i}, this.value)">
+        <span class="goal-val-label">${g.unit||''}</span>
+        <span id="goal-badge-${i}">${badge}</span>
       </div>
+      ` : ''}
     </div>`;
   }).join('');
+
   if(addBtn) addBtn.style.display = goalRows.length >= 5 ? 'none' : 'block';
   updateGoalPreview();
 }
