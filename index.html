@@ -674,7 +674,7 @@ let myName = localStorage.getItem('att_myname')||'';
 const todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
 
 function mKey(n){ return n.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
-function dayDocId(y,m,d){ return `${y}-${m+1}-${d}`; } // Firebase 기존 형식 "2026-1-16"
+function dayDocId(y,m,d){ return `${y}-${m}-${d}`; } // Firebase 기존 형식 (0-indexed month)
 
 // allData: allData[day] = { fieldKey: value }
 
