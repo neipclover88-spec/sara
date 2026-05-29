@@ -1210,7 +1210,11 @@ let dayGoalsTargetDay = null;
 
 window.openDayGoals = function(day){
   dayGoalsTargetDay = day;
-  const overlay = document.getElementById('dayGoalsOverlay');
+  renderDayGoalsBody(day);
+  document.getElementById('dayGoalsOverlay').style.display = 'flex';
+};
+
+function renderDayGoalsBody(day){
   const title = document.getElementById('dayGoalsTitle');
   const body = document.getElementById('dayGoalsBody');
   const d = new Date(curYear, curMonth, day);
@@ -1231,18 +1235,37 @@ window.openDayGoals = function(day){
           ${goals.map((g,i)=>{
             const isDone = typeof g==='object'?g.done:false;
             const txt = typeof g==='object'?g.text:g;
-            return `<div class="day-goals-item${isDone?' done':''}">
-              <span class="day-goals-num">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>
+            const isMe = name === myName;
+            return `<div class="day-goals-item${isDone?' done':''}" style="align-items:center;">
+              ${isMe
+                ? `<input type="checkbox" class="goal-check" style="flex-shrink:0;width:18px;height:18px;"
+                    ${isDone?'checked':''}
+                    onchange="toggleDayGoalDone('${name.replace(/'/g,"\'")}',${day},${i},this.checked)">`
+                : `<span class="day-goals-num">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>`
+              }
+              ${isMe?`<span class="day-goals-num" style="margin-left:2px">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>`:''}
               <span class="day-goals-text">${txt}</span>
-              ${isDone?'<span style="font-size:0.65rem;color:#00e5a0;margin-left:auto;font-family:monospace">완료!</span>':''}
+              ${isDone?'<span style="font-size:0.63rem;color:#00e5a0;margin-left:auto;font-family:monospace;flex-shrink:0">완료!</span>':''}
             </div>`;
           }).join('')}
         </div>
       </div>
     `).join('');
   }
-  overlay.style.display = 'flex';
+}
+
+window.toggleDayGoalDone = async function(name, day, idx, done){
+  const saved = getDayGoals(day, name);
+  const updated = saved.map((g,i)=>{
+    const obj = typeof g==='object' ? {...g} : {text:g, done:false};
+    if(i===idx) obj.done = done;
+    return obj;
+  });
+  await saveGoals(curYear, curMonth, day, name, updated);
+  renderDayGoalsBody(day);
+  renderCalendar(); // 달력 아이콘도 업데이트
 };
+
 
 window.closeDayGoals = function(e){
   if(e && e.target.id !== 'dayGoalsOverlay' && e.type==='click') return;
