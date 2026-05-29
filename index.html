@@ -674,7 +674,10 @@ let myName = localStorage.getItem('att_myname')||'';
 const todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
 
 function mKey(n){ return n.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_'); }
-function docId(y,m){ return `${y}_${String(m).padStart(2,'0')}`; }
+function dayDocId(y,m,d){ return `${y}-${m+1}-${d}`; } // Firebase 기존 형식 "2026-1-16"
+
+// allData: allData[day] = { fieldKey: value }
+
 function memberEmoji(name){ return members.find(m=>m.name===name)?.emoji||'👤'; }
 
 // ── Firebase 멤버 리스너 ───────────────────────────
@@ -697,20 +700,15 @@ onSnapshot(membersRef, (snap)=>{
 
 function getDefaultMembers(){
   return [
-    {name:"귀염둥이만학도(치/한)", emoji:"🐰"},
-    {name:"긍정(메디컬)",          emoji:"🌻"},
-    {name:"도로로(메디컬)",        emoji:"🐻"},
-    {name:"두콩(약대)",            emoji:"🟢"},
-    {name:"루비(메디컬)",          emoji:"💎"},
-    {name:"Rachel",               emoji:"🌸"},
-    {name:"사라(약대)",            emoji:"⭐"},
-    {name:"스카피(메디컬)",        emoji:"🌙"},
-    {name:"연우(경한)",            emoji:"🍀"},
-    {name:"음악듣는 어피치",       emoji:"🎀"},
-    {name:"진인사/남/남구/시험",   emoji:"🌈"},
-    {name:"청소오리(의한약)",      emoji:"🐥"},
-    {name:"크롱(한의대)",          emoji:"🍵"},
-    {name:"피카츄(의대)",          emoji:"✨"},
+    {name:"나니즈",     emoji:"🌙"},
+    {name:"또잉",       emoji:"🦈"},
+    {name:"라이언",     emoji:"🐻"},
+    {name:"로로",       emoji:"🐥"},
+    {name:"링고",       emoji:"🍎"},
+    {name:"솜솜",       emoji:"🌸"},
+    {name:"슈가링캔디", emoji:"🍬"},
+    {name:"오픈런",     emoji:"🏅"},
+    {name:"연우",       emoji:"👑"},
   ];
 }
 
@@ -723,13 +721,27 @@ let unsubscribeAtt = null;
 function subscribeMonth(y,m){
   subscribeGoals(y,m);
   if(unsubscribeAtt) unsubscribeAtt();
-  const r=doc(db,'attendance',docId(y,m));
-  unsubscribeAtt = onSnapshot(r,(snap)=>{
-    allData=snap.exists()?snap.data():{};
-    render();
-    document.getElementById('loading').classList.add('hidden');
-    setSyncStatus(true);
-  },()=>{ document.getElementById('loading').classList.add('hidden'); setSyncStatus(false); });
+  allData = {};
+  const dim = new Date(y, m+1, 0).getDate();
+  const unsubs = [];
+  let loaded = 0;
+
+  for(let d=1; d<=dim; d++){
+    const r = doc(db,'attendance', dayDocId(y,m,d));
+    const _d = d;
+    const unsub = onSnapshot(r,(snap)=>{
+      if(snap.exists()) allData[_d] = snap.data();
+      else delete allData[_d];
+      loaded++;
+      if(loaded >= dim){
+        document.getElementById('loading').classList.add('hidden');
+        setSyncStatus(true);
+      }
+      render();
+    },()=>{ setSyncStatus(false); document.getElementById('loading').classList.add('hidden'); });
+    unsubs.push(unsub);
+  }
+  unsubscribeAtt = ()=> unsubs.forEach(u=>u());
 }
 
 function setSyncStatus(ok){
@@ -746,7 +758,14 @@ async function saveCheck(y,m,d,name,checked){
   await setDoc(r,data);
 }
 
-function getCount(d,name){ const v=allData[`d${d}_${mKey(name)}`]; return v===true?1:(v||0); }
+function getCount(d,name){
+  const dayData = allData[d] || {};
+  // mKey 형식 먼저, 없으면 plain name, 없으면 이름 앞부분
+  const v = dayData[mKey(name)]
+    ?? dayData[name]
+    ?? dayData[name.split('(')[0].trim()];
+  return v===true?1:(v||0);
+}
 
 // ── 목표 데이터 ───────────────────────────────────
 let goalsData = {}; // goalsData[field] = ["목표1","목표2"]
@@ -754,24 +773,34 @@ let unsubscribeGoals = null;
 
 function subscribeGoals(y,m){
   if(unsubscribeGoals) unsubscribeGoals();
-  const r = doc(db,'goals',docId(y,m));
-  unsubscribeGoals = onSnapshot(r,(snap)=>{
-    goalsData = snap.exists() ? snap.data() : {};
-  });
+  goalsData = {};
+  const dim = new Date(y, m+1, 0).getDate();
+  const unsubs = [];
+  for(let d=1; d<=dim; d++){
+    const r = doc(db,'goals', dayDocId(y,m,d));
+    const _d = d;
+    const unsub = onSnapshot(r,(snap)=>{
+      if(snap.exists()) goalsData[_d] = snap.data();
+      else delete goalsData[_d];
+    });
+    unsubs.push(unsub);
+  }
+  unsubscribeGoals = ()=> unsubs.forEach(u=>u());
 }
 
 async function saveGoals(y,m,d,name,goals){
-  const r = doc(db,'goals',docId(y,m));
-  const field = `d${d}_${mKey(name)}`;
+  const r = doc(db,'goals', dayDocId(y,m,d));
   const snap = await getDoc(r);
   const data = snap.exists() ? snap.data() : {};
-  if(goals.length > 0) data[field] = goals;
-  else delete data[field];
+  const key = mKey(name);
+  if(goals.length > 0) data[key] = goals;
+  else delete data[key];
   await setDoc(r, data);
 }
 
 function getDayGoals(d, name){
-  return goalsData[`d${d}_${mKey(name)}`] || [];
+  const dayGoals = goalsData[d] || {};
+  return dayGoals[mKey(name)] || dayGoals[name] || [];
 }
 
 function getDayAllGoals(d){
@@ -782,12 +811,12 @@ function getDayAllGoals(d){
 
 function getDayGoalText(g){ return typeof g==='object'?g.text:g; }
 async function saveCount(y,m,d,name,count){
-  const r=doc(db,'attendance',docId(y,m));
-  const field=`d${d}_${mKey(name)}`;
-  const snap=await getDoc(r);
-  const data=snap.exists()?snap.data():{};
-  if(count>0) data[field]=count; else delete data[field];
-  await setDoc(r,data);
+  const r = doc(db,'attendance', dayDocId(y,m,d));
+  const snap = await getDoc(r);
+  const data = snap.exists() ? snap.data() : {};
+  const key = mKey(name);
+  if(count>0) data[key]=count; else delete data[key];
+  await setDoc(r, data);
 }
 function isChecked(d,name){ return !!(allData[`d${d}_${mKey(name)}`]); }
 function dayCheckedMembers(d){ return members.filter(m=>isChecked(d,m.name)); }
