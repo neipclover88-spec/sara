@@ -1262,23 +1262,24 @@ function statusBadge(g){
 
 window.updateGoalRowText = function(i, val){ goalRows[i].text = val; updateGoalPreview(); };
 window.updateGoalRow = window.updateGoalRowText; // 호환성
-window.updateGoalVal = function(i, val){ goalRows[i].value = val; updateGoalPreview(); };
+window.updateGoalVal = function(i, val){ goalRows[i].value = val; triggerGoalSave(); updateGoalPreview(); };
 window.updateGoalActual = function(i, val){
   goalRows[i].actual = val;
-  // 자동 done 설정
   const s = calcGoalStatus(goalRows[i]);
   goalRows[i].done = (s === 'done');
+  triggerGoalSave();
   updateGoalPreview();
   // 뱃지만 업데이트 (전체 리렌더 없이)
   const badge = document.getElementById('goal-badge-'+i);
   if(badge) badge.innerHTML = statusBadge(goalRows[i]);
 };
-window.updateGoalUnit = function(i, unit){ goalRows[i].unit = unit; updateGoalPreview(); };
+window.updateGoalUnit = function(i, unit){ goalRows[i].unit = unit; triggerGoalSave(); updateGoalPreview(); };
 window.setGoalType = function(i, type){
   goalRows[i].type = goalRows[i].type===type ? '' : type;
   if(!goalRows[i].unit){
     goalRows[i].unit = type==='reach' ? '페이지' : type==='consume' ? '분' : '';
   }
+  triggerGoalSave();
   renderGoalRows();
 };
 
@@ -1298,6 +1299,19 @@ window.removeGoalRow = function(i){
 };
 
 let goalSaveTimer = null;
+
+function triggerGoalSave(){
+  if(!goalSelectedName || !goalTargetDay) return;
+  if(goalSaveTimer) clearTimeout(goalSaveTimer);
+  goalSaveTimer = setTimeout(async()=>{
+    const toSave = goalRows.filter(g=>g.text.trim()).map(g=>({
+      text:g.text, done:g.done, type:g.type||'',
+      value:g.value||'', unit:g.unit||'', actual:g.actual||''
+    }));
+    await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, toSave);
+  }, 600);
+}
+
 window.updateGoalPreview = function(){
   const filled = goalRows.filter(g=>g.text.trim());
   const preview = document.getElementById('goalPreview');
@@ -1319,13 +1333,8 @@ window.updateGoalPreview = function(){
   ).join('') + (doneCount>0&&doneCount===filled.length?'<div style="font-size:0.82rem;color:#00e5a0;font-weight:700;text-align:center;margin-top:0.4rem">🎉 오늘 목표 모두 완료!</div>':'');
   preview.style.display = 'flex';
 
-  // 0.8초 디바운스 후 Firebase 저장
-  if(goalSaveTimer) clearTimeout(goalSaveTimer);
-  goalSaveTimer = setTimeout(async()=>{
-    if(goalSelectedName && goalTargetDay){
-      await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, filled.map(g=>({text:g.text,done:g.done})));
-    }
-  }, 800);
+  // 텍스트 변경 시에도 저장 트리거
+  triggerGoalSave();
 };
 
 // ── 날짜별 목표 모아보기 ──────────────────────────
