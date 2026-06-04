@@ -1456,8 +1456,8 @@ window.openSummary = function(){
     if(streak>=7) return {tier:'tier-1', msg:`🔥 ${streak}일 연속 개근 중! 이 기세를 이어가요!`, badge:`👑 ${streak}일 연속`};
     if(streak>=3) return {tier:'tier-1', msg:`⚡ ${streak}일 연속 개근! 페이스 좋아요!`, badge:`🔥 ${streak}일 연속`};
     if(streak>=1) return {tier:'tier-2', msg:`✅ ${streak}일 연속 중 · 이번 달 ${total}회 인증`, badge:`✅ ${total}회`};
-    if(rate>=70) return {tier:'tier-3', msg:`📚 이번 달 ${rate}% 참여 · 오늘 다시 시작해봐요!`, badge:`${rate}%`};
-    if(rate>=40) return {tier:'tier-3', msg:`📖 이번 달 ${total}회 인증 · 조금 더 힘내봐요`, badge:`${total}회`};
+    if(rate>=70) return {tier:'tier-2', msg:`✨ 이번 달 ${rate}% 참여 중! 오늘도 화이팅!`, badge:`${rate}%`};
+    if(rate>=40) return {tier:'tier-3', msg:`📖 이번 달 ${total}회 인증 · 오늘 한 번 더 해봐요`, badge:`${total}회`};
     if(total>0)  return {tier:'tier-low', msg:`🌱 이번 달 ${total}회 인증 · 꾸준히 해봐요`, badge:`${total}회`};
     return {tier:'tier-low', msg:'😴 아직 이번 달 인증이 없어요 · 오늘부터 시작!', badge:'0회'};
   }
