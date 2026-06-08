@@ -263,13 +263,155 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   text-align:center; font-family:"DM Mono",monospace;
   font-size:0.58rem; color:#252840; margin-top:0.4rem;
 }
-.goal-btn {
+.challenge-nav-btn {
   font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
-  background:rgba(77,150,255,0.15); border:1px solid rgba(77,150,255,0.4);
-  color:var(--accent2); padding:0.35rem 0.9rem; border-radius:100px;
+  background:linear-gradient(135deg,rgba(255,140,0,0.2),rgba(255,60,0,0.15));
+  border:1px solid rgba(255,140,0,0.5); color:#ff8c00;
+  padding:0.35rem 0.9rem; border-radius:100px;
   cursor:pointer; transition:all 0.2s; white-space:nowrap;
 }
-.goal-btn:hover { background:rgba(77,150,255,0.25); }
+.challenge-nav-btn:hover { background:linear-gradient(135deg,rgba(255,140,0,0.3),rgba(255,60,0,0.2)); }
+
+/* 챌린지 공통 */
+.ch-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:#0a0c14; overflow-y:auto;
+  display:flex; flex-direction:column;
+}
+.ch-modal {
+  width:100%; max-width:640px; margin:0 auto;
+  padding:1rem 1rem 1.5rem;
+  display:flex; flex-direction:column; gap:0.7rem;
+}
+.ch-topbar {
+  display:flex; align-items:flex-start; justify-content:space-between;
+}
+.ch-cycle-label {
+  font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace;
+}
+.ch-deadline {
+  font-size:0.72rem; color:var(--accent3); margin-top:0.1rem; font-family:'DM Mono',monospace;
+}
+.ch-close-btn {
+  background:var(--surface); border:1px solid var(--border); color:var(--muted);
+  width:28px; height:28px; border-radius:50%; cursor:pointer;
+  font-size:0.8rem; display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s; flex-shrink:0;
+}
+.ch-close-btn:hover { border-color:var(--danger); color:var(--danger); }
+.ch-results-btn {
+  font-family:'Noto Sans KR',sans-serif; font-size:0.72rem; font-weight:700;
+  background:rgba(255,217,61,0.12); border:1px solid rgba(255,217,61,0.35);
+  color:var(--accent3); padding:0.28rem 0.7rem; border-radius:100px; cursor:pointer;
+  transition:all 0.15s; white-space:nowrap;
+}
+.ch-register-btn {
+  width:100%; font-family:'Noto Sans KR',sans-serif; font-size:0.82rem; font-weight:700;
+  background:rgba(255,140,0,0.1); border:1px solid rgba(255,140,0,0.3);
+  color:#ff8c00; padding:0.55rem; border-radius:10px; cursor:pointer; transition:all 0.15s;
+}
+.ch-register-btn:hover { background:rgba(255,140,0,0.2); }
+
+/* 현황판 */
+.ch-board { display:flex; flex-direction:column; gap:0.55rem; }
+.ch-member-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+}
+.ch-member-header {
+  display:flex; align-items:center; gap:0.5rem;
+  padding:0.6rem 0.85rem 0.5rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+.ch-member-emoji { font-size:1.3rem; flex-shrink:0; }
+.ch-member-name { font-size:0.9rem; font-weight:700; flex:1; }
+.ch-member-score {
+  font-family:'DM Mono',monospace; font-size:0.68rem;
+  color:var(--muted); white-space:nowrap;
+}
+.ch-goals-table { width:100%; }
+.ch-goal-row {
+  display:flex; align-items:center; gap:0; border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.ch-goal-row:last-child { border-bottom:none; }
+.ch-goal-type { font-size:0.75rem; padding:0.45rem 0.6rem; flex-shrink:0; width:1.5rem; text-align:center; }
+.ch-goal-text {
+  font-size:0.78rem; color:var(--text); flex:1;
+  padding:0.45rem 0.4rem 0.45rem 0; line-height:1.3;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ch-goal-text.empty { color:var(--muted); font-style:italic; }
+.ch-day-checks { display:flex; gap:0; flex-shrink:0; }
+.ch-check-cell {
+  width:36px; text-align:center; padding:0.35rem 0;
+  border-left:1px solid rgba(255,255,255,0.05);
+  cursor:pointer; transition:background 0.12s;
+}
+.ch-check-cell:hover { background:rgba(255,255,255,0.05); }
+.ch-check-cell.checked { color:#00e5a0; }
+.ch-check-cell.unchecked { color:rgba(255,255,255,0.12); }
+.ch-day-header-row {
+  display:flex; align-items:center; padding:0 0 0 2.5rem;
+  border-bottom:1px solid var(--border);
+}
+.ch-day-header {
+  width:36px; text-align:center;
+  font-family:'DM Mono',monospace; font-size:0.62rem;
+  color:var(--muted); padding:0.35rem 0;
+  border-left:1px solid rgba(255,255,255,0.05);
+}
+.ch-day-header.today { color:var(--accent); font-weight:700; }
+.ch-no-goals {
+  padding:0.8rem; font-size:0.75rem; color:var(--muted);
+  text-align:center; font-style:italic;
+}
+
+/* 목표 등록 팝업 */
+.ch-register-overlay {
+  position:fixed; inset:0; z-index:600;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+  display:flex; align-items:flex-end; justify-content:center;
+}
+.ch-register-modal {
+  background:#141726; border:1px solid #2a2f4a;
+  border-radius:20px 20px 0 0; width:100%; max-width:640px;
+  padding:1.2rem 1.3rem 2rem; max-height:90vh; overflow-y:auto;
+  animation:slideUp 0.22s ease;
+}
+.ch-register-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:0.9rem;
+}
+.ch-register-title { font-size:1rem; font-weight:800; }
+.ch-input-label {
+  font-size:0.72rem; color:var(--muted); margin-bottom:0.3rem;
+  font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em;
+}
+.ch-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); border-radius:9px; padding:0.6rem 0.8rem;
+  font-family:'Noto Sans KR',sans-serif; font-size:0.88rem;
+  outline:none; transition:border-color 0.15s; box-sizing:border-box;
+}
+.ch-input:focus { border-color:var(--accent); }
+.ch-save-btn {
+  width:100%; font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; font-weight:700;
+  background:var(--accent); border:none; color:#0d0f1a;
+  padding:0.7rem; border-radius:10px; cursor:pointer; margin-top:0.3rem;
+}
+.ch-save-btn:hover { opacity:0.9; }
+
+/* 결산용 추가 */
+.ch-result-stat {
+  font-family:'DM Mono',monospace; font-size:0.72rem; margin-left:auto;
+  padding:0.15rem 0.55rem; border-radius:100px; white-space:nowrap;
+}
+.ch-result-stat.perfect { background:rgba(0,229,160,0.15); color:#00e5a0; border:1px solid rgba(0,229,160,0.3); }
+.ch-result-stat.good { background:rgba(255,217,61,0.15); color:#ffd93d; border:1px solid rgba(255,217,61,0.3); }
+.ch-result-stat.low { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+
+
 
 .goal-name-box {
   background:var(--surface); border:1px solid var(--border);
@@ -463,7 +605,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     <button class="month-btn" onclick="changeMonth(1)">›</button>
   </div>
   <button class="summary-btn" onclick="openSummary()">📊 오늘의 결산</button>
-  <button class="goal-btn" onclick="openGoal()">🎯 오늘의 목표</button>
+  <button class="challenge-nav-btn" onclick="openChallenge()">🔥 작심삼일</button>
 </nav>
 
 <div class="main">
@@ -527,72 +669,84 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 
 </div>
 
-<!-- 목표 전체화면 -->
-<div class="summary-overlay" id="goalOverlay" style="display:none">
-  <div class="summary-modal">
-    <div class="summary-top-bar">
-      <span style="font-size:0.82rem;color:var(--muted);font-family:'DM Mono',monospace" id="goalDateLabel"></span>
-      <button class="summary-close" onclick="closeGoal()">← 돌아가기</button>
+<!-- 🔥 작심삼일 현황판 -->
+<div class="ch-overlay" id="challengeOverlay" style="display:none">
+  <div class="ch-modal">
+    <div class="ch-topbar">
+      <div>
+        <div class="ch-cycle-label" id="chCycleLabel"></div>
+        <div class="ch-deadline" id="chDeadline"></div>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <button class="ch-results-btn" onclick="openChallengeResults()">📊 결산</button>
+        <button class="ch-close-btn" onclick="closeChallenge()">✕</button>
+      </div>
     </div>
-    <div class="summary-date-block">
-      <span class="summary-date" id="goalDate"></span>
-      <span class="summary-headline">오늘의 인증 목표! ✍️</span>
-    </div>
+    <button class="ch-register-btn" onclick="openGoalRegister()">✏️ 내 목표 등록 / 수정</button>
+    <div class="ch-board" id="chBoard"></div>
+  </div>
+</div>
 
-    <!-- 닉네임 선택 (접이식) -->
-    <div class="goal-name-box" id="goalNameBox">
-      <div id="goalNameSelected" style="display:none">
+<!-- 🔥 목표 등록 팝업 -->
+<div class="ch-register-overlay" id="goalRegisterOverlay" style="display:none" onclick="closeGoalRegisterOutside(event)">
+  <div class="ch-register-modal">
+    <div class="ch-register-header">
+      <div class="ch-register-title">내 목표 등록</div>
+      <button class="ch-close-btn" onclick="closeGoalRegister()">✕</button>
+    </div>
+    <div class="goal-section-label" style="margin-bottom:0.5rem">닉네임 선택</div>
+    <div class="goal-name-box" id="chNameBox">
+      <div id="chNameSelected" style="display:none">
         <div class="goal-name-selected-row">
           <div class="goal-name-selected-inner">
-            <span class="goal-name-selected-emoji" id="goalSelEmoji"></span>
-            <span class="goal-name-selected-text" id="goalSelText"></span>
+            <span class="goal-name-selected-emoji" id="chSelEmoji"></span>
+            <span class="goal-name-selected-text" id="chSelText"></span>
           </div>
-          <button class="goal-name-change-btn" onclick="changeGoalName()">변경</button>
+          <button class="goal-name-change-btn" onclick="changeChallengeGoalName()">변경</button>
         </div>
       </div>
-      <div id="goalNameGridWrap">
+      <div id="chNameGridWrap">
         <div class="goal-name-grid-label">닉네임 선택</div>
-        <div class="goal-name-grid" id="goalNameGrid"></div>
+        <div class="goal-name-grid" id="chNameGrid"></div>
       </div>
     </div>
-
-    <!-- 목표 입력 -->
-    <div class="goal-input-section" id="goalInputSection" style="display:none">
-      <div class="goal-section-label" id="goalInputLabel"></div>
-      <div id="goalRows"></div>
-      <button class="goal-add-btn" id="goalAddBtn" onclick="addGoalRow()">+ 목표 추가 (최대 5개)</button>
-    </div>
-
-    <!-- 목표 미리보기 -->
-    <div class="goal-preview" id="goalPreview" style="display:none">
-      <div class="goal-preview-member">
-        <span class="goal-preview-emoji" id="goalPreviewEmoji"></span>
-        <div class="goal-preview-name-wrap">
-          <span class="goal-preview-name" id="goalPreviewName"></span>
-          <span class="goal-preview-date" id="goalPreviewDate"></span>
-        </div>
+    <div id="chGoalInputSection" style="display:none;flex-direction:column;gap:0.7rem;margin-top:0.7rem">
+      <div>
+        <div class="ch-input-label">📚 교재 진척 목표 <span style="color:var(--danger);font-size:0.65rem">필수</span></div>
+        <input class="ch-input" id="chTextbookInput" type="text" placeholder="예) 마더텅 수2 1~3강 완강" maxlength="50">
       </div>
-      <div class="goal-preview-list" id="goalPreviewList"></div>
-    </div>
-
-    <div class="summary-footer" style="margin-top:auto">
-      <div class="summary-tip">📸 스크린샷 후 카톡방에 공유하세요!</div>
-      <div class="summary-watermark">직장인 수능준비생 1일 1인증방</div>
+      <div>
+        <div class="ch-input-label">💪 습관 목표 <span style="color:var(--danger);font-size:0.65rem">필수</span></div>
+        <input class="ch-input" id="chHabitInput" type="text" placeholder="예) 매일 30분 운동" maxlength="50">
+      </div>
+      <div>
+        <div class="ch-input-label">📝 기타 목표 <span style="color:var(--muted);font-size:0.65rem">선택</span></div>
+        <input class="ch-input" id="chExtraInput" type="text" placeholder="예) 하루 2시간 이상 공부" maxlength="50">
+      </div>
+      <button class="ch-save-btn" onclick="saveChallengeGoal()">저장</button>
     </div>
   </div>
 </div>
 
-<!-- 날짜별 목표 모아보기 -->
-<div class="day-goals-overlay" id="dayGoalsOverlay" style="display:none" onclick="closeDayGoals(event)">
-  <div class="day-goals-modal">
-    <div class="day-goals-header">
-      <div class="day-goals-title" id="dayGoalsTitle"></div>
-      <button class="day-goals-close" onclick="closeDayGoals()">✕</button>
+<!-- 🔥 결산 화면 -->
+<div class="ch-overlay" id="challengeResultsOverlay" style="display:none">
+  <div class="ch-modal">
+    <div class="ch-topbar">
+      <div>
+        <div class="ch-cycle-label" id="chResultsCycleLabel"></div>
+        <div style="font-size:1.1rem;font-weight:900;color:var(--accent3);margin-top:0.1rem">🔥 작심삼일 결산!</div>
+      </div>
+      <button class="ch-close-btn" onclick="closeChallengeResults()">✕</button>
     </div>
-    <div id="dayGoalsBody"></div>
-    <button class="day-goals-add-btn" id="dayGoalsAddBtn" onclick="openGoalFromDay()">✍️ 내 목표 입력하기</button>
+    <div class="ch-board" id="chResultsBoard"></div>
+    <div style="text-align:center;padding:0.8rem 0 0.3rem;border-top:1px solid var(--border)">
+      <div style="font-size:0.82rem;color:var(--muted)">📸 스크린샷 후 카톡방에 공유하세요!</div>
+      <div style="font-size:0.58rem;color:#252840;margin-top:0.3rem;font-family:monospace">직장인 수능준비생 1일 1인증방</div>
+    </div>
   </div>
 </div>
+
+<!-- 결산 전체화면 -->
 
 <!-- 결산 전체화면 -->
 <div class="summary-overlay" id="summaryOverlay" style="display:none">
@@ -1082,335 +1236,331 @@ document.addEventListener('mousedown', function(e){
 });
 document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }});
 
-// ── 목표 ──────────────────────────────────────────
-let goalSelectedName = '';
-let goalRows = [{text:'', done:false, type:'', value:'', unit:'', actual:''}];
-const GOAL_NUM_EMOJI = ['①','②','③','④','⑤'];
+// ── 작심삼일 챌린지 ────────────────────────────────
 
-let goalTargetDay = null; // 목표 입력 대상 날짜 (null=오늘)
+// ─ 사이클 계산 ─
+function getCycleInfo(refDate) {
+  const d = new Date(refDate || new Date());
+  d.setHours(0,0,0,0);
+  const dow = d.getDay(); // 0=일,1=월...6=토
+  let startOffset, endDow;
+  if (dow >= 1 && dow <= 3) { startOffset = -(dow-1); endDow = 3; }      // 월~수
+  else if (dow === 4) { startOffset = 0; endDow = 0; }                   // 목 시작
+  else if (dow === 5) { startOffset = -1; endDow = 0; }                  // 금
+  else if (dow === 6) { startOffset = -2; endDow = 0; }                  // 토
+  else { startOffset = -3; endDow = 0; }                                  // 일 (목 사이클)
 
-window.openGoal = function(day){
-  goalTargetDay = day || todayD;
-  const overlay = document.getElementById('goalOverlay');
-  const dateEl = document.getElementById('goalDate');
-  const dateLabel = document.getElementById('goalDateLabel');
-  const now = new Date();
-  const dowNames = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-  const d = new Date(curYear, curMonth, goalTargetDay);
-  const dStr = `${d.getMonth()+1}월 ${d.getDate()}일 ${dowNames[d.getDay()]}`;
-  dateEl.textContent = dStr;
-  dateLabel.textContent = `${d.getMonth()+1}월 ${d.getDate()}일`;
-  const pdEl = document.getElementById('goalPreviewDate');
-  if(pdEl) pdEl.textContent = `${dStr} 목표`;
+  const start = new Date(d);
+  start.setDate(d.getDate() + startOffset);
 
-  goalSelectedName = myName || '';
-  // 기존 저장된 목표 불러오기
-  if(goalSelectedName){
-    const saved = getDayGoals(goalTargetDay, goalSelectedName);
-    goalRows = saved.length > 0 ? saved.map(g=>typeof g==='object'?{text:'',done:false,type:'',value:'',unit:'',actual:'',...g}:{text:g,done:false,type:'',value:'',unit:'',actual:''}) : [{text:'',done:false,type:'',value:'',unit:''}];
-  } else {
-    goalRows = [{text:'', done:false, type:'', value:'', unit:'', actual:''}];
+  // 마감일 = 수(3) 또는 일(0)
+  const end = new Date(start);
+  while (true) {
+    const ew = end.getDay();
+    if ((startOffset <= 0 && dow <= 3 && ew === 3) || (!(dow >=1&&dow<=3) && ew === 0)) break;
+    end.setDate(end.getDate() + 1);
   }
-  renderGoalNameBox();
-  updateGoalInputSection();
-  renderGoalRows();
-  updateGoalPreview();
+  end.setHours(22, 0, 0, 0);
 
-  overlay.style.display = 'flex';
+  // 사이클 내 날짜 배열
+  const days = [];
+  const cur = new Date(start);
+  while (cur < end) {
+    days.push(new Date(cur));
+    cur.setDate(cur.getDate() + 1);
+  }
+  days.push(new Date(end)); // 마감일 포함 (시간 무시)
+  // 실제로는 end.getDate()까지
+  const dayNums = days.map(dd => dd.getDate());
+
+  return { start, end, days, dayNums,
+    docId: `ch_${start.getFullYear()}-${start.getMonth()}-${start.getDate()}` };
+}
+
+const DOW_KR = ['일','월','화','수','목','금','토'];
+
+// ─ Firebase 구독 ─
+let challengeData = {};
+let unsubscribeChallenge = null;
+let currentCycle = null;
+
+function subscribeChallenge(cycle) {
+  if (unsubscribeChallenge) unsubscribeChallenge();
+  const r = doc(db, 'challenges', cycle.docId);
+  unsubscribeChallenge = onSnapshot(r, snap => {
+    challengeData = snap.exists() ? snap.data() : {};
+    renderChallengeBoard();
+    renderChallengeResults();
+  });
+}
+
+async function saveToChallenge(cycle, field, value) {
+  const r = doc(db, 'challenges', cycle.docId);
+  const snap = await getDoc(r);
+  const data = snap.exists() ? snap.data() : {};
+  if (value !== null && value !== undefined && value !== '') data[field] = value;
+  else delete data[field];
+  await setDoc(r, data);
+}
+
+// ─ 사이클 열기 ─
+window.openChallenge = function() {
+  currentCycle = getCycleInfo();
+  subscribeChallenge(currentCycle);
+  renderCycleHeader();
+  document.getElementById('challengeOverlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 };
 
-window.closeGoal = function(){
-  document.getElementById('goalOverlay').style.display = 'none';
+window.closeChallenge = function() {
+  document.getElementById('challengeOverlay').style.display = 'none';
   document.body.style.overflow = '';
 };
 
-function renderGoalNameBox(){
-  const selected = document.getElementById('goalNameSelected');
-  const gridWrap = document.getElementById('goalNameGridWrap');
-  if(!selected || !gridWrap) return;
-  if(goalSelectedName){
-    const m = members.find(m=>m.name===goalSelectedName);
-    document.getElementById('goalSelEmoji').textContent = m?.emoji||'👤';
-    document.getElementById('goalSelText').textContent = goalSelectedName;
-    selected.style.display = 'block';
-    gridWrap.style.display = 'none';
+function renderCycleHeader() {
+  if (!currentCycle) return;
+  const { start, end } = currentCycle;
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}(${DOW_KR[d.getDay()]})`;
+  document.getElementById('chCycleLabel').textContent = `🔥 ${fmt(start)} ~ ${fmt(new Date(end.getFullYear(),end.getMonth(),end.getDate()))}`;
+
+  // 마감 카운트다운
+  const now = new Date();
+  const diff = end - now;
+  let deadlineStr = '';
+  if (diff > 0) {
+    const h = Math.floor(diff/3600000);
+    const daysLeft = Math.floor(h/24);
+    if (daysLeft > 0) deadlineStr = `마감 D-${daysLeft} (${end.getMonth()+1}/${end.getDate()} 22:00)`;
+    else deadlineStr = `마감 ${h}시간 후`;
   } else {
-    selected.style.display = 'none';
-    gridWrap.style.display = 'block';
-    const grid = document.getElementById('goalNameGrid');
-    grid.innerHTML = members.map(m =>
-      `<div class="goal-name-chip" onclick="selectGoalName('${m.name.replace(/'/g,"\'")}')"><span>${m.emoji}</span>${m.name}</div>`
+    deadlineStr = '마감 완료';
+  }
+  document.getElementById('chDeadline').textContent = deadlineStr;
+  // 결산 화면 레이블도
+  const el2 = document.getElementById('chResultsCycleLabel');
+  if (el2) el2.textContent = `${fmt(start)} ~ ${fmt(new Date(end.getFullYear(),end.getMonth(),end.getDate()))}`;
+}
+
+// ─ 현황판 렌더 ─
+function renderChallengeBoard() {
+  if (!currentCycle) return;
+  const { dayNums } = currentCycle;
+  const today = new Date();
+  const todayNum = today.getDate();
+
+  // 요일 헤더
+  const dayHeaders = dayNums.map(d => {
+    const dt = new Date(currentCycle.start.getFullYear(), currentCycle.start.getMonth(), d);
+    const isToday = dt.toDateString() === today.toDateString();
+    return `<div class="ch-day-header${isToday?' today':''}">${DOW_KR[dt.getDay()]}<br>${d}</div>`;
+  }).join('');
+
+  const TYPES = [
+    { key:'textbook', icon:'📚' },
+    { key:'habit',    icon:'💪' },
+    { key:'extra',    icon:'📝' },
+  ];
+
+  const cards = members.map(m => {
+    const mk = mKey(m.name);
+    const tb = challengeData[`goal_${mk}_textbook`] || '';
+    const hb = challengeData[`goal_${mk}_habit`] || '';
+    const ex = challengeData[`goal_${mk}_extra`] || '';
+    const hasGoals = tb || hb;
+
+    // 달성률 계산
+    let total=0, done=0;
+    TYPES.forEach(({key}) => {
+      const goalTxt = challengeData[`goal_${mk}_${key}`];
+      if (!goalTxt) return;
+      dayNums.forEach(d => {
+        total++;
+        if (challengeData[`check_${mk}_${d}_${key}`]) done++;
+      });
+    });
+    const scoreStr = total>0 ? `${done}/${total}` : '';
+
+    const goalRows = TYPES.map(({key, icon}) => {
+      const txt = challengeData[`goal_${mk}_${key}`] || '';
+      if (!txt && key==='extra') return ''; // 기타는 없으면 숨김
+      const checks = dayNums.map(d => {
+        const checked = !!challengeData[`check_${mk}_${d}_${key}`];
+        const dt = new Date(currentCycle.start.getFullYear(), currentCycle.start.getMonth(), d);
+        const isFuture = dt > today && dt.toDateString() !== today.toDateString();
+        return `<div class="ch-check-cell ${checked?'checked':'unchecked'}"
+          onclick="toggleCheck('${mk}','${m.name}',${d},'${key}',${checked})"
+          title="${m.name} ${d}일 ${key}"
+          >${checked?'✅':'○'}</div>`;
+      }).join('');
+      return `<div class="ch-goal-row">
+        <div class="ch-goal-type">${icon}</div>
+        <div class="ch-goal-text${txt?'':' empty'}">${txt||'(미등록)'}</div>
+        <div class="ch-day-checks">${checks}</div>
+      </div>`;
+    }).filter(Boolean).join('');
+
+    return `<div class="ch-member-card">
+      <div class="ch-member-header">
+        <span class="ch-member-emoji">${m.emoji}</span>
+        <span class="ch-member-name">${m.name}</span>
+        ${scoreStr?`<span class="ch-member-score">${scoreStr} 달성</span>`:''}
+      </div>
+      <div>
+        <div class="ch-day-header-row">${dayHeaders}</div>
+        ${hasGoals ? goalRows : '<div class="ch-no-goals">목표 미등록</div>'}
+      </div>
+    </div>`;
+  }).join('');
+
+  const board = document.getElementById('chBoard');
+  if (board) board.innerHTML = cards;
+}
+
+window.toggleCheck = async function(mk, name, day, goalType, wasChecked) {
+  if (!currentCycle) return;
+  const field = `check_${mk}_${day}_${goalType}`;
+  await saveToChallenge(currentCycle, field, wasChecked ? null : true);
+};
+
+// ─ 목표 등록 ─
+let chSelectedName = '';
+
+window.openGoalRegister = function() {
+  chSelectedName = myName || '';
+  renderChNameBox();
+  updateChInputSection();
+  document.getElementById('goalRegisterOverlay').style.display = 'flex';
+};
+
+window.closeGoalRegister = function() {
+  document.getElementById('goalRegisterOverlay').style.display = 'none';
+};
+
+window.closeGoalRegisterOutside = function(e) {
+  if (e.target.id === 'goalRegisterOverlay') closeGoalRegister();
+};
+
+function renderChNameBox() {
+  const sel = document.getElementById('chNameSelected');
+  const wrap = document.getElementById('chNameGridWrap');
+  if (!sel || !wrap) return;
+  if (chSelectedName) {
+    const m = members.find(m=>m.name===chSelectedName);
+    document.getElementById('chSelEmoji').textContent = m?.emoji||'👤';
+    document.getElementById('chSelText').textContent = chSelectedName;
+    sel.style.display = 'block';
+    wrap.style.display = 'none';
+  } else {
+    sel.style.display = 'none';
+    wrap.style.display = 'block';
+    document.getElementById('chNameGrid').innerHTML = members.map(m=>
+      `<div class="goal-name-chip" onclick="selectChName('${m.name.replace(/'/g,"\'")}')">
+        <span>${m.emoji}</span>${m.name}
+      </div>`
     ).join('');
   }
 }
 
-window.changeGoalName = function(){
-  goalSelectedName = '';
-  renderGoalNameBox();
-  updateGoalInputSection();
-  updateGoalPreview();
+window.changeChallengeGoalName = function() {
+  chSelectedName = '';
+  renderChNameBox();
+  updateChInputSection();
 };
 
-window.selectGoalName = function(name){
-  goalSelectedName = name;
-  const saved = getDayGoals(goalTargetDay||todayD, name);
-  goalRows = saved.length > 0 ? [...saved] : [''];
-  renderGoalNameBox();
-  updateGoalInputSection();
-  renderGoalRows();
-  updateGoalPreview();
+window.selectChName = function(name) {
+  chSelectedName = name;
+  renderChNameBox();
+  updateChInputSection();
 };
 
-function updateGoalInputSection(){
-  const section = document.getElementById('goalInputSection');
-  const label = document.getElementById('goalInputLabel');
-  if(!section) return;
-  if(goalSelectedName){
-    const m = members.find(m=>m.name===goalSelectedName);
-    if(label) label.textContent = `${m?.emoji||''} ${goalSelectedName}의 오늘 목표`;
-    section.style.display = 'flex';
-    renderGoalRows();
-  } else {
-    section.style.display = 'none';
-    const preview = document.getElementById('goalPreview');
-    if(preview) preview.style.display = 'none';
+function updateChInputSection() {
+  const sec = document.getElementById('chGoalInputSection');
+  if (!sec) return;
+  if (!chSelectedName) { sec.style.display = 'none'; return; }
+  sec.style.display = 'flex';
+  // 기존 값 불러오기
+  if (currentCycle) {
+    const mk = mKey(chSelectedName);
+    document.getElementById('chTextbookInput').value = challengeData[`goal_${mk}_textbook`]||'';
+    document.getElementById('chHabitInput').value = challengeData[`goal_${mk}_habit`]||'';
+    document.getElementById('chExtraInput').value = challengeData[`goal_${mk}_extra`]||'';
   }
 }
 
-function renderGoalRows(){
-  const container = document.getElementById('goalRows');
-  const addBtn = document.getElementById('goalAddBtn');
-  if(!container) return;
+window.saveChallengeGoal = async function() {
+  if (!chSelectedName || !currentCycle) return;
+  const mk = mKey(chSelectedName);
+  const tb = document.getElementById('chTextbookInput').value.trim();
+  const hb = document.getElementById('chHabitInput').value.trim();
+  const ex = document.getElementById('chExtraInput').value.trim();
+  if (!tb || !hb) { alert('교재 진척과 습관 목표는 필수예요!'); return; }
+  await saveToChallenge(currentCycle, `goal_${mk}_textbook`, tb);
+  await saveToChallenge(currentCycle, `goal_${mk}_habit`, hb);
+  await saveToChallenge(currentCycle, `goal_${mk}_extra`, ex||null);
+  closeGoalRegister();
+};
 
-  container.innerHTML = goalRows.map((g, i) => {
-    const typeReach = g.type==='reach';
-    const typeConsume = g.type==='consume';
-    const hasType = typeReach || typeConsume;
-    const hasValue = hasType && g.value;
+// ─ 결산 ─
+window.openChallengeResults = function() {
+  if (!currentCycle) { currentCycle = getCycleInfo(); }
+  renderCycleHeader();
+  renderChallengeResults();
+  document.getElementById('challengeResultsOverlay').style.display = 'flex';
+};
 
-    // 목표값 라벨
-    const valLabel = typeReach ? '📍 목표치' : typeConsume ? '⏱ 소모량' : '';
-    const valPlaceholder = typeReach ? '150' : '40';
-    const unitPlaceholder = typeReach ? '페이지' : '분';
+window.closeChallengeResults = function() {
+  document.getElementById('challengeResultsOverlay').style.display = 'none';
+};
 
-    // 실제 달성값 라벨
-    const actualLabel = typeReach ? '📝 실제 달성' : '📝 실제 소모';
+function renderChallengeResults() {
+  const board = document.getElementById('chResultsBoard');
+  if (!board || !currentCycle) return;
+  const { dayNums } = currentCycle;
+  const today = new Date();
 
-    // 상태 뱃지
-    const badge = statusBadge(g);
+  const TYPES = [
+    { key:'textbook', icon:'📚', label:'교재' },
+    { key:'habit',    icon:'💪', label:'습관' },
+    { key:'extra',    icon:'📝', label:'기타' },
+  ];
 
-    return `<div class="goal-row">
-      <div class="goal-row-top">
-        <input type="checkbox" class="goal-check" ${g.done?'checked':''} onchange="toggleGoalDone(${i}, this.checked)">
-        <span class="goal-num${g.done?' done':''}">${GOAL_NUM_EMOJI[i]}</span>
-        <input class="goal-input${g.done?' done':''}" type="text"
-          value="${g.text.replace(/"/g,'&quot;')}"
-          placeholder="목표 ${i+1} 입력" maxlength="60"
-          oninput="updateGoalRowText(${i}, this.value)">
-        <button class="goal-del-btn" onclick="removeGoalRow(${i})">✕</button>
+  // 달성률 기준 내림차순 정렬
+  const ranked = [...members].map(m => {
+    const mk = mKey(m.name);
+    let total=0, done=0;
+    const rows = [];
+    TYPES.forEach(({key,icon,label}) => {
+      const txt = challengeData[`goal_${mk}_${key}`];
+      if (!txt) return;
+      const dayDone = dayNums.filter(d => challengeData[`check_${mk}_${d}_${key}`]);
+      total += dayNums.length;
+      done += dayDone.length;
+      const dots = dayNums.map(d => challengeData[`check_${mk}_${d}_${key}`]?'✅':'⬜').join('');
+      rows.push(`<div style="display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.9rem;font-size:0.78rem">
+        <span>${icon}</span>
+        <span style="flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${txt}</span>
+        <span style="font-family:monospace;font-size:0.75rem;letter-spacing:0.1rem;flex-shrink:0">${dots}</span>
+      </div>`);
+    });
+    return { m, mk, total, done, rows, rate: total>0?Math.round(done/total*100):0 };
+  }).sort((a,b) => b.rate - a.rate);
+
+  board.innerHTML = ranked.map(({m, total, done, rows, rate}) => {
+    const statClass = rate===100?'perfect':rate>=50?'good':'low';
+    const statTxt = total>0 ? `${done}/${total} (${rate}%)` : '미등록';
+    return `<div class="ch-member-card">
+      <div class="ch-member-header">
+        <span class="ch-member-emoji">${m.emoji}</span>
+        <span class="ch-member-name">${m.name}</span>
+        <span class="ch-result-stat ${statClass}">${statTxt}</span>
       </div>
-      <div class="goal-row-sub">
-        <button class="goal-type-btn${typeReach?' active-reach':''}" onclick="setGoalType(${i},'reach')">📍 도달</button>
-        <button class="goal-type-btn${typeConsume?' active-consume':''}" onclick="setGoalType(${i},'consume')">⏱ 소모량</button>
-        ${hasType ? `
-          <span class="goal-sub-sep">|</span>
-          <span class="goal-val-label">${valLabel}:</span>
-          <input class="goal-val-input" type="number" value="${g.value}" placeholder="${valPlaceholder}" min="0" oninput="updateGoalVal(${i}, this.value)">
-          <input class="goal-unit-input" type="text" value="${g.unit}" placeholder="${unitPlaceholder}" maxlength="6" oninput="updateGoalUnit(${i}, this.value)">
-        ` : ''}
-      </div>
-      ${hasValue ? `
-      <div class="goal-row-sub">
-        <span class="goal-val-label">${actualLabel}:</span>
-        <input class="goal-actual-input" type="number" value="${g.actual}" placeholder="?" min="0" oninput="updateGoalActual(${i}, this.value)">
-        <span class="goal-val-label">${g.unit||''}</span>
-        <span id="goal-badge-${i}">${badge}</span>
-      </div>
-      ` : ''}
+      ${rows.length ? rows.join('') : '<div class="ch-no-goals">목표 미등록</div>'}
     </div>`;
   }).join('');
-
-  if(addBtn) addBtn.style.display = goalRows.length >= 5 ? 'none' : 'block';
-  updateGoalPreview();
 }
 
-// 달성 상태 계산: done/partial/over/none
-function calcGoalStatus(g){
-  if(!g.type || !g.value) return g.done ? 'done' : 'none';
-  const target = parseFloat(g.value);
-  const actual = parseFloat(g.actual);
-  if(isNaN(actual) || g.actual==='') return g.done ? 'done' : 'none';
-  if(g.type==='reach'){
-    if(actual >= target) return 'done';
-    return 'partial';
-  } else { // consume
-    if(actual <= target) return 'done';
-    return 'over';
-  }
-}
-
-function statusBadge(g){
-  const s = calcGoalStatus(g);
-  if(s==='done') return '<span class="goal-status-done">✅ 완료!</span>';
-  if(s==='partial'){
-    const pct = g.value ? Math.round(parseFloat(g.actual)/parseFloat(g.value)*100) : 0;
-    return `<span class="goal-status-partial">🔶 ${pct}% 달성</span>`;
-  }
-  if(s==='over') return '<span class="goal-status-over">⚠️ 초과</span>';
-  return '';
-}
-
-window.updateGoalRowText = function(i, val){ goalRows[i].text = val; updateGoalPreview(); };
-window.updateGoalRow = window.updateGoalRowText; // 호환성
-window.updateGoalVal = function(i, val){ goalRows[i].value = val; triggerGoalSave(); updateGoalPreview(); };
-window.updateGoalActual = function(i, val){
-  goalRows[i].actual = val;
-  const s = calcGoalStatus(goalRows[i]);
-  goalRows[i].done = (s === 'done');
-  triggerGoalSave();
-  updateGoalPreview();
-  // 뱃지만 업데이트 (전체 리렌더 없이)
-  const badge = document.getElementById('goal-badge-'+i);
-  if(badge) badge.innerHTML = statusBadge(goalRows[i]);
-};
-window.updateGoalUnit = function(i, unit){ goalRows[i].unit = unit; triggerGoalSave(); updateGoalPreview(); };
-window.setGoalType = function(i, type){
-  goalRows[i].type = goalRows[i].type===type ? '' : type;
-  if(!goalRows[i].unit){
-    goalRows[i].unit = type==='reach' ? '페이지' : type==='consume' ? '분' : '';
-  }
-  triggerGoalSave();
-  renderGoalRows();
-};
-
-window.toggleGoalDone = function(i, done){
-  goalRows[i].done = done;
-  renderGoalRows();
-};
-
-window.addGoalRow = function(){
-  if(goalRows.length < 5){ goalRows.push({text:'',done:false}); renderGoalRows(); }
-};
-
-window.removeGoalRow = function(i){
-  if(goalRows.length === 1){ goalRows[0]={text:'',done:false}; renderGoalRows(); return; }
-  goalRows.splice(i, 1);
-  renderGoalRows();
-};
-
-let goalSaveTimer = null;
-
-function triggerGoalSave(){
-  if(!goalSelectedName || !goalTargetDay) return;
-  if(goalSaveTimer) clearTimeout(goalSaveTimer);
-  goalSaveTimer = setTimeout(async()=>{
-    const toSave = goalRows.filter(g=>g.text.trim()).map(g=>({
-      text:g.text, done:g.done, type:g.type||'',
-      value:g.value||'', unit:g.unit||'', actual:g.actual||''
-    }));
-    await saveGoals(curYear, curMonth, goalTargetDay, goalSelectedName, toSave);
-  }, 600);
-}
-
-window.updateGoalPreview = function(){
-  const filled = goalRows.filter(g=>g.text.trim());
-  const preview = document.getElementById('goalPreview');
-  if(!preview) return;
-  if(!goalSelectedName || filled.length===0){ preview.style.display='none'; return; }
-  const m = members.find(m=>m.name===goalSelectedName);
-  document.getElementById('goalPreviewEmoji').textContent = m?.emoji||'👤';
-  document.getElementById('goalPreviewName').textContent = goalSelectedName;
-  const doneCount = filled.filter(g=>g.done).length;
-  const list = document.getElementById('goalPreviewList');
-  if(list) list.innerHTML = filled.map((g,i) =>
-    `<div class="goal-preview-item${g.done?' done':''}">
-      <span class="goal-preview-num">${g.done?'✅':GOAL_NUM_EMOJI[i]}</span>
-      <span class="goal-preview-text">${g.text}${g.type&&g.value?` <span style="font-size:0.75rem;color:${g.type==='reach'?'#4d96ff':'#ffd93d'};font-family:monospace;font-weight:700">${g.type==='reach'?'→':'⏱'} ${g.value}${g.unit||''}</span>`:''}
-      ${g.actual?`<span style="font-size:0.72rem;color:#aaa;font-family:monospace"> / 실제 ${g.actual}${g.unit||''}</span>`:''}
-      </span>
-      ${statusBadge(g)}
-    </div>`
-  ).join('') + (doneCount>0&&doneCount===filled.length?'<div style="font-size:0.82rem;color:#00e5a0;font-weight:700;text-align:center;margin-top:0.4rem">🎉 오늘 목표 모두 완료!</div>':'');
-  preview.style.display = 'flex';
-
-  // 텍스트 변경 시에도 저장 트리거
-  triggerGoalSave();
-};
-
-// ── 날짜별 목표 모아보기 ──────────────────────────
-let dayGoalsTargetDay = null;
-
-window.openDayGoals = function(day){
-  dayGoalsTargetDay = day;
-  renderDayGoalsBody(day);
-  document.getElementById('dayGoalsOverlay').style.display = 'flex';
-};
-
-function renderDayGoalsBody(day){
-  const title = document.getElementById('dayGoalsTitle');
-  const body = document.getElementById('dayGoalsBody');
-  const d = new Date(curYear, curMonth, day);
-  const dowNames = ['일','월','화','수','목','금','토'];
-  title.textContent = `${curMonth+1}월 ${day}일 (${dowNames[d.getDay()]}) 목표 모아보기`;
-
-  const allGoals = getDayAllGoals(day);
-  if(allGoals.length === 0){
-    body.innerHTML = '<div class="day-goals-empty">아직 이날 입력된 목표가 없어요</div>';
-  } else {
-    body.innerHTML = allGoals.map(({name,emoji,goals})=>`
-      <div class="day-goals-member">
-        <div class="day-goals-member-header">
-          <span class="day-goals-member-emoji">${emoji}</span>
-          <span class="day-goals-member-name">${name}</span>
-        </div>
-        <div class="day-goals-list">
-          ${goals.map((g,i)=>{
-            const isDone = typeof g==='object'?g.done:false;
-            const txt = typeof g==='object'?g.text:g;
-            const isMe = name === myName;
-            return `<div class="day-goals-item${isDone?' done':''}" style="align-items:center;">
-              ${isMe
-                ? `<input type="checkbox" class="goal-check" style="flex-shrink:0;width:18px;height:18px;"
-                    ${isDone?'checked':''}
-                    onchange="toggleDayGoalDone('${name.replace(/'/g,"\'")}',${day},${i},this.checked)">`
-                : `<span class="day-goals-num">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>`
-              }
-              ${isMe?`<span class="day-goals-num" style="margin-left:2px">${isDone?'✅':GOAL_NUM_EMOJI[i]}</span>`:''}
-              <span class="day-goals-text">${txt}${(typeof g==='object'&&g.type&&g.value)?` <span style="font-size:0.72rem;color:${g.type==='reach'?'#4d96ff':'#ffd93d'};font-family:monospace;font-weight:700">${g.type==='reach'?'→':'⏱'} ${g.value}${g.unit||''}</span>`:''}
-              ${(typeof g==='object'&&g.actual)?`<span style="font-size:0.7rem;color:#888;font-family:monospace"> / 실제 ${g.actual}${g.unit||''}</span>`:''}</span>
-              ${(typeof g==='object')?statusBadge(g):''}
-              ${isDone?'<span style="font-size:0.63rem;color:#00e5a0;margin-left:auto;font-family:monospace;flex-shrink:0">완료!</span>':''}
-            </div>`;
-          }).join('')}
-        </div>
-      </div>
-    `).join('');
-  }
-}
-
-window.toggleDayGoalDone = async function(name, day, idx, done){
-  const saved = getDayGoals(day, name);
-  const updated = saved.map((g,i)=>{
-    const obj = typeof g==='object' ? {...g} : {text:g, done:false};
-    if(i===idx) obj.done = done;
-    return obj;
-  });
-  await saveGoals(curYear, curMonth, day, name, updated);
-  renderDayGoalsBody(day);
-  renderCalendar(); // 달력 아이콘도 업데이트
-};
-
-
-window.closeDayGoals = function(e){
-  if(e && e.target.id !== 'dayGoalsOverlay' && e.type==='click') return;
-  document.getElementById('dayGoalsOverlay').style.display = 'none';
-};
-
-window.openGoalFromDay = function(){
-  document.getElementById('dayGoalsOverlay').style.display = 'none';
-  openGoal(dayGoalsTargetDay);
-};
+// ─ 기존 목표 관련 호환 ─
+window.openGoalFromDay = window.openChallenge;
 
 // ── 결산 ──────────────────────────────────────────
 window.openSummary = function(){
