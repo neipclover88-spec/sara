@@ -34,6 +34,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .name-chip { display:flex; align-items:center; gap:0.4rem; padding:0.38rem 0.75rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.78rem; font-weight:500; transition:all 0.15s; user-select:none; white-space:nowrap; }
 .name-chip:hover { border-color:#444b70; transform:translateY(-1px); }
 .name-chip.selected { border-color:var(--accent); background:rgba(0,229,160,0.1); color:var(--accent); font-weight:700; }
+.mgmt-date-input {
+  background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:var(--muted); font-size:0.62rem; font-family:'DM Mono',monospace;
+  outline:none; width:75px; padding:0.05rem 0.15rem;
+  transition:border-color 0.15s;
+}
+.mgmt-date-input:focus { border-color:var(--accent); color:var(--text); }
+.mgmt-date-input::placeholder { color:rgba(255,255,255,0.15); }
 .chip-name-wrap { display:flex; flex-direction:column; gap:0; }
 .chip-name { font-size:0.78rem; font-weight:500; line-height:1.2; }
 .chip-joined { font-size:0.55rem; color:var(--muted); font-family:'DM Mono',monospace; line-height:1; }
@@ -989,6 +997,14 @@ window.selectMemberEmoji = async function(emoji){
 
 function initEmojiGrid(){ /* 이제 openEmojiPicker에서 처리 */ }
 
+window.updateJoinedAt = async function(name, date){
+  const m = members.find(m=>m.name===name);
+  if(!m) return;
+  m.joinedAt = date.trim();
+  await saveMembersToFirestore();
+  renderNameGrid();
+};
+
 window.addMember = async function(){
   const nameInput=document.getElementById('newName');
   const name=nameInput.value.trim();
@@ -1019,7 +1035,18 @@ function renderMgmtList(){
   list.innerHTML = members.map(m=>`
     <div class="mgmt-member-row" id="row_${mKey(m.name)}">
       <span class="mgmt-member-emoji emoji-trigger" onclick="openEmojiPicker('${m.name.replace(/'/g,"\'")}',this)" title="클릭해서 이모지 변경">${m.emoji}</span>
-      <span class="mgmt-member-name">${m.name}</span>
+      <div style="display:flex;flex-direction:column;gap:0.1rem;flex:1;min-width:0">
+        <span class="mgmt-member-name">${m.name}</span>
+        <div style="display:flex;align-items:center;gap:0.3rem">
+          <input class="mgmt-date-input" type="text"
+            value="${m.joinedAt||''}"
+            placeholder="예) 2026.1.1"
+            maxlength="12"
+            onchange="updateJoinedAt('${m.name.replace(/'/g,"\'")}', this.value)"
+            title="가입일 입력"
+          >
+        </div>
+      </div>
       <button class="emoji-change-btn" onclick="openEmojiPicker('${m.name.replace(/'/g,"\'")}',this)">✎ 이모지</button>
       <button class="del-btn" onclick="deleteMember('${m.name.replace(/'/g,"\'")}')">삭제</button>
     </div>
