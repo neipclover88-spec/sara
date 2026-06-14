@@ -34,6 +34,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .name-chip { display:flex; align-items:center; gap:0.4rem; padding:0.38rem 0.75rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.78rem; font-weight:500; transition:all 0.15s; user-select:none; white-space:nowrap; }
 .name-chip:hover { border-color:#444b70; transform:translateY(-1px); }
 .name-chip.selected { border-color:var(--accent); background:rgba(0,229,160,0.1); color:var(--accent); font-weight:700; }
+.chip-name-wrap { display:flex; flex-direction:column; gap:0; }
+.chip-name { font-size:0.78rem; font-weight:500; line-height:1.2; }
+.chip-joined { font-size:0.55rem; color:var(--muted); font-family:'DM Mono',monospace; line-height:1; }
+.name-chip.selected .chip-joined { color:rgba(0,229,160,0.7); }
 .chip-emoji { font-size:1rem; line-height:1; }
 .selected-info { margin-top:0.7rem; padding-top:0.7rem; border-top:1px solid var(--border); font-size:0.75rem; color:var(--muted); display:none; align-items:center; gap:0.5rem; }
 .selected-info.show { display:flex; }
@@ -990,7 +994,9 @@ window.addMember = async function(){
   const name=nameInput.value.trim();
   if(!name){ nameInput.focus(); return; }
   if(members.find(m=>m.name===name)){ alert('이미 있는 이름이에요!'); return; }
-  members=[...members,{name,emoji:'👤'}].sort((a,b)=>a.name.localeCompare(b.name,'ko'));
+  const now = new Date();
+  const joinedAt = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()}`;
+  members=[...members,{name,emoji:'👤',joinedAt}].sort((a,b)=>a.name.localeCompare(b.name,'ko'));
   await saveMembersToFirestore();
   nameInput.value='';
 };
