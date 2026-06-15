@@ -850,16 +850,16 @@ function memberEmoji(name){ return members.find(m=>m.name===name)?.emoji||'👤'
 const membersRef = doc(db,'config','members');
 onSnapshot(membersRef, (snap)=>{
   if(snap.exists() && snap.data().list && snap.data().list.length > 0){
-    members = snap.data().list;
-  } else {
+    members = snap.data().list; // Firebase 우선 — 절대 덮어쓰지 않음
+  } else if(members.length === 0){
     members = getDefaultMembers();
-    saveMembersToFirestore(); // 최초 1회 저장 시도
+    saveMembersToFirestore(); // Firebase에 아무것도 없을 때만 1회 저장
   }
   render();
 }, (err)=>{
   console.warn('Firestore 읽기 실패, 기본 멤버 사용:', err);
-  members = getDefaultMembers();
-  saveMembersToFirestore();
+  if(members.length === 0) members = getDefaultMembers();
+  // 에러 시 절대 Firestore에 쓰지 않음
   render();
   document.getElementById('loading').classList.add('hidden');
 });
