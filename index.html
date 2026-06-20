@@ -250,6 +250,8 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.06); }
 .summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
 .summary-member-row.tier-low { opacity:0.5; }
+.summary-member-row.week-warn { border-color:rgba(255,107,107,0.5) !important; background:rgba(255,107,107,0.08) !important; opacity:1 !important; }
+.week-warn-tag { font-size:0.68rem; color:#ff6b6b; font-weight:700; margin-left:0.3rem; vertical-align:middle; }
 .summary-emoji { font-size:1.6rem; flex-shrink:0; }
 .summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
 .summary-name { font-size:1rem; font-weight:700; }
@@ -1633,8 +1635,18 @@ window.openSummary = function(){
     return Math.round(days/yesterday*100);
   }
 
+  // 이번 주(월요일~오늘) 인증 횟수
+  function calcWeekCount(name){
+    const dow = new Date(curYear, curMonth, todayD).getDay(); // 0=일~6=토
+    const mondayOffset = dow === 0 ? 6 : dow - 1; // 월요일까지 며칠 전인지
+    const monday = todayD - mondayOffset;
+    let cnt = 0;
+    for(let d = Math.max(1, monday); d <= todayD; d++) cnt += getCount(d, name);
+    return cnt;
+  }
+
   // 참여도 등급 & 메시지
-  function getGrade(name, streak, total, rate){
+  function getGrade(name, streak, total, rate, weekCount){
     if(yesterday<=0) return {tier:'tier-2', msg:'이번 달 첫날이에요! 오늘 인증 시작해봐요 🌱', badge:''};
     if(streak>=7) return {tier:'tier-1', msg:`🔥 ${streak}일 연속 개근 중! 이 기세를 이어가요!`, badge:`👑 ${streak}일 연속`};
     if(streak>=3) return {tier:'tier-1', msg:`⚡ ${streak}일 연속 개근! 페이스 좋아요!`, badge:`🔥 ${streak}일 연속`};
@@ -1650,8 +1662,10 @@ window.openSummary = function(){
     const streak=calcStreak(m.name);
     const total=calcMonthTotal(m.name);
     const rate=calcRate(m.name);
-    const grade=getGrade(m.name,streak,total,rate);
-    return {...m, streak, total, rate, ...grade};
+    const weekCount=calcWeekCount(m.name);
+    const grade=getGrade(m.name,streak,total,rate,weekCount);
+    const isLowWeek = weekCount < 3;
+    return {...m, streak, total, rate, weekCount, isLowWeek, ...grade};
   }).sort((a,b)=>b.streak-a.streak||b.total-a.total);
 
   const cntBadgeColor = {
@@ -1661,13 +1675,13 @@ window.openSummary = function(){
     'tier-low':'#5a6080'
   };
 
-  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,tier,msg,badge},idx)=>{
+  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,weekCount,isLowWeek,tier,msg,badge},idx)=>{
     const color = cntBadgeColor[tier];
-    const rankCls = '';
-    return `<div class="summary-member-row ${tier}${rankCls}">
+    const warnCls = isLowWeek ? ' week-warn' : '';
+    return `<div class="summary-member-row ${tier}${warnCls}">
       <span class="summary-emoji">${emoji}</span>
       <div class="summary-info">
-        <span class="summary-name">${name}</span>
+        <span class="summary-name">${name}${isLowWeek?' <span class="week-warn-tag">⚠️ 이번주 '+weekCount+'회</span>':''}</span>
         <span class="summary-msg">${msg}</span>
       </div>
       ${badge?`<span class="summary-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${badge}</span>`:''}
