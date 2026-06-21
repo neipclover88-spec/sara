@@ -250,8 +250,22 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .summary-member-row.tier-2 { border-color:rgba(0,229,160,0.35); background:rgba(0,229,160,0.06); }
 .summary-member-row.tier-3 { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
 .summary-member-row.tier-low { opacity:0.5; }
-.summary-member-row.week-warn { border-color:rgba(255,107,107,0.5) !important; background:rgba(255,107,107,0.08) !important; opacity:1 !important; }
-.week-warn-tag { font-size:0.68rem; color:#ff6b6b; font-weight:700; margin-left:0.3rem; vertical-align:middle; }
+.summary-member-row.week-warn {
+  border-color:#ffd93d !important;
+  background:linear-gradient(135deg,rgba(255,217,61,0.18),rgba(255,217,61,0.06)) !important;
+  box-shadow:0 0 0 1px rgba(255,217,61,0.3), 0 2px 12px rgba(255,217,61,0.15);
+  opacity:1 !important;
+}
+.week-warn-tag {
+  display:inline-block; font-size:0.65rem; color:#1a1500; background:#ffd93d;
+  font-weight:800; margin-left:0.35rem; vertical-align:middle;
+  padding:0.08rem 0.4rem; border-radius:100px;
+}
+.week-warn-badge {
+  display:inline-block; font-size:0.62rem; color:#1a1500; background:#ffd93d;
+  font-weight:800; margin-left:0.3rem; padding:0.04rem 0.35rem; border-radius:100px;
+  vertical-align:middle; white-space:nowrap;
+}
 .summary-emoji { font-size:1.6rem; flex-shrink:0; }
 .summary-info { flex:1; display:flex; flex-direction:column; gap:0.1rem; min-width:0; }
 .summary-name { font-size:1rem; font-weight:700; }
@@ -917,6 +931,20 @@ function getCount(d,name){
   return v===true?1:(v||0);
 }
 
+// 이번 주(월요일~오늘) 동안 "체크한 날짜 수" — 하루에 여러 번 해도 1일로 카운트
+// 현재 보고 있는 달이 실제 이번 달일 때만 의미 있음
+function getWeekDaysChecked(name){
+  if(curYear!==todayY || curMonth!==todayM) return null; // 다른 달 보는 중이면 계산 안 함
+  const dow = new Date(todayY, todayM, todayD).getDay(); // 0=일~6=토
+  const mondayOffset = dow===0 ? 6 : dow-1;
+  const monday = todayD - mondayOffset;
+  let days = 0;
+  for(let d=Math.max(1,monday); d<=todayD; d++){
+    if(getCount(d,name) > 0) days++;
+  }
+  return days;
+}
+
 // ── 목표 데이터 ───────────────────────────────────
 let goalsData = {}; // goalsData[field] = ["목표1","목표2"]
 let unsubscribeGoals = null;
@@ -1227,7 +1255,9 @@ function renderTable(){
     const isMe=name===myName;
     let total=0;
     bHtml+=`<tr class="${isMe?'my-row':''}" data-name="${name}">`;
-    bHtml+=`<td class="name-cell${isMe?' my-name':''}" data-name="${name}"><span class="name-emoji-inline">${emoji}</span>${name}</td>`;
+    const wkDays = getWeekDaysChecked(name);
+    const wkWarn = (wkDays!==null && wkDays<3);
+    bHtml+=`<td class="name-cell${isMe?' my-name':''}" data-name="${name}"><span class="name-emoji-inline">${emoji}</span>${name}${wkWarn?` <span class="week-warn-badge" title="이번주 ${wkDays}일 인증 (3일 미달)">⚠️${wkDays}일</span>`:''}</td>`;
     for(let d=1;d<=dim;d++){
       const cnt_=getCount(d,name);
       total+=cnt_;
@@ -1635,15 +1665,7 @@ window.openSummary = function(){
     return Math.round(days/yesterday*100);
   }
 
-  // 이번 주(월요일~오늘) 인증 횟수
-  function calcWeekCount(name){
-    const dow = new Date(curYear, curMonth, todayD).getDay(); // 0=일~6=토
-    const mondayOffset = dow === 0 ? 6 : dow - 1; // 월요일까지 며칠 전인지
-    const monday = todayD - mondayOffset;
-    let cnt = 0;
-    for(let d = Math.max(1, monday); d <= todayD; d++) cnt += getCount(d, name);
-    return cnt;
-  }
+  // 이번 주 일수 기준 카운트는 전역 getWeekDaysChecked() 사용
 
   // 참여도 등급 & 메시지
   function getGrade(name, streak, total, rate, weekCount){
@@ -1662,9 +1684,9 @@ window.openSummary = function(){
     const streak=calcStreak(m.name);
     const total=calcMonthTotal(m.name);
     const rate=calcRate(m.name);
-    const weekCount=calcWeekCount(m.name);
+    const weekCount=getWeekDaysChecked(m.name);
     const grade=getGrade(m.name,streak,total,rate,weekCount);
-    const isLowWeek = weekCount < 3;
+    const isLowWeek = (weekCount!==null && weekCount < 3);
     return {...m, streak, total, rate, weekCount, isLowWeek, ...grade};
   }).sort((a,b)=>b.streak-a.streak||b.total-a.total);
 
