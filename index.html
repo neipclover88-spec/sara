@@ -1133,17 +1133,6 @@ function getMonday(offset=0){
   mon.setDate(now.getDate() - (dow===0?6:dow-1) + offset*7);
   return mon;
 }
-
-// 시작일부터 몇 주차인지
-function getKsWeekNum(monday){
-  const start = new Date(ksConfig.startDate);
-  const startDow = start.getDay();
-  const startMon = new Date(start);
-  startMon.setDate(start.getDate()-(startDow===0?6:startDow-1));
-  const diff = monday - startMon;
-  return Math.floor(diff/(7*24*60*60*1000))+1;
-}
-
 // 현재 보고 있는 주의 sessions (1~3개)
 // 시작일 기준 주차 계산
 function getKsWeekNum(monday){
