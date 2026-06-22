@@ -295,155 +295,103 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   text-align:center; font-family:"DM Mono",monospace;
   font-size:0.58rem; color:#252840; margin-top:0.4rem;
 }
-.challenge-nav-btn {
+.korean-nav-btn {
   font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
-  background:linear-gradient(135deg,rgba(255,140,0,0.2),rgba(255,60,0,0.15));
-  border:1px solid rgba(255,140,0,0.5); color:#ff8c00;
+  background:rgba(77,150,255,0.15); border:1px solid rgba(77,150,255,0.45); color:var(--accent2);
   padding:0.35rem 0.9rem; border-radius:100px;
   cursor:pointer; transition:all 0.2s; white-space:nowrap;
 }
-.challenge-nav-btn:hover { background:linear-gradient(135deg,rgba(255,140,0,0.3),rgba(255,60,0,0.2)); }
+.korean-nav-btn:hover { background:rgba(77,150,255,0.25); }
 
-/* 챌린지 공통 */
-.ch-overlay {
+/* 국어 스터디 */
+.ks-overlay {
   position:fixed; inset:0; z-index:500;
   background:#0a0c14; overflow-y:auto;
   display:flex; flex-direction:column;
 }
-.ch-modal {
-  width:100%; max-width:640px; margin:0 auto;
-  padding:1rem 1rem 1.5rem;
-  display:flex; flex-direction:column; gap:0.7rem;
+.ks-modal {
+  width:100%; max-width:700px; margin:0 auto;
+  padding:1rem 0.8rem 2rem;
+  display:flex; flex-direction:column; gap:0.6rem;
+  min-height:100vh;
 }
-.ch-topbar {
-  display:flex; align-items:flex-start; justify-content:space-between;
+.ks-topbar {
+  display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
 }
-.ch-cycle-label {
-  font-size:0.78rem; color:var(--muted); font-family:'DM Mono',monospace;
+.ks-title { font-size:1rem; font-weight:900; }
+.ks-month-nav {
+  font-size:1.1rem; color:var(--muted); cursor:pointer; padding:0 0.3rem;
+  transition:color 0.15s; user-select:none;
 }
-.ch-deadline {
-  font-size:0.72rem; color:var(--accent3); margin-top:0.1rem; font-family:'DM Mono',monospace;
-}
-.ch-close-btn {
+.ks-month-nav:hover { color:var(--accent2); }
+.ks-month-label { font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--text); }
+.ks-close-btn {
   background:var(--surface); border:1px solid var(--border); color:var(--muted);
   width:28px; height:28px; border-radius:50%; cursor:pointer;
   font-size:0.8rem; display:flex; align-items:center; justify-content:center;
-  transition:all 0.15s; flex-shrink:0;
 }
-.ch-close-btn:hover { border-color:var(--danger); color:var(--danger); }
-.ch-results-btn {
-  font-family:'Noto Sans KR',sans-serif; font-size:0.72rem; font-weight:700;
-  background:rgba(255,217,61,0.12); border:1px solid rgba(255,217,61,0.35);
-  color:var(--accent3); padding:0.28rem 0.7rem; border-radius:100px; cursor:pointer;
-  transition:all 0.15s; white-space:nowrap;
-}
-.ch-register-btn {
-  width:100%; font-family:'Noto Sans KR',sans-serif; font-size:0.82rem; font-weight:700;
-  background:rgba(255,140,0,0.1); border:1px solid rgba(255,140,0,0.3);
-  color:#ff8c00; padding:0.55rem; border-radius:10px; cursor:pointer; transition:all 0.15s;
-}
-.ch-register-btn:hover { background:rgba(255,140,0,0.2); }
+.ks-close-btn:hover { border-color:var(--danger); color:var(--danger); }
 
-/* 현황판 */
-.ch-board { display:flex; flex-direction:column; gap:0.55rem; }
-.ch-member-card {
+.ks-tabs { display:flex; gap:0.5rem; }
+.ks-tab {
+  flex:1; font-family:'Noto Sans KR',sans-serif; font-size:0.8rem; font-weight:600;
+  background:var(--surface); border:1px solid var(--border); color:var(--muted);
+  padding:0.45rem; border-radius:9px; cursor:pointer; transition:all 0.15s;
+}
+.ks-tab.active { background:rgba(77,150,255,0.12); border-color:rgba(77,150,255,0.4); color:var(--accent2); }
+
+/* 안내 탭 */
+.ks-info-card {
   background:var(--surface); border:1px solid var(--border);
-  border-radius:14px; overflow:hidden;
+  border-radius:14px; padding:1.1rem 1.2rem;
 }
-.ch-member-header {
-  display:flex; align-items:center; gap:0.5rem;
-  padding:0.6rem 0.85rem 0.5rem;
-  border-bottom:1px solid var(--border);
-  background:rgba(255,255,255,0.02);
-}
-.ch-member-emoji { font-size:1.3rem; flex-shrink:0; }
-.ch-member-name { font-size:0.9rem; font-weight:700; flex:1; }
-.ch-member-score {
-  font-family:'DM Mono',monospace; font-size:0.68rem;
-  color:var(--muted); white-space:nowrap;
-}
-.ch-goals-table { width:100%; }
-.ch-goal-row {
-  display:flex; align-items:center; gap:0; border-bottom:1px solid rgba(255,255,255,0.04);
-}
-.ch-goal-row:last-child { border-bottom:none; }
-.ch-goal-type { font-size:0.75rem; padding:0.45rem 0.6rem; flex-shrink:0; width:1.5rem; text-align:center; }
-.ch-goal-text {
-  font-size:0.78rem; color:var(--text); flex:1;
-  padding:0.45rem 0.4rem 0.45rem 0; line-height:1.3;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.ch-goal-text.empty { color:var(--muted); font-style:italic; }
-.ch-day-checks { display:flex; gap:0; flex-shrink:0; }
-.ch-check-cell {
-  width:36px; text-align:center; padding:0.35rem 0;
-  border-left:1px solid rgba(255,255,255,0.05);
-  cursor:pointer; transition:background 0.12s;
-}
-.ch-check-cell:hover { background:rgba(255,255,255,0.05); }
-.ch-check-cell.checked { color:#00e5a0; }
-.ch-check-cell.unchecked { color:rgba(255,255,255,0.12); }
-.ch-day-header-row {
-  display:flex; align-items:center; padding:0 0 0 2.5rem;
+.ks-info-title {
+  font-size:0.95rem; font-weight:800; color:var(--accent2);
+  margin-bottom:0.9rem; padding-bottom:0.6rem;
   border-bottom:1px solid var(--border);
 }
-.ch-day-header {
-  width:36px; text-align:center;
-  font-family:'DM Mono',monospace; font-size:0.62rem;
-  color:var(--muted); padding:0.35rem 0;
-  border-left:1px solid rgba(255,255,255,0.05);
+.ks-info-row { display:flex; align-items:baseline; gap:0.4rem; margin-top:0.75rem; }
+.ks-info-num { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent2); font-weight:700; flex-shrink:0; }
+.ks-info-label { font-size:0.85rem; font-weight:700; }
+.ks-info-sub { font-size:0.8rem; color:var(--muted); padding-left:1.1rem; margin-top:0.2rem; line-height:1.5; }
+.ks-info-example {
+  margin-top:0.9rem; background:rgba(77,150,255,0.06);
+  border:1px solid rgba(77,150,255,0.2); border-radius:10px; padding:0.8rem 1rem;
 }
-.ch-day-header.today { color:var(--accent); font-weight:700; }
-.ch-no-goals {
-  padding:0.8rem; font-size:0.75rem; color:var(--muted);
-  text-align:center; font-style:italic;
-}
+.ks-info-example-title { font-size:0.72rem; color:var(--accent2); font-weight:700; margin-bottom:0.4rem; }
+.ks-info-example-body { font-size:0.78rem; color:var(--muted); line-height:1.8; }
 
-/* 목표 등록 팝업 */
-.ch-register-overlay {
-  position:fixed; inset:0; z-index:600;
-  background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
-  display:flex; align-items:flex-end; justify-content:center;
+/* 인증 현황 탭 */
+.ks-week-legend { font-size:0.72rem; color:var(--muted); margin-bottom:0.3rem; }
+.ks-leg-done { color:#00e5a0; font-weight:700; }
+.ks-leg-fail { color:#ffd93d; font-weight:700; }
+.ks-board-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.ks-table { width:100%; border-collapse:collapse; min-width:420px; }
+.ks-table thead tr th {
+  font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--muted);
+  padding:0.3rem 0.2rem; text-align:center; font-weight:500;
+  border-bottom:1px solid var(--border); white-space:nowrap;
 }
-.ch-register-modal {
-  background:#141726; border:1px solid #2a2f4a;
-  border-radius:20px 20px 0 0; width:100%; max-width:640px;
-  padding:1.2rem 1.3rem 2rem; max-height:90vh; overflow-y:auto;
-  animation:slideUp 0.22s ease;
+.ks-table thead tr th.ks-name-col { text-align:left; padding-left:0.5rem; min-width:90px; }
+.ks-table thead tr th.ks-wk-col { color:var(--accent2); min-width:36px; border-left:1px solid var(--border); }
+.ks-table thead tr th.ks-today { color:var(--accent); font-weight:700; }
+.ks-table tbody tr td {
+  padding:0.35rem 0.2rem; text-align:center; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:0.78rem;
 }
-.ch-register-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:0.9rem;
+.ks-table tbody tr td.ks-name-td {
+  text-align:left; padding-left:0.5rem; font-size:0.8rem; font-weight:600;
+  white-space:nowrap;
 }
-.ch-register-title { font-size:1rem; font-weight:800; }
-.ch-input-label {
-  font-size:0.72rem; color:var(--muted); margin-bottom:0.3rem;
-  font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em;
+.ks-table tbody tr td.ks-wk-td {
+  border-left:1px solid var(--border); font-family:'DM Mono',monospace;
+  font-size:0.7rem;
 }
-.ch-input {
-  width:100%; background:var(--surface2); border:1px solid var(--border);
-  color:var(--text); border-radius:9px; padding:0.6rem 0.8rem;
-  font-family:'Noto Sans KR',sans-serif; font-size:0.88rem;
-  outline:none; transition:border-color 0.15s; box-sizing:border-box;
-}
-.ch-input:focus { border-color:var(--accent); }
-.ch-save-btn {
-  width:100%; font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; font-weight:700;
-  background:var(--accent); border:none; color:#0d0f1a;
-  padding:0.7rem; border-radius:10px; cursor:pointer; margin-top:0.3rem;
-}
-.ch-save-btn:hover { opacity:0.9; }
-
-/* 결산용 추가 */
-.ch-result-stat {
-  font-family:'DM Mono',monospace; font-size:0.72rem; margin-left:auto;
-  padding:0.15rem 0.55rem; border-radius:100px; white-space:nowrap;
-}
-.ch-result-stat.perfect { background:rgba(0,229,160,0.15); color:#00e5a0; border:1px solid rgba(0,229,160,0.3); }
-.ch-result-stat.good { background:rgba(255,217,61,0.15); color:#ffd93d; border:1px solid rgba(255,217,61,0.3); }
-.ch-result-stat.low { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
-
-
+.ks-table tbody tr td.ks-wk-done { color:#00e5a0; font-weight:700; }
+.ks-table tbody tr td.ks-wk-warn { color:#ffd93d; font-weight:700; }
+.ks-check-cell { cursor:pointer; font-size:0.85rem; transition:transform 0.1s; display:block; }
+.ks-check-cell:hover { transform:scale(1.2); }
+.ks-table tbody tr.my-row td.ks-name-td { color:var(--accent); }
 
 .goal-name-box {
   background:var(--surface); border:1px solid var(--border);
@@ -606,6 +554,54 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .day-goals-item.done { background:rgba(0,229,160,0.06); border-radius:8px; padding:0.25rem 0.5rem; margin-left:-0.5rem; }
 .day-goals-add-btn { width:100%; margin-top:1rem; background:rgba(77,150,255,0.1); border:1px solid rgba(77,150,255,0.3); color:var(--accent2); padding:0.6rem; border-radius:10px; cursor:pointer; font-size:0.82rem; font-family:'Noto Sans KR',sans-serif; font-weight:600; transition:all 0.15s; }
 .day-goals-add-btn:hover { background:rgba(77,150,255,0.2); }
+.korean-nav-btn {
+  font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
+  background:rgba(0,229,160,0.12); border:1px solid rgba(0,229,160,0.4);
+  color:var(--accent); padding:0.35rem 0.9rem; border-radius:100px;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.korean-nav-btn:hover { background:rgba(0,229,160,0.22); }
+
+/* 탭바 */
+.ks-tabbar { display:flex; align-items:center; gap:0.3rem; padding:0.8rem 1rem 0; border-bottom:1px solid var(--border); }
+.ks-tab { font-family:'Noto Sans KR',sans-serif; font-size:0.8rem; font-weight:600; background:transparent; border:none; color:var(--muted); padding:0.4rem 0.8rem 0.6rem; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
+.ks-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* 월 네비 */
+.ks-month-nav { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem; }
+.ks-nav-btn { background:var(--surface); border:1px solid var(--border); color:var(--text); width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; }
+.ks-month-label { font-size:0.88rem; font-weight:700; font-family:'DM Mono',monospace; }
+
+/* 인증 테이블 */
+.ks-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.ks-table { border-collapse:collapse; width:100%; min-width:500px; }
+.ks-table th, .ks-table td { text-align:center; padding:0.3rem 0.2rem; font-size:0.72rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+.ks-table th { font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); padding:0.25rem 0.15rem; }
+.ks-table th.today-col { color:var(--accent); font-weight:700; }
+.ks-table th.sun { color:#ff6b6b; }
+.ks-table th.sat { color:var(--accent2); }
+.ks-name-cell { text-align:left !important; white-space:nowrap; font-size:0.78rem; font-weight:600; padding-left:0.3rem !important; }
+.ks-name-emoji { margin-right:0.25rem; }
+.ks-check { font-size:0.9rem; cursor:pointer; transition:transform 0.1s; display:block; }
+.ks-check:hover { transform:scale(1.3); }
+.ks-total { font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; }
+.ks-total.met { color:var(--accent); }
+.ks-total.warn { color:#ffd93d; }
+.ks-total.low { color:var(--muted); }
+.ks-week-divider { border-top:1px solid rgba(255,255,255,0.1) !important; }
+.ks-week-header th { color:rgba(255,255,255,0.15); font-size:0.58rem; padding:0.1rem 0; }
+
+/* 안내 */
+.ks-info-box { display:flex; flex-direction:column; gap:0.9rem; padding:0.3rem 0; }
+.ks-info-title { font-size:1rem; font-weight:800; color:var(--accent); margin-bottom:0.2rem; }
+.ks-info-section { display:flex; gap:0.6rem; align-items:flex-start; }
+.ks-info-num { background:var(--accent); color:#0d0f1a; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:800; flex-shrink:0; margin-top:0.1rem; }
+.ks-info-head { font-size:0.82rem; font-weight:700; display:block; margin-bottom:0.2rem; }
+.ks-info-body { font-size:0.78rem; color:var(--muted); line-height:1.6; }
+.ks-example { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; padding:0.8rem; }
+.ks-example-label { font-size:0.65rem; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; margin-bottom:0.4rem; }
+.ks-example-body { font-size:0.78rem; color:var(--text); line-height:1.8; }
+
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -637,7 +633,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     <button class="month-btn" onclick="changeMonth(1)">›</button>
   </div>
   <button class="summary-btn" onclick="openSummary()">📊 오늘의 결산</button>
-  <button class="challenge-nav-btn" onclick="openChallenge()">🔥 작심삼일</button>
+  <button class="korean-nav-btn" onclick="openKoreanStudy()">📚 국어 스터디</button>
 </nav>
 
 <div class="main">
@@ -701,79 +697,106 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 
 </div>
 
-<!-- 🔥 작심삼일 현황판 -->
-<div class="ch-overlay" id="challengeOverlay" style="display:none">
-  <div class="ch-modal">
-    <div class="ch-topbar">
-      <div>
-        <div class="ch-cycle-label" id="chCycleLabel"></div>
-        <div class="ch-deadline" id="chDeadline"></div>
-      </div>
-      <div style="display:flex;gap:0.5rem;align-items:center">
-        <button class="ch-results-btn" onclick="openChallengeResults()">📊 결산</button>
-        <button class="ch-close-btn" onclick="closeChallenge()">✕</button>
-      </div>
-    </div>
-    <button class="ch-register-btn" onclick="openGoalRegister()">✏️ 내 목표 등록 / 수정</button>
-    <div class="ch-board" id="chBoard"></div>
-  </div>
-</div>
+<!-- 📚 국어 기출 스터디 -->
+<div class="ks-overlay" id="koreanStudyOverlay" style="display:none">
+  <div class="ks-modal">
 
-<!-- 🔥 목표 등록 팝업 -->
-<div class="ch-register-overlay" id="goalRegisterOverlay" style="display:none" onclick="closeGoalRegisterOutside(event)">
-  <div class="ch-register-modal">
-    <div class="ch-register-header">
-      <div class="ch-register-title">내 목표 등록</div>
-      <button class="ch-close-btn" onclick="closeGoalRegister()">✕</button>
+    <!-- 탑바 -->
+    <div class="ks-topbar">
+      <div class="ks-title">📚 국어 기출 스터디</div>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <span class="ks-month-nav" onclick="changeKsMonth(-1)">‹</span>
+        <span class="ks-month-label" id="ksMonthLabel"></span>
+        <span class="ks-month-nav" onclick="changeKsMonth(1)">›</span>
+        <button class="ks-close-btn" onclick="closeKoreanStudy()">✕</button>
+      </div>
     </div>
-    <div class="goal-section-label" style="margin-bottom:0.5rem">닉네임 선택</div>
-    <div class="goal-name-box" id="chNameBox">
-      <div id="chNameSelected" style="display:none">
-        <div class="goal-name-selected-row">
-          <div class="goal-name-selected-inner">
-            <span class="goal-name-selected-emoji" id="chSelEmoji"></span>
-            <span class="goal-name-selected-text" id="chSelText"></span>
+
+    <!-- 탭 -->
+    <div class="ks-tabs">
+      <button class="ks-tab active" id="ksTabInfo" onclick="switchKsTab('info')">📋 안내</button>
+      <button class="ks-tab" id="ksTabBoard" onclick="switchKsTab('board')">✅ 인증 현황</button>
+    </div>
+
+    <!-- 안내 탭 -->
+    <div class="ks-section" id="ksSectionInfo">
+      <div class="ks-info-card">
+        <div class="ks-info-title">📚 국어 기출 스터디 안내</div>
+        <div class="ks-info-body">
+          <div class="ks-info-row"><span class="ks-info-num">1.</span><span class="ks-info-label">진행 횟수</span></div>
+          <div class="ks-info-sub">• 주 3회</div>
+
+          <div class="ks-info-row"><span class="ks-info-num">2.</span><span class="ks-info-label">진도</span></div>
+          <div class="ks-info-sub">• 2026학년도 6월 모의평가부터 역순 진행</div>
+          <div class="ks-info-sub">• 독서론 포함 회차는 범위 조정 후 별도 공지</div>
+
+          <div class="ks-info-row"><span class="ks-info-num">3.</span><span class="ks-info-label">학습 범위</span></div>
+          <div class="ks-info-sub">• 독서 1세트</div>
+          <div class="ks-info-sub">• 문학 1세트</div>
+
+          <div class="ks-info-row"><span class="ks-info-num">4.</span><span class="ks-info-label">인증 방법 (당일 자정까지)</span></div>
+          <div class="ks-info-sub">• 지문 또는 풀이 사진</div>
+          <div class="ks-info-sub">• 독서 지문 요약 3줄</div>
+          <div class="ks-info-sub">• 가장 어려웠던 문제 또는 배운 점 1줄</div>
+
+          <div class="ks-info-row"><span class="ks-info-num">5.</span><span class="ks-info-label">인증 형식</span></div>
+          <div class="ks-info-sub">• 사진 인증 가능</div>
+          <div class="ks-info-sub">• 텍스트만 작성해도 가능</div>
+
+          <div class="ks-info-example">
+            <div class="ks-info-example-title">예시)</div>
+            <div class="ks-info-example-body">[국어 인증]<br>요약<br>• ...<br>• ...<br>• ...<br>배운 점<br>• 선지 판단 전에 필자의 주장을 먼저 정리해야겠다.</div>
           </div>
-          <button class="goal-name-change-btn" onclick="changeChallengeGoalName()">변경</button>
         </div>
       </div>
-      <div id="chNameGridWrap">
-        <div class="goal-name-grid-label">닉네임 선택</div>
-        <div class="goal-name-grid" id="chNameGrid"></div>
+    </div>
+
+    <!-- 인증 현황 탭 -->
+    <div class="ks-section" id="ksSectionBoard" style="display:none">
+      <div class="ks-week-legend">주 3회 달성: <span class="ks-leg-done">✅ 달성</span> <span class="ks-leg-fail">⚠️ 미달</span></div>
+      <div class="ks-board-wrap">
+        <table class="ks-table" id="ksTable">
+          <thead id="ksTableHead"></thead>
+          <tbody id="ksTableBody"></tbody>
+        </table>
       </div>
     </div>
-    <div id="chGoalInputSection" style="display:none;flex-direction:column;gap:0.7rem;margin-top:0.7rem">
-      <div>
-        <div class="ch-input-label">📚 교재 진척 목표 <span style="color:var(--danger);font-size:0.65rem">필수</span></div>
-        <input class="ch-input" id="chTextbookInput" type="text" placeholder="예) 마더텅 수2 1~3강 완강" maxlength="50">
-      </div>
-      <div>
-        <div class="ch-input-label">💪 습관 목표 <span style="color:var(--danger);font-size:0.65rem">필수</span></div>
-        <input class="ch-input" id="chHabitInput" type="text" placeholder="예) 매일 30분 운동" maxlength="50">
-      </div>
-      <div>
-        <div class="ch-input-label">📝 기타 목표 <span style="color:var(--muted);font-size:0.65rem">선택</span></div>
-        <input class="ch-input" id="chExtraInput" type="text" placeholder="예) 하루 2시간 이상 공부" maxlength="50">
-      </div>
-      <button class="ch-save-btn" onclick="saveChallengeGoal()">저장</button>
-    </div>
+
   </div>
 </div>
 
-<!-- 🔥 결산 화면 -->
-<div class="ch-overlay" id="challengeResultsOverlay" style="display:none">
-  <div class="ch-modal">
-    <div class="ch-topbar">
-      <div>
-        <div class="ch-cycle-label" id="chResultsCycleLabel"></div>
-        <div style="font-size:1.1rem;font-weight:900;color:var(--accent3);margin-top:0.1rem">🔥 작심삼일 결산!</div>
-      </div>
-      <button class="ch-close-btn" onclick="closeChallengeResults()">✕</button>
+<!-- 📚 국어 기출 스터디 -->
+<div class="summary-overlay" id="koreanStudyOverlay" style="display:none">
+  <div class="summary-modal" style="max-width:700px;padding:0">
+    <div class="ks-tabbar">
+      <button class="ks-tab active" id="ksTab1" onclick="switchKsTab(1)">✅ 인증 현황</button>
+      <button class="ks-tab" id="ksTab2" onclick="switchKsTab(2)">📋 스터디 안내</button>
+      <div style="flex:1"></div>
+      <button class="summary-close" style="margin-right:1rem" onclick="closeKoreanStudy()">← 돌아가기</button>
     </div>
-    <div class="ch-board" id="chResultsBoard"></div>
-    <div style="text-align:center;padding:0.8rem 0 0.3rem;border-top:1px solid var(--border)">
-      <div style="font-size:0.82rem;color:var(--muted)">📸 스크린샷 후 카톡방에 공유하세요!</div>
-      <div style="font-size:0.58rem;color:#252840;margin-top:0.3rem;font-family:monospace">직장인 수능준비생 1일 1인증방</div>
+    <div style="padding:0.8rem 1rem 1.5rem">
+      <div id="ksPanel1">
+        <div class="ks-month-nav">
+          <button class="ks-nav-btn" onclick="changeKsMonth(-1)">‹</button>
+          <span class="ks-month-label" id="ksMonthLabel"></span>
+          <button class="ks-nav-btn" onclick="changeKsMonth(1)">›</button>
+        </div>
+        <div class="ks-table-wrap"><table class="ks-table" id="ksTable"></table></div>
+      </div>
+      <div id="ksPanel2" style="display:none">
+        <div class="ks-info-box">
+          <div class="ks-info-title">📚 국어 기출 스터디 안내</div>
+          <div class="ks-info-section"><span class="ks-info-num">1</span><div><span class="ks-info-head">진행 일정</span><div class="ks-info-body">주 3회 목표 · 아무 날이나 자유롭게 인증</div></div></div>
+          <div class="ks-info-section"><span class="ks-info-num">2</span><div><span class="ks-info-head">진도</span><div class="ks-info-body">2026학년도 6월 모의평가부터 역순 진행 · 독서론 포함 회차는 범위 조정 후 별도 공지</div></div></div>
+          <div class="ks-info-section"><span class="ks-info-num">3</span><div><span class="ks-info-head">학습 범위</span><div class="ks-info-body">독서 1세트 · 문학 1세트</div></div></div>
+          <div class="ks-info-section"><span class="ks-info-num">4</span><div><span class="ks-info-head">인증 방법 (당일 자정까지)</span><div class="ks-info-body">• 지문 또는 풀이 사진<br>• 독서 지문 요약 3줄<br>• 가장 어려웠던 문제 또는 배운 점 1줄</div></div></div>
+          <div class="ks-info-section"><span class="ks-info-num">5</span><div><span class="ks-info-head">인증 형식</span><div class="ks-info-body">사진 인증 가능 · 텍스트만도 가능</div></div></div>
+          <div class="ks-example">
+            <div class="ks-example-label">예시</div>
+            <div class="ks-example-body">[국어 인증]<br>요약<br>• ...<br>배운 점<br>• 선지 판단 전에 필자의 주장을 먼저 정리해야겠다.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1346,331 +1369,145 @@ document.addEventListener('mousedown', function(e){
 });
 document.addEventListener('mouseup',()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }});
 
-// ── 작심삼일 챌린지 ────────────────────────────────
+// ── 국어 기출 스터디 ─────────────────────────────────
 
-// ─ 사이클 계산 ─
-function getCycleInfo(refDate) {
-  const d = new Date(refDate || new Date());
-  d.setHours(0,0,0,0);
-  const dow = d.getDay(); // 0=일,1=월...6=토
-  let startOffset, endDow;
-  if (dow >= 1 && dow <= 3) { startOffset = -(dow-1); endDow = 3; }      // 월~수
-  else if (dow === 4) { startOffset = 0; endDow = 0; }                   // 목 시작
-  else if (dow === 5) { startOffset = -1; endDow = 0; }                  // 금
-  else if (dow === 6) { startOffset = -2; endDow = 0; }                  // 토
-  else { startOffset = -3; endDow = 0; }                                  // 일 (목 사이클)
+let ksYear = todayY, ksMonth = todayM;
+let ksData = {};
+let unsubscribeKs = null;
 
-  const start = new Date(d);
-  start.setDate(d.getDate() + startOffset);
+function ksDocId(y, m){ return `${y}_${String(m).padStart(2,'0')}`; }
 
-  // 마감일 = 수(3) 또는 일(0)
-  const end = new Date(start);
-  while (true) {
-    const ew = end.getDay();
-    if ((startOffset <= 0 && dow <= 3 && ew === 3) || (!(dow >=1&&dow<=3) && ew === 0)) break;
-    end.setDate(end.getDate() + 1);
-  }
-  end.setHours(22, 0, 0, 0);
-
-  // 사이클 내 날짜 배열
-  const days = [];
-  const cur = new Date(start);
-  while (cur < end) {
-    days.push(new Date(cur));
-    cur.setDate(cur.getDate() + 1);
-  }
-  days.push(new Date(end)); // 마감일 포함 (시간 무시)
-  // 실제로는 end.getDate()까지
-  const dayNums = days.map(dd => dd.getDate());
-
-  return { start, end, days, dayNums,
-    docId: `ch_${start.getFullYear()}-${start.getMonth()}-${start.getDate()}` };
-}
-
-const DOW_KR = ['일','월','화','수','목','금','토'];
-
-// ─ Firebase 구독 ─
-let challengeData = {};
-let unsubscribeChallenge = null;
-let currentCycle = null;
-
-function subscribeChallenge(cycle) {
-  if (unsubscribeChallenge) unsubscribeChallenge();
-  const r = doc(db, 'challenges', cycle.docId);
-  unsubscribeChallenge = onSnapshot(r, snap => {
-    challengeData = snap.exists() ? snap.data() : {};
-    renderChallengeBoard();
-    renderChallengeResults();
+function subscribeKs(y, m){
+  if(unsubscribeKs) unsubscribeKs();
+  const r = doc(db, 'korean_study', ksDocId(y, m));
+  unsubscribeKs = onSnapshot(r, snap => {
+    ksData = snap.exists() ? snap.data() : {};
+    renderKsBoard();
   });
 }
 
-async function saveToChallenge(cycle, field, value) {
-  const r = doc(db, 'challenges', cycle.docId);
-  const snap = await getDoc(r);
-  const data = snap.exists() ? snap.data() : {};
-  if (value !== null && value !== undefined && value !== '') data[field] = value;
-  else delete data[field];
-  await setDoc(r, data);
-}
-
-// ─ 사이클 열기 ─
-window.openChallenge = function() {
-  currentCycle = getCycleInfo();
-  subscribeChallenge(currentCycle);
-  renderCycleHeader();
-  document.getElementById('challengeOverlay').style.display = 'flex';
+window.openKoreanStudy = function(){
+  ksYear = todayY; ksMonth = todayM;
+  subscribeKs(ksYear, ksMonth);
+  switchKsTab(1);
+  document.getElementById('koreanStudyOverlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 };
 
-window.closeChallenge = function() {
-  document.getElementById('challengeOverlay').style.display = 'none';
+window.closeKoreanStudy = function(){
+  document.getElementById('koreanStudyOverlay').style.display = 'none';
   document.body.style.overflow = '';
+  if(unsubscribeKs){ unsubscribeKs(); unsubscribeKs=null; }
 };
 
-function renderCycleHeader() {
-  if (!currentCycle) return;
-  const { start, end } = currentCycle;
-  const fmt = d => `${d.getMonth()+1}/${d.getDate()}(${DOW_KR[d.getDay()]})`;
-  document.getElementById('chCycleLabel').textContent = `🔥 ${fmt(start)} ~ ${fmt(new Date(end.getFullYear(),end.getMonth(),end.getDate()))}`;
+window.changeKsMonth = function(dir){
+  ksMonth += dir;
+  if(ksMonth > 11){ ksMonth=0; ksYear++; }
+  if(ksMonth < 0){ ksMonth=11; ksYear--; }
+  document.getElementById('ksMonthLabel').textContent = `${ksYear}년 ${ksMonth+1}월`;
+  subscribeKs(ksYear, ksMonth);
+};
 
-  // 마감 카운트다운
-  const now = new Date();
-  const diff = end - now;
-  let deadlineStr = '';
-  if (diff > 0) {
-    const h = Math.floor(diff/3600000);
-    const daysLeft = Math.floor(h/24);
-    if (daysLeft > 0) deadlineStr = `마감 D-${daysLeft} (${end.getMonth()+1}/${end.getDate()} 22:00)`;
-    else deadlineStr = `마감 ${h}시간 후`;
-  } else {
-    deadlineStr = '마감 완료';
+window.switchKsTab = function(n){
+  document.getElementById('ksPanel1').style.display = n===1 ? 'block' : 'none';
+  document.getElementById('ksPanel2').style.display = n===2 ? 'block' : 'none';
+  document.getElementById('ksTab1').className = 'ks-tab'+(n===1?' active':'');
+  document.getElementById('ksTab2').className = 'ks-tab'+(n===2?' active':'');
+  if(n===1) renderKsBoard();
+};
+
+function renderKsBoard(){
+  const table = document.getElementById('ksTable');
+  if(!table) return;
+  const lbl = document.getElementById('ksMonthLabel');
+  if(lbl) lbl.textContent = `${ksYear}년 ${ksMonth+1}월`;
+
+  const dim = new Date(ksYear, ksMonth+1, 0).getDate();
+  const DOW = ['일','월','화','수','목','금','토'];
+  const todayDt = new Date(todayY, todayM, todayD);
+
+  // 주 key (해당 주의 월요일 날짜)
+  function weekKey(d){
+    const dt = new Date(ksYear, ksMonth, d);
+    const dow = dt.getDay();
+    const mon = new Date(dt); mon.setDate(dt.getDate()-(dow===0?6:dow-1));
+    return mon.toDateString();
   }
-  document.getElementById('chDeadline').textContent = deadlineStr;
-  // 결산 화면 레이블도
-  const el2 = document.getElementById('chResultsCycleLabel');
-  if (el2) el2.textContent = `${fmt(start)} ~ ${fmt(new Date(end.getFullYear(),end.getMonth(),end.getDate()))}`;
-}
 
-// ─ 현황판 렌더 ─
-function renderChallengeBoard() {
-  if (!currentCycle) return;
-  const { dayNums } = currentCycle;
-  const today = new Date();
-  const todayNum = today.getDate();
+  // 고유 주 목록
+  const weekKeys = [...new Set(Array.from({length:dim},(_,i)=>weekKey(i+1)))];
 
-  // 요일 헤더
-  const dayHeaders = dayNums.map(d => {
-    const dt = new Date(currentCycle.start.getFullYear(), currentCycle.start.getMonth(), d);
-    const isToday = dt.toDateString() === today.toDateString();
-    return `<div class="ch-day-header${isToday?' today':''}">${DOW_KR[dt.getDay()]}<br>${d}</div>`;
-  }).join('');
+  // 헤더
+  let headHtml = '<thead><tr><th style="text-align:left;padding-left:0.3rem;font-size:0.68rem;color:var(--muted)">이름</th>';
+  for(let d=1;d<=dim;d++){
+    const dt=new Date(ksYear,ksMonth,d);
+    const dow=dt.getDay();
+    const isToday=(ksYear===todayY&&ksMonth===todayM&&d===todayD);
+    const cls=isToday?'today-col ':dow===0?'sun ':dow===6?'sat ':'';
+    headHtml+=`<th class="${cls}">${d}<br>${DOW[dow]}</th>`;
+  }
+  weekKeys.forEach((_,i)=>{ headHtml+=`<th style="font-size:0.6rem;color:var(--muted);padding:0.2rem">W${i+1}</th>`; });
+  headHtml+='<th style="font-size:0.68rem;color:var(--muted)">합계</th></tr></thead>';
 
-  const TYPES = [
-    { key:'textbook', icon:'📚' },
-    { key:'habit',    icon:'💪' },
-    { key:'extra',    icon:'📝' },
-  ];
-
-  const cards = members.map(m => {
-    const mk = mKey(m.name);
-    const tb = challengeData[`goal_${mk}_textbook`] || '';
-    const hb = challengeData[`goal_${mk}_habit`] || '';
-    const ex = challengeData[`goal_${mk}_extra`] || '';
-    const hasGoals = tb || hb;
-
-    // 달성률 계산
-    let total=0, done=0;
-    TYPES.forEach(({key}) => {
-      const goalTxt = challengeData[`goal_${mk}_${key}`];
-      if (!goalTxt) return;
-      dayNums.forEach(d => {
-        total++;
-        if (challengeData[`check_${mk}_${d}_${key}`]) done++;
-      });
+  // 바디
+  let bodyHtml='<tbody>';
+  members.forEach(m=>{
+    const isMe=m.name===myName;
+    bodyHtml+=`<tr${isMe?' class="my-row"':''}>`;
+    bodyHtml+=`<td class="ks-name-cell"><span class="ks-name-emoji">${m.emoji}</span>${m.name}</td>`;
+    let total=0;
+    for(let d=1;d<=dim;d++){
+      const checked=!!ksData[`d${d}_${mKey(m.name)}`];
+      if(checked) total++;
+      const dt=new Date(ksYear,ksMonth,d);
+      const isFuture=dt>todayDt;
+      const isToday=(ksYear===todayY&&ksMonth===todayM&&d===todayD);
+      bodyHtml+=`<td style="${isToday?'background:rgba(0,229,160,0.05)':''}">`;
+      if(isFuture) bodyHtml+='<span style="color:rgba(255,255,255,0.1)">·</span>';
+      else bodyHtml+=`<span class="ks-check" onclick="toggleKsCheck(${d},'${m.name.replace(/'/g,"\'")}',${checked})">${checked?'✅':'○'}</span>`;
+      bodyHtml+='</td>';
+    }
+    // 주별 집계
+    weekKeys.forEach(wk=>{
+      const wkDays=[];
+      for(let d=1;d<=dim;d++){ if(weekKey(d)===wk) wkDays.push(d); }
+      const cnt=wkDays.filter(d=>!!ksData[`d${d}_${mKey(m.name)}`]).length;
+      const lastDay=new Date(ksYear,ksMonth,wkDays[wkDays.length-1]);
+      const allPast=lastDay<todayDt;
+      let cls=''; let txt=`${cnt}/3`;
+      if(cnt>=3){cls='color:#00e5a0;font-weight:700';txt='✅';}
+      else if(allPast&&cnt<3){cls='color:#ffd93d;font-weight:700';}
+      bodyHtml+=`<td style="font-family:monospace;font-size:0.7rem;${cls}">${txt}</td>`;
     });
-    const scoreStr = total>0 ? `${done}/${total}` : '';
+    const totalCls=total===0?'color:var(--muted)':total>=9?'color:#00e5a0;font-weight:700':'color:#ffd93d;font-weight:700';
+    bodyHtml+=`<td style="font-family:monospace;font-size:0.72rem;${totalCls}">${total}</td></tr>`;
+  });
 
-    const goalRows = TYPES.map(({key, icon}) => {
-      const txt = challengeData[`goal_${mk}_${key}`] || '';
-      if (!txt && key==='extra') return ''; // 기타는 없으면 숨김
-      const checks = dayNums.map(d => {
-        const checked = !!challengeData[`check_${mk}_${d}_${key}`];
-        const dt = new Date(currentCycle.start.getFullYear(), currentCycle.start.getMonth(), d);
-        const isFuture = dt > today && dt.toDateString() !== today.toDateString();
-        return `<div class="ch-check-cell ${checked?'checked':'unchecked'}"
-          onclick="toggleCheck('${mk}','${m.name}',${d},'${key}',${checked})"
-          title="${m.name} ${d}일 ${key}"
-          >${checked?'✅':'○'}</div>`;
-      }).join('');
-      return `<div class="ch-goal-row">
-        <div class="ch-goal-type">${icon}</div>
-        <div class="ch-goal-text${txt?'':' empty'}">${txt||'(미등록)'}</div>
-        <div class="ch-day-checks">${checks}</div>
-      </div>`;
-    }).filter(Boolean).join('');
-
-    return `<div class="ch-member-card">
-      <div class="ch-member-header">
-        <span class="ch-member-emoji">${m.emoji}</span>
-        <span class="ch-member-name">${m.name}</span>
-        ${scoreStr?`<span class="ch-member-score">${scoreStr} 달성</span>`:''}
-      </div>
-      <div>
-        <div class="ch-day-header-row">${dayHeaders}</div>
-        ${hasGoals ? goalRows : '<div class="ch-no-goals">목표 미등록</div>'}
-      </div>
-    </div>`;
-  }).join('');
-
-  const board = document.getElementById('chBoard');
-  if (board) board.innerHTML = cards;
-}
-
-window.toggleCheck = async function(mk, name, day, goalType, wasChecked) {
-  if (!currentCycle) return;
-  const field = `check_${mk}_${day}_${goalType}`;
-  await saveToChallenge(currentCycle, field, wasChecked ? null : true);
-};
-
-// ─ 목표 등록 ─
-let chSelectedName = '';
-
-window.openGoalRegister = function() {
-  chSelectedName = myName || '';
-  renderChNameBox();
-  updateChInputSection();
-  document.getElementById('goalRegisterOverlay').style.display = 'flex';
-};
-
-window.closeGoalRegister = function() {
-  document.getElementById('goalRegisterOverlay').style.display = 'none';
-};
-
-window.closeGoalRegisterOutside = function(e) {
-  if (e.target.id === 'goalRegisterOverlay') closeGoalRegister();
-};
-
-function renderChNameBox() {
-  const sel = document.getElementById('chNameSelected');
-  const wrap = document.getElementById('chNameGridWrap');
-  if (!sel || !wrap) return;
-  if (chSelectedName) {
-    const m = members.find(m=>m.name===chSelectedName);
-    document.getElementById('chSelEmoji').textContent = m?.emoji||'👤';
-    document.getElementById('chSelText').textContent = chSelectedName;
-    sel.style.display = 'block';
-    wrap.style.display = 'none';
-  } else {
-    sel.style.display = 'none';
-    wrap.style.display = 'block';
-    document.getElementById('chNameGrid').innerHTML = members.map(m=>
-      `<div class="goal-name-chip" onclick="selectChName('${m.name.replace(/'/g,"\'")}')">
-        <span>${m.emoji}</span>${m.name}
-      </div>`
-    ).join('');
+  // 합계 행
+  bodyHtml+='<tr style="border-top:1px solid var(--border)"><td class="ks-name-cell" style="color:var(--muted);font-size:0.65rem">합계</td>';
+  for(let d=1;d<=dim;d++){
+    const cnt=members.filter(m=>!!ksData[`d${d}_${mKey(m.name)}`]).length;
+    bodyHtml+=`<td style="font-size:0.65rem;font-family:monospace;color:${cnt>0?'var(--accent)':'var(--muted)'}">${cnt||'·'}</td>`;
   }
+  weekKeys.forEach(()=>{ bodyHtml+='<td></td>'; });
+  bodyHtml+='<td></td></tr></tbody>';
+
+  table.innerHTML=headHtml+bodyHtml;
 }
 
-window.changeChallengeGoalName = function() {
-  chSelectedName = '';
-  renderChNameBox();
-  updateChInputSection();
+window.toggleKsCheck = async function(name, day, wasChecked){
+  const r = doc(db, 'korean_study', ksDocId(ksYear, ksMonth));
+  const field = `d${day}_${mKey(name)}`;
+  const snap = await getDoc(r);
+  const data = snap.exists() ? snap.data() : {};
+  if(wasChecked) delete data[field];
+  else data[field] = true;
+  await setDoc(r, data);
 };
 
-window.selectChName = function(name) {
-  chSelectedName = name;
-  renderChNameBox();
-  updateChInputSection();
-};
-
-function updateChInputSection() {
-  const sec = document.getElementById('chGoalInputSection');
-  if (!sec) return;
-  if (!chSelectedName) { sec.style.display = 'none'; return; }
-  sec.style.display = 'flex';
-  // 기존 값 불러오기
-  if (currentCycle) {
-    const mk = mKey(chSelectedName);
-    document.getElementById('chTextbookInput').value = challengeData[`goal_${mk}_textbook`]||'';
-    document.getElementById('chHabitInput').value = challengeData[`goal_${mk}_habit`]||'';
-    document.getElementById('chExtraInput').value = challengeData[`goal_${mk}_extra`]||'';
-  }
-}
-
-window.saveChallengeGoal = async function() {
-  if (!chSelectedName || !currentCycle) return;
-  const mk = mKey(chSelectedName);
-  const tb = document.getElementById('chTextbookInput').value.trim();
-  const hb = document.getElementById('chHabitInput').value.trim();
-  const ex = document.getElementById('chExtraInput').value.trim();
-  if (!tb || !hb) { alert('교재 진척과 습관 목표는 필수예요!'); return; }
-  await saveToChallenge(currentCycle, `goal_${mk}_textbook`, tb);
-  await saveToChallenge(currentCycle, `goal_${mk}_habit`, hb);
-  await saveToChallenge(currentCycle, `goal_${mk}_extra`, ex||null);
-  closeGoalRegister();
-};
-
-// ─ 결산 ─
-window.openChallengeResults = function() {
-  if (!currentCycle) { currentCycle = getCycleInfo(); }
-  renderCycleHeader();
-  renderChallengeResults();
-  document.getElementById('challengeResultsOverlay').style.display = 'flex';
-};
-
-window.closeChallengeResults = function() {
-  document.getElementById('challengeResultsOverlay').style.display = 'none';
-};
-
-function renderChallengeResults() {
-  const board = document.getElementById('chResultsBoard');
-  if (!board || !currentCycle) return;
-  const { dayNums } = currentCycle;
-  const today = new Date();
-
-  const TYPES = [
-    { key:'textbook', icon:'📚', label:'교재' },
-    { key:'habit',    icon:'💪', label:'습관' },
-    { key:'extra',    icon:'📝', label:'기타' },
-  ];
-
-  // 달성률 기준 내림차순 정렬
-  const ranked = [...members].map(m => {
-    const mk = mKey(m.name);
-    let total=0, done=0;
-    const rows = [];
-    TYPES.forEach(({key,icon,label}) => {
-      const txt = challengeData[`goal_${mk}_${key}`];
-      if (!txt) return;
-      const dayDone = dayNums.filter(d => challengeData[`check_${mk}_${d}_${key}`]);
-      total += dayNums.length;
-      done += dayDone.length;
-      const dots = dayNums.map(d => challengeData[`check_${mk}_${d}_${key}`]?'✅':'⬜').join('');
-      rows.push(`<div style="display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.9rem;font-size:0.78rem">
-        <span>${icon}</span>
-        <span style="flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${txt}</span>
-        <span style="font-family:monospace;font-size:0.75rem;letter-spacing:0.1rem;flex-shrink:0">${dots}</span>
-      </div>`);
-    });
-    return { m, mk, total, done, rows, rate: total>0?Math.round(done/total*100):0 };
-  }).sort((a,b) => b.rate - a.rate);
-
-  board.innerHTML = ranked.map(({m, total, done, rows, rate}) => {
-    const statClass = rate===100?'perfect':rate>=50?'good':'low';
-    const statTxt = total>0 ? `${done}/${total} (${rate}%)` : '미등록';
-    return `<div class="ch-member-card">
-      <div class="ch-member-header">
-        <span class="ch-member-emoji">${m.emoji}</span>
-        <span class="ch-member-name">${m.name}</span>
-        <span class="ch-result-stat ${statClass}">${statTxt}</span>
-      </div>
-      ${rows.length ? rows.join('') : '<div class="ch-no-goals">목표 미등록</div>'}
-    </div>`;
-  }).join('');
-}
-
-// ─ 기존 목표 관련 호환 ─
-window.openGoalFromDay = window.openChallenge;
+// 호환
+window.openChallenge = window.openKoreanStudy;
+window.openGoalFromDay = function(){ openKoreanStudy(); }; switchKsTab('board'); };
 
 // ── 결산 ──────────────────────────────────────────
 window.openSummary = function(){
