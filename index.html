@@ -518,8 +518,10 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="ks-settings-section">
       <div class="ks-settings-label">📅 스터디 시작일 (1회차 기준)</div>
-      <input class="ks-date-input" type="date" id="ksStartDateInput"><div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem">날짜 미확정이면 비워두세요 — 미정으로 표시돼요</div>
+      <input class="ks-date-input" type="date" id="ksStartDateInput">
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem">날짜 미확정이면 비워두세요 — 미정으로 표시돼요</div>
     </div>
+
     <div class="ks-settings-section">
       <div class="ks-settings-label">👥 참여 멤버 선택</div>
       <div class="ks-participant-grid" id="ksParticipantGrid"></div>
@@ -1143,6 +1145,19 @@ function getKsWeekNum(monday){
 }
 
 // 현재 보고 있는 주의 sessions (1~3개)
+// 시작일 기준 주차 계산
+function getKsWeekNum(monday){
+  if(!ksConfig.startDate) return 0;
+  const start = new Date(ksConfig.startDate);
+  start.setHours(0,0,0,0);
+  const startDow = start.getDay();
+  const startMon = new Date(start);
+  startMon.setDate(start.getDate()-(startDow===0?6:startDow-1));
+  const diff = monday - startMon;
+  return Math.floor(diff/(7*24*60*60*1000))+1;
+}
+
+// 주차별 세션 번호 (주 3회 기준)
 function getKsSessionsForWeek(weekNum){
   if(weekNum<1) return [];
   const base=(weekNum-1)*3+1;
@@ -1192,7 +1207,8 @@ function subscribeKsSession(sessionNum){
 // 현재 주 구독
 function subscribeKsWeek(monday){
   ksUnsubscribes.forEach(u=>u()); ksUnsubscribes=[];
-  const weekNum = getKsWeekNum(monday);
+  if(!ksConfig.startDate) return;
+  const weekNum=getKsWeekNum(monday);
   if(weekNum<1) return;
   getKsSessionsForWeek(weekNum).forEach(n=>subscribeKsSession(n));
 }
@@ -1233,7 +1249,6 @@ window.gotoKsCurrentWeek = function(){
 function renderKsWeek(){
   const monday = getMonday(ksWeekOffset);
   const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
-  const weekNum = getKsWeekNum(monday);
   const fmt = d=>`${d.getMonth()+1}/${d.getDate()}`;
 
   const labelEl = document.getElementById('ksWeekLabel');
@@ -1252,9 +1267,12 @@ function renderKsWeek(){
     </div>`;
     return;
   }
+
+  const weekNum = getKsWeekNum(monday);
+
   if(weekNum<1){
     labelEl.textContent = '스터디 시작 전';
-    dateEl.textContent = fmt(monday)+'~'+fmt(sunday);
+    dateEl.textContent = `${fmt(monday)} ~ ${fmt(sunday)}`;
     sessionsEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.82rem">📅 스터디 시작 전 주차예요</div>';
     return;
   }
@@ -1278,22 +1296,18 @@ function renderKsWeek(){
     const data = ksSessionData[n]||{};
     const isFirst = n===1;
 
-    // 교재 준비 행 (1회차만)
     let readyHtml='';
     if(isFirst){
-      const readyChips = participants.map(m=>{
+      const chips = participants.map(m=>{
         const checked=!!data[`ready_${mKey(m.name)}`];
         return `<span class="ks-ready-chip${checked?' checked':''}"
           data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="ready" data-checked="${checked}">
           ${m.emoji} ${m.name}${checked?' ✅':''}
         </span>`;
       }).join('');
-      readyHtml=`<div class="ks-ready-row">
-        <span class="ks-ready-label">📦 교재 준비</span>${readyChips}
-      </div>`;
+      readyHtml=`<div class="ks-ready-row"><span class="ks-ready-label">📦 교재 준비</span>${chips}</div>`;
     }
 
-    // 멤버 체크행
     const memberRows = participants.map(m=>{
       const checks = CHECK_TYPES.map(({key,label})=>{
         const checked=!!data[`${key}_${mKey(m.name)}`];
@@ -1303,10 +1317,7 @@ function renderKsWeek(){
         </button>`;
       }).join('');
       return `<div class="ks-member-row">
-        <div class="ks-member-info">
-          <span class="ks-member-emoji2">${m.emoji}</span>
-          <span class="ks-member-name2">${m.name}</span>
-        </div>
+        <div class="ks-member-info"><span class="ks-member-emoji2">${m.emoji}</span><span class="ks-member-name2">${m.name}</span></div>
         <div class="ks-checks">${checks}</div>
       </div>`;
     }).join('');
@@ -1314,11 +1325,10 @@ function renderKsWeek(){
     return `<div class="ks-session-card">
       <div class="ks-session-header">
         <span class="ks-session-num">${n}회차</span>
-        <span class="ks-session-exam">${info.exam}</span>
-        <span class="ks-session-sub">${info.회차}회</span>
+        <span class="ks-session-exam">${info.exam} ${info.회차}회</span>
       </div>
       ${readyHtml}
-      ${participants.length>0?memberRows:'<div class="ks-no-participants">참여 멤버를 설정해주세요 ⚙️</div>'}
+      ${participants.length>0?memberRows:'<div style="padding:0.8rem;font-size:0.75rem;color:var(--muted);text-align:center">참여 멤버를 ⚙️ 설정에서 선택해주세요</div>'}
     </div>`;
   }).join('');
 }
@@ -1338,6 +1348,7 @@ window.openKsSettings = function(){
   loadKsConfig();
   const dateInput = document.getElementById('ksStartDateInput');
   if(dateInput) dateInput.value = ksConfig.startDate||'';
+
   const grid = document.getElementById('ksParticipantGrid');
   if(grid) grid.innerHTML = members.map(m=>{
     const selected=(ksConfig.participants||[]).includes(m.name);
