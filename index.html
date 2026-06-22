@@ -765,42 +765,6 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
 </div>
 
-<!-- 📚 국어 기출 스터디 -->
-<div class="summary-overlay" id="koreanStudyOverlay" style="display:none">
-  <div class="summary-modal" style="max-width:700px;padding:0">
-    <div class="ks-tabbar">
-      <button class="ks-tab active" id="ksTab1" onclick="switchKsTab(1)">✅ 인증 현황</button>
-      <button class="ks-tab" id="ksTab2" onclick="switchKsTab(2)">📋 스터디 안내</button>
-      <div style="flex:1"></div>
-      <button class="summary-close" style="margin-right:1rem" onclick="closeKoreanStudy()">← 돌아가기</button>
-    </div>
-    <div style="padding:0.8rem 1rem 1.5rem">
-      <div id="ksPanel1">
-        <div class="ks-month-nav">
-          <button class="ks-nav-btn" onclick="changeKsMonth(-1)">‹</button>
-          <span class="ks-month-label" id="ksMonthLabel"></span>
-          <button class="ks-nav-btn" onclick="changeKsMonth(1)">›</button>
-        </div>
-        <div class="ks-table-wrap"><table class="ks-table" id="ksTable"></table></div>
-      </div>
-      <div id="ksPanel2" style="display:none">
-        <div class="ks-info-box">
-          <div class="ks-info-title">📚 국어 기출 스터디 안내</div>
-          <div class="ks-info-section"><span class="ks-info-num">1</span><div><span class="ks-info-head">진행 일정</span><div class="ks-info-body">주 3회 목표 · 아무 날이나 자유롭게 인증</div></div></div>
-          <div class="ks-info-section"><span class="ks-info-num">2</span><div><span class="ks-info-head">진도</span><div class="ks-info-body">2026학년도 6월 모의평가부터 역순 진행 · 독서론 포함 회차는 범위 조정 후 별도 공지</div></div></div>
-          <div class="ks-info-section"><span class="ks-info-num">3</span><div><span class="ks-info-head">학습 범위</span><div class="ks-info-body">독서 1세트 · 문학 1세트</div></div></div>
-          <div class="ks-info-section"><span class="ks-info-num">4</span><div><span class="ks-info-head">인증 방법 (당일 자정까지)</span><div class="ks-info-body">• 지문 또는 풀이 사진<br>• 독서 지문 요약 3줄<br>• 가장 어려웠던 문제 또는 배운 점 1줄</div></div></div>
-          <div class="ks-info-section"><span class="ks-info-num">5</span><div><span class="ks-info-head">인증 형식</span><div class="ks-info-body">사진 인증 가능 · 텍스트만도 가능</div></div></div>
-          <div class="ks-example">
-            <div class="ks-example-label">예시</div>
-            <div class="ks-example-body">[국어 인증]<br>요약<br>• ...<br>배운 점<br>• 선지 판단 전에 필자의 주장을 먼저 정리해야겠다.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- 결산 전체화면 -->
 
 <!-- 결산 전체화면 -->
@@ -1388,8 +1352,9 @@ function subscribeKs(y, m){
 
 window.openKoreanStudy = function(){
   ksYear = todayY; ksMonth = todayM;
+  document.getElementById('ksMonthLabel').textContent = `${ksYear}년 ${ksMonth+1}월`;
   subscribeKs(ksYear, ksMonth);
-  switchKsTab(1);
+  switchKsTab('board');
   document.getElementById('koreanStudyOverlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 };
@@ -1408,17 +1373,18 @@ window.changeKsMonth = function(dir){
   subscribeKs(ksYear, ksMonth);
 };
 
-window.switchKsTab = function(n){
-  document.getElementById('ksPanel1').style.display = n===1 ? 'block' : 'none';
-  document.getElementById('ksPanel2').style.display = n===2 ? 'block' : 'none';
-  document.getElementById('ksTab1').className = 'ks-tab'+(n===1?' active':'');
-  document.getElementById('ksTab2').className = 'ks-tab'+(n===2?' active':'');
-  if(n===1) renderKsBoard();
+window.switchKsTab = function(tab){
+  document.getElementById('ksSectionInfo').style.display = tab==='info' ? 'block' : 'none';
+  document.getElementById('ksSectionBoard').style.display = tab==='board' ? 'block' : 'none';
+  document.getElementById('ksTabInfo').classList.toggle('active', tab==='info');
+  document.getElementById('ksTabBoard').classList.toggle('active', tab==='board');
+  if(tab==='board') renderKsBoard();
 };
 
 function renderKsBoard(){
-  const table = document.getElementById('ksTable');
-  if(!table) return;
+  const head = document.getElementById('ksTableHead');
+  const body = document.getElementById('ksTableBody');
+  if(!head || !body) return;
   const lbl = document.getElementById('ksMonthLabel');
   if(lbl) lbl.textContent = `${ksYear}년 ${ksMonth+1}월`;
 
@@ -1426,35 +1392,31 @@ function renderKsBoard(){
   const DOW = ['일','월','화','수','목','금','토'];
   const todayDt = new Date(todayY, todayM, todayD);
 
-  // 주 key (해당 주의 월요일 날짜)
   function weekKey(d){
     const dt = new Date(ksYear, ksMonth, d);
     const dow = dt.getDay();
     const mon = new Date(dt); mon.setDate(dt.getDate()-(dow===0?6:dow-1));
     return mon.toDateString();
   }
-
-  // 고유 주 목록
   const weekKeys = [...new Set(Array.from({length:dim},(_,i)=>weekKey(i+1)))];
 
   // 헤더
-  let headHtml = '<thead><tr><th style="text-align:left;padding-left:0.3rem;font-size:0.68rem;color:var(--muted)">이름</th>';
+  let headHtml = '<tr><th style="text-align:left;padding-left:0.3rem;min-width:80px;font-size:0.68rem;color:var(--muted)">이름</th>';
   for(let d=1;d<=dim;d++){
     const dt=new Date(ksYear,ksMonth,d);
     const dow=dt.getDay();
     const isToday=(ksYear===todayY&&ksMonth===todayM&&d===todayD);
-    const cls=isToday?'today-col ':dow===0?'sun ':dow===6?'sat ':'';
-    headHtml+=`<th class="${cls}">${d}<br>${DOW[dow]}</th>`;
+    headHtml+=`<th class="${isToday?'ks-today':''}" style="${dow===0?'color:#ff6b6b':dow===6?'color:var(--accent2)':''}">${d}<br><span style="font-size:0.55rem">${DOW[dow]}</span></th>`;
   }
-  weekKeys.forEach((_,i)=>{ headHtml+=`<th style="font-size:0.6rem;color:var(--muted);padding:0.2rem">W${i+1}</th>`; });
-  headHtml+='<th style="font-size:0.68rem;color:var(--muted)">합계</th></tr></thead>';
+  weekKeys.forEach((_,i)=>{ headHtml+=`<th class="ks-wk-col">W${i+1}</th>`; });
+  headHtml += '<th style="font-size:0.65rem;color:var(--muted)">합계</th></tr>';
+  head.innerHTML = headHtml;
 
   // 바디
-  let bodyHtml='<tbody>';
-  members.forEach(m=>{
-    const isMe=m.name===myName;
-    bodyHtml+=`<tr${isMe?' class="my-row"':''}>`;
-    bodyHtml+=`<td class="ks-name-cell"><span class="ks-name-emoji">${m.emoji}</span>${m.name}</td>`;
+  body.innerHTML = members.map(m=>{
+    const isMe = m.name===myName;
+    let row=`<tr class="${isMe?'my-row':''}">`;
+    row+=`<td class="ks-name-td"><span class="name-emoji-inline">${m.emoji}</span>${m.name}</td>`;
     let total=0;
     for(let d=1;d<=dim;d++){
       const checked=!!ksData[`d${d}_${mKey(m.name)}`];
@@ -1462,38 +1424,28 @@ function renderKsBoard(){
       const dt=new Date(ksYear,ksMonth,d);
       const isFuture=dt>todayDt;
       const isToday=(ksYear===todayY&&ksMonth===todayM&&d===todayD);
-      bodyHtml+=`<td style="${isToday?'background:rgba(0,229,160,0.05)':''}">`;
-      if(isFuture) bodyHtml+='<span style="color:rgba(255,255,255,0.1)">·</span>';
-      else bodyHtml+=`<span class="ks-check" onclick="toggleKsCheck(${d},'${m.name.replace(/'/g,"\'")}',${checked})">${checked?'✅':'○'}</span>`;
-      bodyHtml+='</td>';
+      row+=`<td style="${isToday?'background:rgba(0,229,160,0.05)':''}">`;
+      if(isFuture) row+='<span style="color:rgba(255,255,255,0.08)">·</span>';
+      else row+=`<span class="ks-check-cell" onclick="toggleKsCheck('${m.name.replace(/'/g,"\'")}',${d},${checked})">${checked?'✅':'·'}</span>`;
+      row+='</td>';
     }
-    // 주별 집계
     weekKeys.forEach(wk=>{
       const wkDays=[];
       for(let d=1;d<=dim;d++){ if(weekKey(d)===wk) wkDays.push(d); }
       const cnt=wkDays.filter(d=>!!ksData[`d${d}_${mKey(m.name)}`]).length;
-      const lastDay=new Date(ksYear,ksMonth,wkDays[wkDays.length-1]);
-      const allPast=lastDay<todayDt;
+      const lastDt=new Date(ksYear,ksMonth,wkDays[wkDays.length-1]);
+      const allPast=lastDt<todayDt;
       let cls=''; let txt=`${cnt}/3`;
-      if(cnt>=3){cls='color:#00e5a0;font-weight:700';txt='✅';}
-      else if(allPast&&cnt<3){cls='color:#ffd93d;font-weight:700';}
-      bodyHtml+=`<td style="font-family:monospace;font-size:0.7rem;${cls}">${txt}</td>`;
+      if(cnt>=3){cls='ks-wk-done';txt='✅';}
+      else if(allPast){cls='ks-wk-warn';}
+      row+=`<td class="ks-wk-td ${cls}">${txt}</td>`;
     });
-    const totalCls=total===0?'color:var(--muted)':total>=9?'color:#00e5a0;font-weight:700':'color:#ffd93d;font-weight:700';
-    bodyHtml+=`<td style="font-family:monospace;font-size:0.72rem;${totalCls}">${total}</td></tr>`;
-  });
-
-  // 합계 행
-  bodyHtml+='<tr style="border-top:1px solid var(--border)"><td class="ks-name-cell" style="color:var(--muted);font-size:0.65rem">합계</td>';
-  for(let d=1;d<=dim;d++){
-    const cnt=members.filter(m=>!!ksData[`d${d}_${mKey(m.name)}`]).length;
-    bodyHtml+=`<td style="font-size:0.65rem;font-family:monospace;color:${cnt>0?'var(--accent)':'var(--muted)'}">${cnt||'·'}</td>`;
-  }
-  weekKeys.forEach(()=>{ bodyHtml+='<td></td>'; });
-  bodyHtml+='<td></td></tr></tbody>';
-
-  table.innerHTML=headHtml+bodyHtml;
+    const tCls=total>=9?'color:#00e5a0;font-weight:700':total>0?'color:#ffd93d':'color:var(--muted)';
+    row+=`<td style="font-family:monospace;font-size:0.72rem;${tCls}">${total}</td></tr>`;
+    return row;
+  }).join('');
 }
+
 
 window.toggleKsCheck = async function(name, day, wasChecked){
   const r = doc(db, 'korean_study', ksDocId(ksYear, ksMonth));
@@ -1507,7 +1459,7 @@ window.toggleKsCheck = async function(name, day, wasChecked){
 
 // 호환
 window.openChallenge = window.openKoreanStudy;
-window.openGoalFromDay = function(){ openKoreanStudy(); }; switchKsTab('board'); };
+window.openGoalFromDay = function(){ openKoreanStudy(); };
 
 // ── 결산 ──────────────────────────────────────────
 window.openSummary = function(){
