@@ -1273,7 +1273,7 @@ function renderKsWeek(){
       const readyChips = participants.map(m=>{
         const checked=!!data[`ready_${mKey(m.name)}`];
         return `<span class="ks-ready-chip${checked?' checked':''}"
-          onclick="toggleKsCheck(${n},'${m.name.replace(/'/g,"\'")}','ready',${checked})">
+          data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="ready" data-checked="${checked}">
           ${m.emoji} ${m.name}${checked?' ✅':''}
         </span>`;
       }).join('');
@@ -1287,7 +1287,7 @@ function renderKsWeek(){
       const checks = CHECK_TYPES.map(({key,label})=>{
         const checked=!!data[`${key}_${mKey(m.name)}`];
         return `<button class="ks-check-btn${checked?' checked':''}"
-          onclick="toggleKsCheck(${n},'${m.name.replace(/'/g,"\'")}','${key}',${checked})">
+          data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="${key}" data-checked="${checked}">
           ${checked?'✅ ':''}${label}
         </button>`;
       }).join('');
@@ -1312,6 +1312,16 @@ function renderKsWeek(){
   }).join('');
 }
 
+// 이벤트 위임으로 체크 처리
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-ks]');
+  if(!btn) return;
+  const { session, name, field, checked } = btn.dataset;
+  if(session && name && field){
+    toggleKsCheck(parseInt(session), name, field, checked==='true');
+  }
+});
+
 // 설정 패널
 window.openKsSettings = function(){
   loadKsConfig();
@@ -1321,7 +1331,8 @@ window.openKsSettings = function(){
   if(grid) grid.innerHTML = members.map(m=>{
     const selected=(ksConfig.participants||[]).includes(m.name);
     return `<div class="ks-participant-chip${selected?' selected':''}"
-      onclick="toggleKsParticipant('${m.name.replace(/'/g,"\'")}',this)">
+      onclick="toggleKsParticipant(this)">
+      <span style="display:none" class="ks-p-name">${m.name}</span>
       ${m.emoji} ${m.name}
     </div>`;
   }).join('');
@@ -1336,7 +1347,8 @@ window.closeKsSettingsOutside = function(e){
   if(e.target.id==='ksSettingsOverlay') closeKsSettings();
 };
 
-window.toggleKsParticipant = function(name, el){
+window.toggleKsParticipant = function(el){
+  const name = el.querySelector('.ks-p-name').textContent;
   if(!ksConfig.participants) ksConfig.participants=[];
   const idx=ksConfig.participants.indexOf(name);
   if(idx>=0){ ksConfig.participants.splice(idx,1); el.classList.remove('selected'); }
