@@ -518,7 +518,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="ks-settings-section">
       <div class="ks-settings-label">📅 스터디 시작일 (1회차 기준)</div>
-      <input class="ks-date-input" type="date" id="ksStartDateInput">
+      <input class="ks-date-input" type="date" id="ksStartDateInput"><div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem">날짜 미확정이면 비워두세요 — 미정으로 표시돼요</div>
     </div>
     <div class="ks-settings-section">
       <div class="ks-settings-label">👥 참여 멤버 선택</div>
@@ -1116,7 +1116,7 @@ function getSessionLabel(sessionNum){
 }
 
 // 설정
-let ksConfig = { startDate:'2026-06-16', participants:[] };
+let ksConfig = { startDate:'', participants:[] };
 let ksWeekOffset = 0; // 0 = 현재 주
 let ksSessionData = {}; // sessionNum → data
 let ksUnsubscribes = [];
@@ -1241,10 +1241,21 @@ function renderKsWeek(){
   const sessionsEl = document.getElementById('ksSessions');
   if(!labelEl||!sessionsEl) return;
 
+  if(!ksConfig.startDate){
+    labelEl.textContent = '시작일 미정';
+    dateEl.textContent = '⚙️ 설정에서 날짜를 정해주세요';
+    sessionsEl.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem">
+      <div style="font-size:2rem;margin-bottom:0.7rem">📅</div>
+      <div style="font-size:0.88rem;font-weight:700;margin-bottom:0.4rem">아직 시작일이 정해지지 않았어요</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem">날짜가 확정되면 ⚙️ 설정에서 입력해주세요</div>
+      <button onclick="openKsSettings()" style="background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.35);color:var(--accent);font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;font-weight:700;padding:0.55rem 1.2rem;border-radius:100px;cursor:pointer">⚙️ 시작일 설정하기</button>
+    </div>`;
+    return;
+  }
   if(weekNum<1){
     labelEl.textContent = '스터디 시작 전';
     dateEl.textContent = fmt(monday)+'~'+fmt(sunday);
-    sessionsEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.82rem">스터디 시작 전 주차예요</div>';
+    sessionsEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.82rem">📅 스터디 시작 전 주차예요</div>';
     return;
   }
 
@@ -1326,7 +1337,7 @@ document.addEventListener('click', function(e){
 window.openKsSettings = function(){
   loadKsConfig();
   const dateInput = document.getElementById('ksStartDateInput');
-  if(dateInput) dateInput.value = ksConfig.startDate||'2026-06-16';
+  if(dateInput) dateInput.value = ksConfig.startDate||'';
   const grid = document.getElementById('ksParticipantGrid');
   if(grid) grid.innerHTML = members.map(m=>{
     const selected=(ksConfig.participants||[]).includes(m.name);
