@@ -370,6 +370,27 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .ks-participant-grid { display:flex; flex-wrap:wrap; gap:0.4rem; }
 .ks-participant-chip { display:flex; align-items:center; gap:0.3rem; padding:0.32rem 0.65rem; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.75rem; background:var(--surface2); transition:all 0.15s; }
 .ks-participant-chip.selected { border-color:var(--accent); background:rgba(0,229,160,0.1); color:var(--accent); font-weight:700; }
+.ks-window-badge {
+  font-size:0.65rem; font-family:'DM Mono',monospace;
+  background:rgba(255,217,61,0.15); color:#ffd93d;
+  border:1px solid rgba(255,217,61,0.3);
+  padding:0.12rem 0.45rem; border-radius:100px; white-space:nowrap;
+}
+.ks-edit-notice-btn {
+  background:transparent; border:none; color:var(--muted);
+  font-size:0.85rem; cursor:pointer; padding:0.1rem 0.3rem;
+  border-radius:6px; transition:color 0.15s; margin-left:auto;
+}
+.ks-edit-notice-btn:hover { color:var(--accent); }
+.ks-notice-box {
+  background:rgba(0,229,160,0.04); border-bottom:1px solid rgba(0,229,160,0.1);
+  padding:0.6rem 0.9rem; display:flex; flex-direction:column; gap:0.3rem;
+}
+.ks-notice-row { display:flex; align-items:baseline; gap:0.4rem; font-size:0.78rem; }
+.ks-notice-icon { font-size:0.85rem; flex-shrink:0; }
+.ks-notice-label { color:var(--muted); font-size:0.7rem; flex-shrink:0; min-width:28px; }
+.ks-notice-val { color:var(--text); line-height:1.4; }
+.ks-no-participants { padding:0.8rem; font-size:0.75rem; color:var(--muted); text-align:center; }
 .ks-save-btn { width:100%; background:var(--accent); border:none; color:#0d0f1a; font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; font-weight:700; padding:0.7rem; border-radius:10px; cursor:pointer; }
 
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
@@ -506,6 +527,30 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
       </div>
     </details>
 
+  </div>
+</div>
+
+<!-- 📢 공지 편집 모달 -->
+<div class="ks-settings-overlay" id="ksNoticeOverlay" style="display:none" onclick="closeKsNoticeOutside(event)">
+  <div class="ks-settings-modal">
+    <div class="ks-settings-header">
+      <span style="font-weight:800;font-size:0.95rem">✏️ 진도 공지 입력</span>
+      <button class="ks-close-btn" onclick="closeKsNoticeEdit()">✕</button>
+    </div>
+    <input type="hidden" id="ksNoticeSessionNum">
+    <div class="ks-settings-section">
+      <div class="ks-settings-label">🎯 시험 범위</div>
+      <input class="ks-date-input" id="ksNoticeExam" type="text" placeholder="예) 2026학년도 6월 모의평가">
+    </div>
+    <div class="ks-settings-section">
+      <div class="ks-settings-label">📖 독서 지문</div>
+      <input class="ks-date-input" id="ksNoticeReading" type="text" placeholder="예) 독서론「학습을 위한 읽기」, 사회「완전경쟁시장의~」">
+    </div>
+    <div class="ks-settings-section">
+      <div class="ks-settings-label">📝 문학 지문</div>
+      <input class="ks-date-input" id="ksNoticeLit" type="text" placeholder="예) 하근찬「나룻배 이야기」">
+    </div>
+    <button class="ks-save-btn" onclick="saveKsNotice()">저장</button>
   </div>
 </div>
 
@@ -1134,6 +1179,13 @@ function getMonday(offset=0){
   return mon;
 }
 // 현재 보고 있는 주의 sessions (1~3개)
+// 인증 창: 월화/수목/금토일 (3개 창 = 주 3회)
+const KS_WINDOWS = [
+  { label:'월화', days:[1,2] },
+  { label:'수목', days:[3,4] },
+  { label:'금토일', days:[5,6,0] },
+];
+
 // 시작일 기준 주차 계산
 function getKsWeekNum(monday){
   if(!ksConfig.startDate) return 0;
@@ -1146,24 +1198,41 @@ function getKsWeekNum(monday){
   return Math.floor(diff/(7*24*60*60*1000))+1;
 }
 
-// 주차별 세션 번호 (주 3회 기준, 첫 주는 시작요일에 따라 조정)
-function getKsSessionCountForWeek(weekNum){
-  if(weekNum!==1 || !ksConfig.startDate) return 3;
-  const startDow = new Date(ksConfig.startDate).getDay(); // 0=일,1=월...6=토
-  // 월=3회, 화=2회, 수=2회, 목=1회, 금=1회, 토/일=1회
-  if(startDow===1) return 3;
-  if(startDow===2||startDow===3) return 2;
-  return 1;
+// 특정 주에서 유효한 창 (startDate 이후 것만)
+function getKsWindowsForWeek(weekNum, monday){
+  if(weekNum<1) return [];
+  if(!ksConfig.startDate) return KS_WINDOWS;
+  const start = new Date(ksConfig.startDate);
+  start.setHours(0,0,0,0);
+  return KS_WINDOWS.filter(w=>{
+    // 그 주에서 해당 창의 첫 날 계산
+    const firstDayOfWindow = w.days.filter(d=>d!==0)[0]||w.days[0];
+    const windowDate = new Date(monday);
+    const mondayDow = 1;
+    let offset = firstDayOfWindow - mondayDow;
+    if(offset<0) offset+=7;
+    windowDate.setDate(monday.getDate()+offset);
+    return windowDate >= start;
+  });
 }
 
-function getKsSessionsForWeek(weekNum){
+// 이전 주들까지의 총 세션 수 (세션 번호 계산용)
+function getKsTotalSessionsBefore(weekNum, currentMonday){
+  let total=0;
+  for(let w=1; w<weekNum; w++){
+    const wMonday = new Date(currentMonday);
+    wMonday.setDate(currentMonday.getDate()-(weekNum-w)*7);
+    total += getKsWindowsForWeek(w, wMonday).length;
+  }
+  return total;
+}
+
+// 주어진 주의 세션 목록 [{num, window}]
+function getKsSessionsForWeek(weekNum, monday){
   if(weekNum<1) return [];
-  const count = getKsSessionCountForWeek(weekNum);
-  // 이전 주까지 총 세션 수 계산
-  let prevTotal = 0;
-  for(let w=1; w<weekNum; w++) prevTotal += getKsSessionCountForWeek(w);
-  const base = prevTotal+1;
-  return Array.from({length:count},(_,i)=>base+i);
+  const windows = getKsWindowsForWeek(weekNum, monday);
+  const base = getKsTotalSessionsBefore(weekNum, monday)+1;
+  return windows.map((w,i)=>({ num:base+i, window:w }));
 }
 
 function loadKsConfig(){
@@ -1212,7 +1281,7 @@ function subscribeKsWeek(monday){
   if(!ksConfig.startDate) return;
   const weekNum=getKsWeekNum(monday);
   if(weekNum<1) return;
-  getKsSessionsForWeek(weekNum).forEach(n=>subscribeKsSession(n));
+  getKsSessionsForWeek(weekNum, monday).forEach(({num})=>subscribeKsSession(num));
 }
 
 window.openKoreanStudy = function(){
@@ -1259,9 +1328,9 @@ function renderKsWeek(){
   if(!labelEl||!sessionsEl) return;
 
   if(!ksConfig.startDate){
-    labelEl.textContent = '시작일 미정';
-    dateEl.textContent = '⚙️ 설정에서 날짜를 정해주세요';
-    sessionsEl.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem">
+    labelEl.textContent='시작일 미정';
+    dateEl.textContent='⚙️ 설정에서 날짜를 정해주세요';
+    sessionsEl.innerHTML=`<div style="text-align:center;padding:2.5rem 1rem">
       <div style="font-size:2rem;margin-bottom:0.7rem">📅</div>
       <div style="font-size:0.88rem;font-weight:700;margin-bottom:0.4rem">아직 시작일이 정해지지 않았어요</div>
       <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem">날짜가 확정되면 ⚙️ 설정에서 입력해주세요</div>
@@ -1270,37 +1339,44 @@ function renderKsWeek(){
     return;
   }
 
-  const weekNum = getKsWeekNum(monday);
+  const weekNum=getKsWeekNum(monday);
+  const sessions=getKsSessionsForWeek(weekNum, monday);
 
-  if(weekNum<1){
-    labelEl.textContent = '스터디 시작 전';
-    dateEl.textContent = `${fmt(monday)} ~ ${fmt(sunday)}`;
-    sessionsEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.82rem">📅 스터디 시작 전 주차예요</div>';
+  if(weekNum<1||sessions.length===0){
+    labelEl.textContent=weekNum<1?'스터디 시작 전':`${weekNum}주차`;
+    dateEl.textContent=`${fmt(monday)} ~ ${fmt(sunday)}`;
+    sessionsEl.innerHTML='<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.82rem">📅 이번 주는 스터디가 없어요</div>';
     return;
   }
 
-  labelEl.textContent = `${weekNum}주차`;
-  dateEl.textContent = `${fmt(monday)} ~ ${fmt(sunday)}`;
+  labelEl.textContent=`${weekNum}주차`;
+  dateEl.textContent=`${fmt(monday)} ~ ${fmt(sunday)} · ${sessions.length}회`;
 
-  const sessionNums = getKsSessionsForWeek(weekNum);
-  const participants = (ksConfig.participants||[])
-    .map(name=>members.find(m=>m.name===name))
-    .filter(Boolean);
+  const participants=(ksConfig.participants||[]).map(name=>members.find(m=>m.name===name)).filter(Boolean);
+  const CHECK_TYPES=[{key:'solve',label:'풀이'},{key:'summary',label:'3줄요약'},{key:'feedback',label:'피드백'}];
 
-  const CHECK_TYPES = [
-    {key:'solve', label:'풀이'},
-    {key:'summary', label:'3줄요약'},
-    {key:'feedback', label:'피드백'},
-  ];
+  sessionsEl.innerHTML=sessions.map(({num:n, window:win})=>{
+    const info=getSessionLabel(n);
+    const data=ksSessionData[n]||{};
+    const isFirst=n===1;
 
-  sessionsEl.innerHTML = sessionNums.map(n=>{
-    const info = getSessionLabel(n);
-    const data = ksSessionData[n]||{};
-    const isFirst = n===1;
+    // 공지 (시험범위, 독서, 문학)
+    const noticeExam = data['notice_exam']||'';
+    const noticeReading = data['notice_reading']||'';
+    const noticeLit = data['notice_lit']||'';
+    const hasNotice = noticeExam||noticeReading||noticeLit;
 
+    const noticeHtml = hasNotice ? `
+      <div class="ks-notice-box">
+        <div class="ks-notice-row"><span class="ks-notice-icon">🎯</span><span class="ks-notice-label">범위</span><span class="ks-notice-val">${noticeExam}</span></div>
+        ${noticeReading?`<div class="ks-notice-row"><span class="ks-notice-icon">📖</span><span class="ks-notice-label">독서</span><span class="ks-notice-val">${noticeReading}</span></div>`:''}
+        ${noticeLit?`<div class="ks-notice-row"><span class="ks-notice-icon">📝</span><span class="ks-notice-label">문학</span><span class="ks-notice-val">${noticeLit}</span></div>`:''}
+      </div>` : '';
+
+    // 교재 준비 (1회차)
     let readyHtml='';
     if(isFirst){
-      const chips = participants.map(m=>{
+      const chips=participants.map(m=>{
         const checked=!!data[`ready_${mKey(m.name)}`];
         return `<span class="ks-ready-chip${checked?' checked':''}"
           data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="ready" data-checked="${checked}">
@@ -1310,8 +1386,9 @@ function renderKsWeek(){
       readyHtml=`<div class="ks-ready-row"><span class="ks-ready-label">📦 교재 준비</span>${chips}</div>`;
     }
 
-    const memberRows = participants.map(m=>{
-      const checks = CHECK_TYPES.map(({key,label})=>{
+    // 멤버 체크
+    const memberRows=participants.map(m=>{
+      const checks=CHECK_TYPES.map(({key,label})=>{
         const checked=!!data[`${key}_${mKey(m.name)}`];
         return `<button class="ks-check-btn${checked?' checked':''}"
           data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="${key}" data-checked="${checked}">
@@ -1324,11 +1401,17 @@ function renderKsWeek(){
       </div>`;
     }).join('');
 
+    // 공지 편집 버튼
+    const editBtn=`<button class="ks-edit-notice-btn" onclick="openKsNoticeEdit(${n})" title="진도 공지 입력">✏️</button>`;
+
     return `<div class="ks-session-card">
       <div class="ks-session-header">
         <span class="ks-session-num">${n}회차</span>
         <span class="ks-session-exam">${info.exam} ${info.회차}회</span>
+        <span class="ks-window-badge">${win.label}</span>
+        ${editBtn}
       </div>
+      ${noticeHtml}
       ${readyHtml}
       ${participants.length>0?memberRows:'<div style="padding:0.8rem;font-size:0.75rem;color:var(--muted);text-align:center">참여 멤버를 ⚙️ 설정에서 선택해주세요</div>'}
     </div>`;
@@ -1388,6 +1471,36 @@ window.saveKsSettings = async function(){
   const monday=getMonday(0);
   subscribeKsWeek(monday);
   renderKsWeek();
+};
+
+// 공지 편집
+window.openKsNoticeEdit = function(sessionNum){
+  document.getElementById('ksNoticeSessionNum').value = sessionNum;
+  const data = ksSessionData[sessionNum]||{};
+  document.getElementById('ksNoticeExam').value = data['notice_exam']||'';
+  document.getElementById('ksNoticeReading').value = data['notice_reading']||'';
+  document.getElementById('ksNoticeLit').value = data['notice_lit']||'';
+  document.getElementById('ksNoticeOverlay').style.display='flex';
+};
+window.closeKsNoticeEdit = function(){
+  document.getElementById('ksNoticeOverlay').style.display='none';
+};
+window.closeKsNoticeOutside = function(e){
+  if(e.target.id==='ksNoticeOverlay') closeKsNoticeEdit();
+};
+window.saveKsNotice = async function(){
+  const n = parseInt(document.getElementById('ksNoticeSessionNum').value);
+  const exam = document.getElementById('ksNoticeExam').value.trim();
+  const reading = document.getElementById('ksNoticeReading').value.trim();
+  const lit = document.getElementById('ksNoticeLit').value.trim();
+  const r = doc(db,'korean_study', ksDocIdForSession(n));
+  const snap = await getDoc(r);
+  const data = snap.exists()?snap.data():{};
+  if(exam) data['notice_exam']=exam; else delete data['notice_exam'];
+  if(reading) data['notice_reading']=reading; else delete data['notice_reading'];
+  if(lit) data['notice_lit']=lit; else delete data['notice_lit'];
+  await setDoc(r,data);
+  closeKsNoticeEdit();
 };
 
 // 호환
