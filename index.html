@@ -760,14 +760,32 @@ const CARD_TRACKING_START_DAY = 15; // 이 날짜 이전 데이터는 카드 집
 function getMissedWeeksCount(name){
   const dim = new Date(curYear, curMonth+1, 0).getDate();
   let missed = 0;
+
+  // 멤버의 가입일 파악
+  const member = members.find(m=>m.name===name);
+  let joinDate = null;
+  if(member?.joinedAt){
+    const parts = member.joinedAt.split('.');
+    if(parts.length===3){
+      joinDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+      joinDate.setHours(0,0,0,0);
+    }
+  }
+
   for(let d=1; d<=dim; d++){
-    if(d < CARD_TRACKING_START_DAY) continue; // 15일 이전 시작하는 주는 무시
+    if(d < CARD_TRACKING_START_DAY) continue;
     const dow = new Date(curYear, curMonth, d).getDay();
-    if(dow!==1) continue; // 월요일만 주 시작점으로 체크
-    const weekEnd = d+6; // 그 주 일요일
-    if(weekEnd > dim) continue; // 월 경계 밖으로 넘어가는 주는 제외 (불공평하니까)
-    // 보고 있는 달이 이번 달이면, 아직 안 끝난 주(이번주 포함)는 제외
+    if(dow!==1) continue;
+    const weekEnd = d+6;
+    if(weekEnd > dim) continue;
     if(curYear===todayY && curMonth===todayM && weekEnd > todayD) continue;
+
+    // 가입일이 이 주 종료일 이후면 건너뜀 (가입 전 주는 집계 안 함)
+    if(joinDate){
+      const weekEndDate = new Date(curYear, curMonth, weekEnd);
+      if(joinDate > weekEndDate) continue;
+    }
+
     let daysChecked = 0;
     for(let dd=d; dd<=weekEnd; dd++){ if(getCount(dd,name) > 0) daysChecked++; }
     if(daysChecked < 3) missed++;
