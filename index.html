@@ -392,6 +392,14 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .ks-notice-val { color:var(--text); line-height:1.4; }
 .ks-check-btn.ks-perfect { border-color:#00e5a0; background:rgba(0,229,160,0.15); color:#00e5a0; }
 .ks-check-btn.ks-wrong { border-color:#ff8c00; background:rgba(255,140,0,0.12); color:#ff8c00; }
+.ks-passage-list { display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.4rem; }
+.ks-passage-row { display:flex; align-items:center; gap:0.35rem; }
+.ks-passage-num { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); flex-shrink:0; min-width:14px; }
+.ks-passage-input { flex:1; font-size:0.82rem !important; }
+.ks-del-passage-btn { background:transparent; border:1px solid var(--border); color:var(--muted); width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.7rem; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.ks-del-passage-btn:hover { border-color:var(--danger); color:var(--danger); }
+.ks-add-passage-btn { background:transparent; border:1px dashed var(--border); color:var(--muted); width:100%; padding:0.35rem; border-radius:7px; cursor:pointer; font-size:0.75rem; font-family:'Noto Sans KR',sans-serif; transition:all 0.15s; }
+.ks-add-passage-btn:hover { border-color:var(--accent); color:var(--accent); }
 .ks-notice-toggle-row { display:flex; align-items:center; }
 .ks-toggle-label { display:flex; align-items:center; gap:0.45rem; cursor:pointer; font-size:0.82rem; font-weight:600; }
 .ks-toggle-label input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; }
@@ -589,8 +597,9 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
           <span class="ks-toggle-text">📖 독서 포함</span>
         </label>
       </div>
-      <div id="ksNoticeReadingSection" style="display:none;margin-top:0.4rem">
-        <input class="ks-date-input" id="ksNoticeReading" type="text" placeholder="예) 독서론「학습을 위한 읽기」, 사회「완전경쟁시장의~」(2지문)">
+      <div id="ksNoticeReadingSection" style="display:none;margin-top:0.5rem">
+        <div id="ksReadingList" class="ks-passage-list"></div>
+        <button type="button" class="ks-add-passage-btn" onclick="addKsPassage('reading')">+ 지문 추가</button>
       </div>
     </div>
     <div class="ks-settings-section">
@@ -600,8 +609,9 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
           <span class="ks-toggle-text">📝 문학 포함</span>
         </label>
       </div>
-      <div id="ksNoticeLitSection" style="display:none;margin-top:0.4rem">
-        <input class="ks-date-input" id="ksNoticeLit" type="text" placeholder="예) 하근찬「나룻배 이야기」">
+      <div id="ksNoticeLitSection" style="display:none;margin-top:0.5rem">
+        <div id="ksLitList" class="ks-passage-list"></div>
+        <button type="button" class="ks-add-passage-btn" onclick="addKsPassage('lit')">+ 지문 추가</button>
       </div>
     </div>
     <button class="ks-save-btn" onclick="saveKsNotice()">저장</button>
@@ -1432,17 +1442,19 @@ function renderKsWeek(){
     const data=ksSessionData[n]||{};
     const isFirst=n===1;
 
-    // 공지 (시험범위, 독서, 문학)
+    // 공지 (시험범위, 독서, 문학) - 배열/문자열 호환
     const noticeExam = data['notice_exam']||'';
-    const noticeReading = data['notice_reading']||'';
-    const noticeLit = data['notice_lit']||'';
-    const hasNotice = noticeExam||noticeReading||noticeLit;
+    const noticeReadingRaw = data['notice_reading'];
+    const noticeLitRaw = data['notice_lit'];
+    const noticeReadingArr = Array.isArray(noticeReadingRaw)?noticeReadingRaw:(noticeReadingRaw?[noticeReadingRaw]:[]);
+    const noticeLitArr = Array.isArray(noticeLitRaw)?noticeLitRaw:(noticeLitRaw?[noticeLitRaw]:[]);
+    const hasNotice = noticeExam||noticeReadingArr.length||noticeLitArr.length;
 
     const noticeHtml = hasNotice ? `
       <div class="ks-notice-box">
-        <div class="ks-notice-row"><span class="ks-notice-icon">🎯</span><span class="ks-notice-label">범위</span><span class="ks-notice-val">${noticeExam}</span></div>
-        ${noticeReading?`<div class="ks-notice-row"><span class="ks-notice-icon">📖</span><span class="ks-notice-label">독서</span><span class="ks-notice-val">${noticeReading}</span></div>`:''}
-        ${noticeLit?`<div class="ks-notice-row"><span class="ks-notice-icon">📝</span><span class="ks-notice-label">문학</span><span class="ks-notice-val">${noticeLit}</span></div>`:''}
+        ${noticeExam?`<div class="ks-notice-row"><span class="ks-notice-icon">🎯</span><span class="ks-notice-label">범위</span><span class="ks-notice-val">${noticeExam}</span></div>`:''}
+        ${noticeReadingArr.map((p,i)=>`<div class="ks-notice-row"><span class="ks-notice-icon">📖</span><span class="ks-notice-label">독서${noticeReadingArr.length>1?` ${i+1}`:''}</span><span class="ks-notice-val">${p}</span></div>`).join('')}
+        ${noticeLitArr.map((p,i)=>`<div class="ks-notice-row"><span class="ks-notice-icon">📝</span><span class="ks-notice-label">문학${noticeLitArr.length>1?` ${i+1}`:''}</span><span class="ks-notice-val">${p}</span></div>`).join('')}
       </div>` : '';
 
     // 교재 준비 (1회차)
@@ -1606,23 +1618,67 @@ window.saveKsSettings = async function(){
 };
 
 // 공지 편집
+// 지문 리스트 렌더
+function renderKsPassageList(type, passages){
+  const listEl = document.getElementById(`ks${type==='reading'?'Reading':'Lit'}List`);
+  if(!listEl) return;
+  listEl.innerHTML = passages.map((p,i)=>`
+    <div class="ks-passage-row">
+      <span class="ks-passage-num">${i+1}</span>
+      <input class="ks-date-input ks-passage-input" type="text" value="${p.replace(/"/g,'&quot;')}"
+        placeholder="지문 입력" oninput="updateKsPassage('${type}',${i},this.value)">
+      <button type="button" class="ks-del-passage-btn" onclick="removeKsPassage('${type}',${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+let ksPassages = { reading:[], lit:[] };
+
+window.addKsPassage = function(type){
+  ksPassages[type].push('');
+  renderKsPassageList(type, ksPassages[type]);
+};
+window.removeKsPassage = function(type, idx){
+  ksPassages[type].splice(idx,1);
+  if(ksPassages[type].length===0) ksPassages[type]=[''];
+  renderKsPassageList(type, ksPassages[type]);
+};
+window.updateKsPassage = function(type, idx, val){
+  ksPassages[type][idx] = val;
+};
+
 window.openKsNoticeEdit = function(sessionNum){
   document.getElementById('ksNoticeSessionNum').value = sessionNum;
   const data = ksSessionData[sessionNum]||{};
   document.getElementById('ksNoticeExam').value = data['notice_exam']||'';
-  const hasReading = !!(data['notice_reading']);
-  const hasLit = !!(data['notice_lit']);
+
+  // 독서: 배열 or 문자열 호환
+  const readingRaw = data['notice_reading'];
+  const readingArr = Array.isArray(readingRaw) ? readingRaw : (readingRaw?[readingRaw]:[]);
+  const hasReading = readingArr.length > 0;
+  ksPassages.reading = hasReading ? [...readingArr] : [''];
+
+  // 문학: 배열 or 문자열 호환
+  const litRaw = data['notice_lit'];
+  const litArr = Array.isArray(litRaw) ? litRaw : (litRaw?[litRaw]:[]);
+  const hasLit = litArr.length > 0;
+  ksPassages.lit = hasLit ? [...litArr] : [''];
+
   document.getElementById('ksNoticeReadingOn').checked = hasReading;
   document.getElementById('ksNoticeLitOn').checked = hasLit;
   toggleKsNoticeSection('reading', hasReading);
   toggleKsNoticeSection('lit', hasLit);
-  document.getElementById('ksNoticeReading').value = data['notice_reading']||'';
-  document.getElementById('ksNoticeLit').value = data['notice_lit']||'';
+  renderKsPassageList('reading', ksPassages.reading);
+  renderKsPassageList('lit', ksPassages.lit);
   document.getElementById('ksNoticeOverlay').style.display='flex';
 };
 
 window.toggleKsNoticeSection = function(type, show){
   document.getElementById(`ksNotice${type==='reading'?'Reading':'Lit'}Section`).style.display = show?'block':'none';
+  if(show && ksPassages[type].length===0){
+    ksPassages[type]=[''];
+    renderKsPassageList(type, ksPassages[type]);
+  }
 };
 window.closeKsNoticeEdit = function(){
   document.getElementById('ksNoticeOverlay').style.display='none';
@@ -1633,14 +1689,16 @@ window.closeKsNoticeOutside = function(e){
 window.saveKsNotice = async function(){
   const n = parseInt(document.getElementById('ksNoticeSessionNum').value);
   const exam = document.getElementById('ksNoticeExam').value.trim();
-  const reading = document.getElementById('ksNoticeReading').value.trim();
-  const lit = document.getElementById('ksNoticeLit').value.trim();
+  const readingOn = document.getElementById('ksNoticeReadingOn').checked;
+  const litOn = document.getElementById('ksNoticeLitOn').checked;
+  const readingArr = readingOn ? ksPassages.reading.filter(p=>p.trim()) : [];
+  const litArr = litOn ? ksPassages.lit.filter(p=>p.trim()) : [];
   const r = doc(db,'korean_study', ksDocIdForSession(n));
   const snap = await getDoc(r);
   const data = snap.exists()?snap.data():{};
   if(exam) data['notice_exam']=exam; else delete data['notice_exam'];
-  if(reading) data['notice_reading']=reading; else delete data['notice_reading'];
-  if(lit) data['notice_lit']=lit; else delete data['notice_lit'];
+  if(readingArr.length>0) data['notice_reading']=readingArr; else delete data['notice_reading'];
+  if(litArr.length>0) data['notice_lit']=litArr; else delete data['notice_lit'];
   await setDoc(r,data);
   closeKsNoticeEdit();
 };
