@@ -87,7 +87,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 /* 달력 */
 .calendar-section { margin-bottom:2rem; }
 .section-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.7rem; display:flex; align-items:center; flex-wrap:wrap; gap:0.6rem; }
-.cal-guide { font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0; text-transform:none; color:var(--accent); background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3); padding:0.3rem 0.9rem; border-radius:12px; white-space:normal; line-height:1.6; text-align:center; }
+.cal-guide { font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0; text-transform:none; color:var(--text); background:var(--surface); border:1px solid var(--border); padding:0.3rem 0.9rem; border-radius:12px; white-space:normal; line-height:1.6; text-align:center; }
 .weekday-row { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:4px; }
 .weekday { text-align:center; font-size:0.65rem; font-family:'DM Mono',monospace; color:var(--muted); padding:0.2rem; }
 .weekday:first-child { color:#ff6b6b88; }
@@ -390,6 +390,16 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .ks-notice-icon { font-size:0.85rem; flex-shrink:0; }
 .ks-notice-label { color:var(--muted); font-size:0.7rem; flex-shrink:0; min-width:28px; }
 .ks-notice-val { color:var(--text); line-height:1.4; }
+.ks-check-btn.ks-perfect { border-color:#00e5a0; background:rgba(0,229,160,0.15); color:#00e5a0; }
+.ks-check-btn.ks-wrong { border-color:#ff8c00; background:rgba(255,140,0,0.12); color:#ff8c00; }
+.ks-notice-toggle-row { display:flex; align-items:center; }
+.ks-toggle-label { display:flex; align-items:center; gap:0.45rem; cursor:pointer; font-size:0.82rem; font-weight:600; }
+.ks-toggle-label input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; }
+.ks-solve-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.4rem; }
+.ks-solve-opt { background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:0.5rem 0.3rem; cursor:pointer; font-size:0.78rem; font-family:'Noto Sans KR',sans-serif; transition:all 0.15s; text-align:center; }
+.ks-solve-opt:hover { border-color:var(--accent); color:var(--accent); }
+.ks-perfect-opt { grid-column:1/-1; background:rgba(0,229,160,0.08); border-color:rgba(0,229,160,0.3); color:#00e5a0; font-weight:700; }
+.ks-perfect-opt:hover { background:rgba(0,229,160,0.15); }
 .ks-no-participants { padding:0.8rem; font-size:0.75rem; color:var(--muted); text-align:center; }
 .ks-save-btn { width:100%; background:var(--accent); border:none; color:#0d0f1a; font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; font-weight:700; padding:0.7rem; border-radius:10px; cursor:pointer; }
 
@@ -530,6 +540,36 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
 </div>
 
+<!-- 🎯 풀이 결과 입력 모달 -->
+<div class="ks-settings-overlay" id="ksSolveOverlay" style="display:none" onclick="closeKsSolveOutside(event)">
+  <div class="ks-settings-modal" style="max-width:380px">
+    <div class="ks-settings-header">
+      <span style="font-weight:800;font-size:0.95rem">🎯 풀이 결과 입력</span>
+      <button class="ks-close-btn" onclick="closeKsSolve()">✕</button>
+    </div>
+    <input type="hidden" id="ksSolveSession">
+    <input type="hidden" id="ksSolveName">
+    <div class="ks-settings-label" id="ksSolveWhoLabel" style="margin-bottom:0.7rem"></div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.7rem">몇 개 틀렸나요?</div>
+    <div class="ks-solve-grid">
+      <button class="ks-solve-opt ks-perfect-opt" onclick="selectSolveResult(0)">✨ 퍼펙트<br><span style="font-size:0.65rem;color:rgba(0,229,160,0.7)">0개 틀림</span></button>
+      <button class="ks-solve-opt" onclick="selectSolveResult(1)">✗ 1개</button>
+      <button class="ks-solve-opt" onclick="selectSolveResult(2)">✗ 2개</button>
+      <button class="ks-solve-opt" onclick="selectSolveResult(3)">✗ 3개</button>
+      <button class="ks-solve-opt" onclick="selectSolveResult(4)">✗ 4개</button>
+      <button class="ks-solve-opt" onclick="selectSolveResult(5)">✗ 5개</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem">
+      <span style="font-size:0.78rem;color:var(--muted)">직접 입력:</span>
+      <input type="number" id="ksSolveCustom" min="0" max="50" placeholder="0"
+        style="width:60px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:0.3rem 0.5rem;font-size:0.88rem;outline:none;text-align:center">
+      <button onclick="selectSolveResult(parseInt(document.getElementById('ksSolveCustom').value)||0)"
+        style="background:var(--accent);border:none;color:#0d0f1a;font-weight:700;padding:0.3rem 0.7rem;border-radius:7px;cursor:pointer;font-size:0.78rem">확인</button>
+    </div>
+    <button onclick="cancelSolveResult()" style="width:100%;margin-top:0.9rem;background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.5rem;border-radius:9px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:0.78rem">풀이 기록 삭제</button>
+  </div>
+</div>
+
 <!-- 📢 공지 편집 모달 -->
 <div class="ks-settings-overlay" id="ksNoticeOverlay" style="display:none" onclick="closeKsNoticeOutside(event)">
   <div class="ks-settings-modal">
@@ -539,16 +579,30 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <input type="hidden" id="ksNoticeSessionNum">
     <div class="ks-settings-section">
-      <div class="ks-settings-label">🎯 시험 범위</div>
+      <div class="ks-settings-label">🎯 시험명</div>
       <input class="ks-date-input" id="ksNoticeExam" type="text" placeholder="예) 2026학년도 6월 모의평가">
     </div>
     <div class="ks-settings-section">
-      <div class="ks-settings-label">📖 독서 지문</div>
-      <input class="ks-date-input" id="ksNoticeReading" type="text" placeholder="예) 독서론「학습을 위한 읽기」, 사회「완전경쟁시장의~」">
+      <div class="ks-notice-toggle-row">
+        <label class="ks-toggle-label">
+          <input type="checkbox" id="ksNoticeReadingOn" onchange="toggleKsNoticeSection('reading',this.checked)">
+          <span class="ks-toggle-text">📖 독서 포함</span>
+        </label>
+      </div>
+      <div id="ksNoticeReadingSection" style="display:none;margin-top:0.4rem">
+        <input class="ks-date-input" id="ksNoticeReading" type="text" placeholder="예) 독서론「학습을 위한 읽기」, 사회「완전경쟁시장의~」(2지문)">
+      </div>
     </div>
     <div class="ks-settings-section">
-      <div class="ks-settings-label">📝 문학 지문</div>
-      <input class="ks-date-input" id="ksNoticeLit" type="text" placeholder="예) 하근찬「나룻배 이야기」">
+      <div class="ks-notice-toggle-row">
+        <label class="ks-toggle-label">
+          <input type="checkbox" id="ksNoticeLitOn" onchange="toggleKsNoticeSection('lit',this.checked)">
+          <span class="ks-toggle-text">📝 문학 포함</span>
+        </label>
+      </div>
+      <div id="ksNoticeLitSection" style="display:none;margin-top:0.4rem">
+        <input class="ks-date-input" id="ksNoticeLit" type="text" placeholder="예) 하근찬「나룻배 이야기」">
+      </div>
     </div>
     <button class="ks-save-btn" onclick="saveKsNotice()">저장</button>
   </div>
@@ -1006,7 +1060,7 @@ window.changeMonth=function(dir){
 function render(){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('monthLabel').textContent=`${curYear}년 ${mn[curMonth]}`;
-  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 공부했다면 날짜 클릭!<br>1번=🟢 2번=🔵 3번=🟡 · 다시 클릭하면 초기화</span>`;
+  document.getElementById('calLabel').innerHTML=`${curYear}년 ${mn[curMonth]} 인증 달력 &nbsp;<span class="cal-guide">📖 공부했다면 날짜 클릭!<br>1번=🟢 2번=🟡 3번=🟠 · 다시 클릭하면 초기화</span>`;
   renderNameGrid();
   renderMgmtList();
   renderCalendar();
@@ -1371,7 +1425,7 @@ function renderKsWeek(){
   dateEl.textContent=`${fmt(monday)} ~ ${fmt(sunday)} · ${sessions.length}회`;
 
   const participants=(ksConfig.participants||[]).map(name=>members.find(m=>m.name===name)).filter(Boolean);
-  const CHECK_TYPES=[{key:'solve',label:'풀이'},{key:'summary',label:'3줄요약'},{key:'feedback',label:'피드백'}];
+  const CHECK_TYPES=[{key:'solve',label:'풀이',special:true},{key:'summary',label:'3줄요약'},{key:'feedback',label:'피드백'}];
 
   sessionsEl.innerHTML=sessions.map(({num:n, window:win})=>{
     const info=getSessionLabel(n);
@@ -1406,7 +1460,19 @@ function renderKsWeek(){
 
     // 멤버 체크
     const memberRows=participants.map(m=>{
-      const checks=CHECK_TYPES.map(({key,label})=>{
+      const checks=CHECK_TYPES.map(({key,label,special})=>{
+        if(special && key==='solve'){
+          const solveVal = data[`solve_cnt_${mKey(m.name)}`]; // null=미완, 0=퍼펙트, N=틀린수
+          const done = solveVal !== undefined && solveVal !== null;
+          let btnLabel, btnCls;
+          if(!done){ btnLabel='풀이'; btnCls=''; }
+          else if(solveVal===0){ btnLabel='✨ 퍼펙트'; btnCls=' checked ks-perfect'; }
+          else{ btnLabel=`✗ ${solveVal}개`; btnCls=' checked ks-wrong'; }
+          return `<button class="ks-check-btn${btnCls}"
+            data-ks-solve="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-done="${done}" data-val="${solveVal??''}">
+            ${btnLabel}
+          </button>`;
+        }
         const checked=!!data[`${key}_${mKey(m.name)}`];
         return `<button class="ks-check-btn${checked?' checked':''}"
           data-ks="1" data-session="${n}" data-name="${m.name.replace(/"/g,'&quot;')}" data-field="${key}" data-checked="${checked}">
@@ -1438,13 +1504,61 @@ function renderKsWeek(){
 
 // 이벤트 위임으로 체크 처리
 document.addEventListener('click', function(e){
+  // 일반 체크
   const btn = e.target.closest('[data-ks]');
-  if(!btn) return;
-  const { session, name, field, checked } = btn.dataset;
-  if(session && name && field){
-    toggleKsCheck(parseInt(session), name, field, checked==='true');
+  if(btn){
+    const { session, name, field, checked } = btn.dataset;
+    if(session && name && field) toggleKsCheck(parseInt(session), name, field, checked==='true');
+    return;
+  }
+  // 풀이 결과
+  const solveBtn = e.target.closest('[data-ks-solve]');
+  if(solveBtn){
+    const { session, name } = solveBtn.dataset;
+    openKsSolve(parseInt(session), name);
   }
 });
+
+// 풀이 모달
+window.openKsSolve = function(sessionNum, name){
+  document.getElementById('ksSolveSession').value = sessionNum;
+  document.getElementById('ksSolveName').value = name;
+  const m = members.find(m=>m.name===name);
+  document.getElementById('ksSolveWhoLabel').textContent = `${m?.emoji||''} ${name}`;
+  document.getElementById('ksSolveCustom').value = '';
+  document.getElementById('ksSolveOverlay').style.display = 'flex';
+};
+window.closeKsSolve = function(){
+  document.getElementById('ksSolveOverlay').style.display = 'none';
+};
+window.closeKsSolveOutside = function(e){
+  if(e.target.id==='ksSolveOverlay') closeKsSolve();
+};
+window.selectSolveResult = async function(count){
+  const n = parseInt(document.getElementById('ksSolveSession').value);
+  const name = document.getElementById('ksSolveName').value;
+  const r = doc(db,'korean_study', ksDocIdForSession(n));
+  const snap = await getDoc(r);
+  const data = snap.exists()?snap.data():{};
+  data[`solve_cnt_${mKey(name)}`] = count;
+  await setDoc(r, data);
+  if(!ksSessionData[n]) ksSessionData[n]={};
+  ksSessionData[n][`solve_cnt_${mKey(name)}`] = count;
+  closeKsSolve();
+  renderKsWeek();
+};
+window.cancelSolveResult = async function(){
+  const n = parseInt(document.getElementById('ksSolveSession').value);
+  const name = document.getElementById('ksSolveName').value;
+  const r = doc(db,'korean_study', ksDocIdForSession(n));
+  const snap = await getDoc(r);
+  const data = snap.exists()?snap.data():{};
+  delete data[`solve_cnt_${mKey(name)}`];
+  await setDoc(r, data);
+  if(ksSessionData[n]) delete ksSessionData[n][`solve_cnt_${mKey(name)}`];
+  closeKsSolve();
+  renderKsWeek();
+};
 
 // 설정 패널
 window.openKsSettings = function(){
@@ -1496,9 +1610,19 @@ window.openKsNoticeEdit = function(sessionNum){
   document.getElementById('ksNoticeSessionNum').value = sessionNum;
   const data = ksSessionData[sessionNum]||{};
   document.getElementById('ksNoticeExam').value = data['notice_exam']||'';
+  const hasReading = !!(data['notice_reading']);
+  const hasLit = !!(data['notice_lit']);
+  document.getElementById('ksNoticeReadingOn').checked = hasReading;
+  document.getElementById('ksNoticeLitOn').checked = hasLit;
+  toggleKsNoticeSection('reading', hasReading);
+  toggleKsNoticeSection('lit', hasLit);
   document.getElementById('ksNoticeReading').value = data['notice_reading']||'';
   document.getElementById('ksNoticeLit').value = data['notice_lit']||'';
   document.getElementById('ksNoticeOverlay').style.display='flex';
+};
+
+window.toggleKsNoticeSection = function(type, show){
+  document.getElementById(`ksNotice${type==='reading'?'Reading':'Lit'}Section`).style.display = show?'block':'none';
 };
 window.closeKsNoticeEdit = function(){
   document.getElementById('ksNoticeOverlay').style.display='none';
