@@ -1317,11 +1317,20 @@ function getKsSessionsForWeek(weekNum, monday){
   return windows.map((w,i)=>({ num:base+i, window:w }));
 }
 
-function loadKsConfig(){
+async function loadKsConfig(){
+  // Firebase에서 먼저 불러오기
+  try {
+    const r = doc(db,'korean_study_config','main');
+    const snap = await getDoc(r);
+    if(snap.exists()) {
+      ksConfig = {...ksConfig, ...snap.data()};
+      localStorage.setItem('ks_config', JSON.stringify(ksConfig)); // 캐시
+      return;
+    }
+  } catch(e){}
+  // Firebase 실패시 localStorage 폴백
   const stored = localStorage.getItem('ks_config');
-  if(stored){
-    try{ ksConfig={...ksConfig,...JSON.parse(stored)}; }catch(e){}
-  }
+  if(stored){ try{ ksConfig={...ksConfig,...JSON.parse(stored)}; }catch(e){} }
 }
 
 async function saveKsSettings(){
@@ -1358,6 +1367,20 @@ function subscribeKsSession(sessionNum){
 }
 
 // 현재 주 구독
+// 설정 실시간 구독 (다른 기기에서 설정 변경시 자동 반영)
+let unsubscribeKsConfig = null;
+function subscribeKsConfig(){
+  if(unsubscribeKsConfig) return;
+  const r = doc(db,'korean_study_config','main');
+  unsubscribeKsConfig = onSnapshot(r, snap=>{
+    if(snap.exists()){
+      ksConfig = {...ksConfig, ...snap.data()};
+      localStorage.setItem('ks_config', JSON.stringify(ksConfig));
+      renderKsWeek();
+    }
+  });
+}
+
 function subscribeKsWeek(monday){
   ksUnsubscribes.forEach(u=>u()); ksUnsubscribes=[];
   if(!ksConfig.startDate) return;
@@ -1366,13 +1389,14 @@ function subscribeKsWeek(monday){
   getKsSessionsForWeek(weekNum, monday).forEach(({num})=>subscribeKsSession(num));
 }
 
-window.openKoreanStudy = function(){
-  loadKsConfig();
+window.openKoreanStudy = async function(){
+  await loadKsConfig();
   if(!ksConfig.participants || ksConfig.participants.length===0){
     ksConfig.participants = members.map(m=>m.name);
   }
   ksWeekOffset=0;
   const monday=getMonday(0);
+  subscribeKsConfig();
   subscribeKsWeek(monday);
   renderKsWeek();
   document.getElementById('koreanStudyOverlay').style.display='flex';
@@ -1609,6 +1633,11 @@ window.toggleKsParticipant = function(el){
 window.saveKsSettings = async function(){
   const dateInput=document.getElementById('ksStartDateInput');
   if(dateInput) ksConfig.startDate=dateInput.value;
+  // Firebase에 저장 (모든 사용자 공유)
+  try {
+    const r = doc(db,'korean_study_config','main');
+    await setDoc(r, ksConfig);
+  } catch(e){ console.warn('KS config save failed:', e); }
   localStorage.setItem('ks_config', JSON.stringify(ksConfig));
   closeKsSettings();
   ksWeekOffset=0;
