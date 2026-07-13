@@ -462,7 +462,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .math-day-row.today .math-day-cells { border-bottom:2px solid #5b8def; background:rgba(91,141,239,0.08); border-radius:4px; }
 .math-day-label { flex:0 0 34px; font-size:0.68rem; color:#ffd93d; font-weight:700; text-align:right; padding-top:3px; font-family:"DM Mono",monospace; }
 .math-day-cells { display:flex; flex-wrap:wrap; gap:2px; flex:1; padding:4px 0 5px; border-bottom:2px solid rgba(255,217,61,0.2); margin-bottom:1px; }
-.math-cell { width:22px; height:18px; border-radius:3px; background:#232c40; border:1px solid #313c54; cursor:pointer; padding:0; font-size:7.5px; color:#4a5570; display:flex; align-items:center; justify-content:center; }
+.math-cell { width:22px; height:18px; border-radius:3px; background:#232c40; border:1px solid #313c54; cursor:pointer; padding:0; font-size:7.5px; color:#4a5570; display:flex; align-items:center; justify-content:center; touch-action:none; }
 .math-cell.solved { background:#2fb673; border-color:#2fb673; color:#0a4230; }
 .math-cell.retry  { background:#e0a83a; border-color:#e0a83a; color:#4a2c05; }
 .math-cell.wrong  { background:#e15b5b; border-color:#e15b5b; color:#5c1a1a; }
@@ -2052,9 +2052,11 @@ function mathBuildBoard(){
 
   // 드래그 이벤트
   board.addEventListener('pointerdown', mathPointerDown, {passive:false});
-  document.addEventListener('pointermove', mathPointerMove, {passive:false});
+  board.addEventListener('pointermove', mathPointerMove, {passive:false});
+  board.addEventListener('pointerup', mathPointerUp);
+  board.addEventListener('pointercancel', mathPointerUp);
+  // 보드 밖으로 나갔을 때도 처리
   document.addEventListener('pointerup', mathPointerUp);
-  document.addEventListener('pointercancel', mathPointerUp);
 
   mathSetActive(mathActiveMember || members[0]?.name || '');
 }
@@ -2071,15 +2073,16 @@ function mathApplyCell(btn, state){
 function mathPointerDown(e){
   const btn=e.target.closest('.math-cell');
   if(!btn) return;
-  e.preventDefault(); // 셀 위에서만 스크롤 방지
+  e.preventDefault();
   const name=btn.dataset.mname, sec=btn.dataset.sec, idx=+btn.dataset.idx;
   const cur=mathDataMap[name].cells[sec][idx]||0;
   mathPaintState=(cur+1)%MATH_STATES.length;
   mathPainting=true;
   mathPaintedKey=name+'|'+sec+'|'+idx;
   mathApplyCell(btn,mathPaintState);
-  // 드래그 캡처
-  try{ btn.setPointerCapture(e.pointerId); }catch(ex){}
+  // 드래그 시작 시 보드 전체 터치 스크롤 잠금
+  const board=document.getElementById('mathBoard');
+  if(board) board.style.touchAction='none';
 }
 function mathPointerMove(e){
   if(!mathPainting) return;
@@ -2094,6 +2097,9 @@ function mathPointerMove(e){
 }
 function mathPointerUp(){
   mathPainting=false;
+  // 드래그 종료 시 스크롤 복원
+  const board=document.getElementById('mathBoard');
+  if(board) board.style.touchAction='auto';
 }
 
 function mathSetActive(name){
@@ -2194,10 +2200,12 @@ window.closeMathStudy = function(){
   // 이벤트 정리
   const board=document.getElementById('mathBoard');
   board.removeEventListener('pointerdown',mathPointerDown);
-  document.removeEventListener('pointermove',mathPointerMove);
+  board.removeEventListener('pointermove',mathPointerMove);
+  board.removeEventListener('pointerup',mathPointerUp);
+  board.removeEventListener('pointercancel',mathPointerUp);
   document.removeEventListener('pointerup',mathPointerUp);
-  document.removeEventListener('pointercancel',mathPointerUp);
   mathPainting=false;
+  board.style.touchAction='auto';
 };
 
 // ── 결산 ──────────────────────────────────────────
