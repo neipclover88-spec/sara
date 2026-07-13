@@ -718,7 +718,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     </div>
     <div class="math-tabs" id="mathTabs"></div>
     <div class="math-compare" id="mathCompare"></div>
-    <div class="math-board" id="mathBoard" style="touch-action:none;user-select:none"></div>
+    <div class="math-board" id="mathBoard" style="user-select:none"></div>
   </div>
 </div>
 
@@ -2051,8 +2051,8 @@ function mathBuildBoard(){
   });
 
   // 드래그 이벤트
-  board.addEventListener('pointerdown', mathPointerDown);
-  document.addEventListener('pointermove', mathPointerMove);
+  board.addEventListener('pointerdown', mathPointerDown, {passive:false});
+  document.addEventListener('pointermove', mathPointerMove, {passive:false});
   document.addEventListener('pointerup', mathPointerUp);
   document.addEventListener('pointercancel', mathPointerUp);
 
@@ -2071,16 +2071,19 @@ function mathApplyCell(btn, state){
 function mathPointerDown(e){
   const btn=e.target.closest('.math-cell');
   if(!btn) return;
-  e.preventDefault();
+  e.preventDefault(); // 셀 위에서만 스크롤 방지
   const name=btn.dataset.mname, sec=btn.dataset.sec, idx=+btn.dataset.idx;
   const cur=mathDataMap[name].cells[sec][idx]||0;
   mathPaintState=(cur+1)%MATH_STATES.length;
   mathPainting=true;
   mathPaintedKey=name+'|'+sec+'|'+idx;
   mathApplyCell(btn,mathPaintState);
+  // 드래그 캡처
+  try{ btn.setPointerCapture(e.pointerId); }catch(ex){}
 }
 function mathPointerMove(e){
   if(!mathPainting) return;
+  e.preventDefault(); // 드래그 페인팅 중 스크롤 방지
   const el=document.elementFromPoint(e.clientX,e.clientY);
   const btn=el&&el.closest('.math-cell');
   if(!btn) return;
@@ -2194,6 +2197,7 @@ window.closeMathStudy = function(){
   document.removeEventListener('pointermove',mathPointerMove);
   document.removeEventListener('pointerup',mathPointerUp);
   document.removeEventListener('pointercancel',mathPointerUp);
+  mathPainting=false;
 };
 
 // ── 결산 ──────────────────────────────────────────
