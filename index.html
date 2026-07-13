@@ -311,6 +311,13 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   cursor:pointer; transition:all 0.2s; white-space:nowrap;
 }
 .korean-nav-btn:hover { background:rgba(0,229,160,0.22); }
+.math-nav-btn {
+  font-family:'Noto Sans KR',sans-serif; font-size:0.78rem; font-weight:700;
+  background:rgba(91,141,239,0.12); border:1px solid rgba(91,141,239,0.4);
+  color:#5b8def; padding:0.35rem 0.9rem; border-radius:100px;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.math-nav-btn:hover { background:rgba(91,141,239,0.22); }
 
 /* 국어 스터디 오버레이 */
 .ks-overlay {
@@ -420,6 +427,46 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .ks-no-participants { padding:0.8rem; font-size:0.75rem; color:var(--muted); text-align:center; }
 .ks-save-btn { width:100%; background:var(--accent); border:none; color:#0d0f1a; font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; font-weight:700; padding:0.7rem; border-radius:10px; cursor:pointer; }
 
+.math-modal {
+  width:100%; max-width:680px; margin:0 auto;
+  padding:1rem 1rem 2rem; display:flex; flex-direction:column; gap:0.6rem;
+}
+.math-topbar { display:flex; align-items:flex-start; justify-content:space-between; }
+.math-title { font-size:1rem; font-weight:800; color:#5b8def; }
+.math-subtitle { font-size:0.68rem; color:var(--muted); margin-top:0.15rem; }
+.math-legend { display:flex; gap:1rem; align-items:center; font-size:0.72rem; color:var(--muted); flex-wrap:wrap; }
+.math-legend span { display:flex; align-items:center; gap:0.3rem; }
+.math-dot { width:10px; height:10px; border-radius:3px; display:inline-block; }
+.math-tabs { display:flex; gap:0.5rem; }
+.math-tab-btn { background:var(--surface); border:1px solid var(--border); color:var(--muted); font-size:0.82rem; font-weight:600; padding:0.4rem 1rem; border-radius:10px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; }
+.math-tab-btn.active { color:var(--text); border-color:#5b8def; background:var(--surface2); }
+.math-compare { display:flex; flex-direction:column; gap:0.35rem; }
+.math-compare-row { display:flex; align-items:center; gap:0.6rem; font-size:0.75rem; color:var(--muted); }
+.math-compare-name { flex:0 0 80px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.math-compare-track { flex:1; height:7px; background:#232c40; border-radius:5px; overflow:hidden; }
+.math-compare-fill { height:100%; background:#2fb673; border-radius:5px; transition:width 0.3s; }
+.math-compare-pct { flex:0 0 38px; text-align:right; font-family:'DM Mono',monospace; }
+.math-member-col { display:none; }
+.math-member-col.active { display:block; }
+.math-member-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.7rem; }
+.math-member-stats { font-size:0.72rem; color:var(--muted); text-align:right; line-height:1.5; }
+.math-member-stats b { color:var(--text); }
+.math-section { margin-bottom:1rem; padding-bottom:0.9rem; border-bottom:1px dashed var(--border); }
+.math-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.math-section-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:0.5rem; }
+.math-section-title { font-size:0.78rem; font-weight:600; color:#5b8def; }
+.math-section-range { font-size:0.68rem; color:var(--muted); }
+.math-day-rows { display:flex; flex-direction:column; gap:3px; }
+.math-day-row { display:flex; align-items:flex-start; gap:0.4rem; }
+.math-day-row.today .math-day-label { color:#5b8def; font-weight:700; }
+.math-day-row.today .math-day-cells { border-bottom:1px solid #5b8def; background:rgba(91,141,239,0.06); border-radius:4px; }
+.math-day-label { flex:0 0 30px; font-size:0.62rem; color:var(--muted); text-align:right; padding-top:3px; }
+.math-day-cells { display:flex; flex-wrap:wrap; gap:2px; flex:1; padding-bottom:3px; border-bottom:1px solid var(--border); }
+.math-cell { width:22px; height:18px; border-radius:3px; background:#232c40; border:1px solid #313c54; cursor:pointer; padding:0; font-size:7.5px; color:#4a5570; display:flex; align-items:center; justify-content:center; }
+.math-cell.solved { background:#2fb673; border-color:#2fb673; color:#0a4230; }
+.math-cell.retry  { background:#e0a83a; border-color:#e0a83a; color:#4a2c05; }
+.math-cell.wrong  { background:#e15b5b; border-color:#e15b5b; color:#5c1a1a; }
+.math-cell:hover { filter:brightness(1.3); }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -452,6 +499,7 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
   <button class="summary-btn" onclick="openSummary()">📊 오늘의 결산</button>
   <button class="korean-nav-btn" onclick="openKoreanStudy()">📚 국어 스터디</button>
+  <button class="math-nav-btn" onclick="openMathStudy()">📐 수학 스터디</button>
 </nav>
 
 <div class="main">
@@ -648,6 +696,28 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
   </div>
 </div>
 
+
+<!-- 📐 수학 스터디 현황판 -->
+<div class="ks-overlay" id="mathStudyOverlay" style="display:none">
+  <div class="math-modal">
+    <div class="math-topbar">
+      <div>
+        <div class="math-title">📐 마더텅 수Ⅱ 기출 스터디 진도</div>
+        <div class="math-subtitle">클릭 또는 드래그로 상태 전환 · 자동 저장됨</div>
+      </div>
+      <button class="ks-close-btn" onclick="closeMathStudy()">✕</button>
+    </div>
+    <div class="math-legend">
+      <span><i class="math-dot" style="background:#232c40;border:1px solid #313c54"></i>미풀</span>
+      <span><i class="math-dot" style="background:#2fb673"></i>해결</span>
+      <span><i class="math-dot" style="background:#e0a83a"></i>다시볼것</span>
+      <span><i class="math-dot" style="background:#e15b5b"></i>못품</span>
+    </div>
+    <div class="math-tabs" id="mathTabs"></div>
+    <div class="math-compare" id="mathCompare"></div>
+    <div class="math-board" id="mathBoard" style="touch-action:none;user-select:none"></div>
+  </div>
+</div>
 
 <!-- 결산 전체화면 -->
 
@@ -1779,6 +1849,284 @@ window.saveKsNotice = async function(){
 window.openChallenge = window.openKoreanStudy;
 window.openGoalFromDay = function(){ openKoreanStudy(); };
 window.switchKsTab = function(){};
+
+
+// ── 수학 스터디 ────────────────────────────────────────
+const MATH_SECTIONS = [
+  {id:"1-1", name:"Ⅰ-1 함수의 극한",        total:186},
+  {id:"1-2", name:"Ⅰ-2 함수의 연속",        total:111},
+  {id:"2-1", name:"Ⅱ-1 미분계수와 도함수",  total:167},
+  {id:"2-2", name:"Ⅱ-2 도함수의 활용",      total:239},
+  {id:"3-1", name:"Ⅲ-1 부정적분과 정적분",  total:183},
+  {id:"3-2", name:"Ⅲ-2 정적분의 활용",      total:114}
+];
+const MATH_DAY_PLAN = {
+  "1-1":[["7/15",47],["7/16",43],["7/17",39],["7/20",29],["7/21",28]],
+  "1-2":[["7/22",44],["7/23",36],["7/24",31]],
+  "2-1":[["7/27",33],["7/28",30],["7/29",30],["7/30",27],["7/31",28],["8/3",19]],
+  "2-2":[["8/4",43],["8/5",26],["8/6",35],["8/7",24],["8/10",32],["8/11",29],["8/12",24],["8/13",24],["+",2]],
+  "3-1":[["8/14",47],["8/17",42],["8/18",37],["8/19",31],["8/20",25],["+",1]],
+  "3-2":[["8/21",45],["8/24",35],["8/25",34]]
+};
+const MATH_STATES = ["","solved","retry","wrong"];
+
+function mathDefaultData(){
+  const d={cells:{}};
+  MATH_SECTIONS.forEach(s=>{ d.cells[s.id]=new Array(s.total).fill(0); });
+  return d;
+}
+
+function mathLoadData(name){
+  // localStorage 캐시 우선 (빠른 초기 로드)
+  try{
+    const raw=localStorage.getItem('math_'+name);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return mathDefaultData();
+}
+
+const mathSaveTimers = {};
+async function mathSaveData(name, d){
+  // localStorage 캐시 즉시
+  try{ localStorage.setItem('math_'+name, JSON.stringify(d)); }catch(e){}
+  // Firebase 0.5초 디바운스
+  if(mathSaveTimers[name]) clearTimeout(mathSaveTimers[name]);
+  mathSaveTimers[name] = setTimeout(async()=>{
+    try{
+      const r = doc(db,'math_study',name.replace(/[^a-zA-Z0-9가-힣]/g,'_'));
+      await setDoc(r, {cells: d.cells});
+    }catch(e){ console.warn('math save failed:',e); }
+  }, 500);
+}
+
+// Firebase 실시간 구독
+const mathUnsubscribes = {};
+function mathSubscribeAll(){
+  members.forEach(m=>{
+    if(mathUnsubscribes[m.name]) return;
+    const r = doc(db,'math_study',m.name.replace(/[^a-zA-Z0-9가-힣]/g,'_'));
+    mathUnsubscribes[m.name] = onSnapshot(r, snap=>{
+      if(!snap.exists()) return;
+      const data = snap.data();
+      if(!mathDataMap[m.name]) mathDataMap[m.name] = mathDefaultData();
+      // 셀 데이터 병합
+      MATH_SECTIONS.forEach(s=>{
+        if(data.cells && data.cells[s.id]){
+          mathDataMap[m.name].cells[s.id] = data.cells[s.id];
+        }
+      });
+      localStorage.setItem('math_'+m.name, JSON.stringify(mathDataMap[m.name]));
+      // 화면 갱신
+      if(mathRefreshMap[m.name]) mathRefreshMap[m.name]();
+      mathRefreshCells(m.name);
+      mathRefreshCompare();
+    });
+  });
+}
+function mathUnsubscribeAll(){
+  Object.values(mathUnsubscribes).forEach(u=>u());
+  Object.keys(mathUnsubscribes).forEach(k=>delete mathUnsubscribes[k]);
+}
+
+// Firebase 변경사항 반영 (다른 멤버가 업데이트시 셀 재렌더)
+function mathRefreshCells(name){
+  const col = mathColMap[name];
+  if(!col) return;
+  const data = mathDataMap[name];
+  col.querySelectorAll('.math-cell').forEach(btn=>{
+    if(btn.dataset.mname!==name) return;
+    const si = data.cells[btn.dataset.sec]?.[+btn.dataset.idx]||0;
+    btn.className='math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'');
+  });
+}
+function mathComputeStats(d){
+  let total=0,solved=0,wrong=0;
+  MATH_SECTIONS.forEach(s=>{ d.cells[s.id].forEach(v=>{ total++; if(v===1)solved++; if(v===3)wrong++; }); });
+  return {total,solved,wrong,pct:total?Math.round(solved/total*100):0};
+}
+
+let mathDataMap = {};
+let mathActiveMember = '';
+let mathColMap = {};
+let mathRefreshMap = {};
+let mathPainting = false;
+let mathPaintState = 0;
+let mathPaintedKey = '';
+
+function mathBuildBoard(){
+  const board = document.getElementById('mathBoard');
+  const now = new Date();
+  const todayLabel = (now.getMonth()+1)+'/'+now.getDate();
+  board.innerHTML = '';
+  mathColMap = {};
+  mathRefreshMap = {};
+
+  members.forEach(m=>{
+    if(!mathDataMap[m.name]){
+      mathDataMap[m.name] = mathLoadData(m.name);
+    }
+    const data = mathDataMap[m.name];
+    const col = document.createElement('div');
+    col.className = 'math-member-col';
+
+    const head = document.createElement('div');
+    head.className = 'math-member-head';
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:1rem;font-weight:700';
+    nameEl.textContent = m.emoji+' '+m.name;
+    const stats = document.createElement('div');
+    stats.className = 'math-member-stats';
+    head.appendChild(nameEl);
+    head.appendChild(stats);
+    col.appendChild(head);
+
+    function refreshStats(){
+      const s = mathComputeStats(data);
+      stats.innerHTML = `<b>${s.solved}</b>/${s.total} · <b>${s.pct}%</b>${s.wrong?' · 못품 '+s.wrong:''}`;
+      mathRefreshCompare();
+    }
+
+    MATH_SECTIONS.forEach(sec=>{
+      const secEl = document.createElement('div');
+      secEl.className = 'math-section';
+      secEl.innerHTML = `<div class="math-section-head">
+        <span class="math-section-title">§ ${sec.name}</span>
+        <span class="math-section-range">001–${String(sec.total).padStart(3,'0')}</span>
+      </div>`;
+      const dayRows = document.createElement('div');
+      dayRows.className = 'math-day-rows';
+      let idx=0;
+      const plan = MATH_DAY_PLAN[sec.id]||[['',sec.total]];
+      plan.forEach(([label,count])=>{
+        const row = document.createElement('div');
+        row.className = 'math-day-row'+(label===todayLabel?' today':'');
+        const lab = document.createElement('span');
+        lab.className = 'math-day-label';
+        lab.textContent = label;
+        row.appendChild(lab);
+        const cellsWrap = document.createElement('div');
+        cellsWrap.className = 'math-day-cells';
+        for(let k=0;k<count&&idx<sec.total;k++,idx++){
+          const btn = document.createElement('button');
+          const si = data.cells[sec.id][idx]||0;
+          btn.className = 'math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'');
+          btn.textContent = String(idx+1);
+          btn.dataset.mname = m.name;
+          btn.dataset.sec = sec.id;
+          btn.dataset.idx = idx;
+          cellsWrap.appendChild(btn);
+        }
+        row.appendChild(cellsWrap);
+        dayRows.appendChild(row);
+      });
+      secEl.appendChild(dayRows);
+      col.appendChild(secEl);
+    });
+
+    col._refresh = refreshStats;
+    refreshStats();
+    mathColMap[m.name] = col;
+    mathRefreshMap[m.name] = refreshStats;
+    board.appendChild(col);
+  });
+
+  // 드래그 이벤트
+  board.addEventListener('pointerdown', mathPointerDown);
+  document.addEventListener('pointermove', mathPointerMove);
+  document.addEventListener('pointerup', mathPointerUp);
+  document.addEventListener('pointercancel', mathPointerUp);
+
+  mathSetActive(mathActiveMember || members[0]?.name || '');
+}
+
+function mathApplyCell(btn, state){
+  const name=btn.dataset.mname, sec=btn.dataset.sec, idx=+btn.dataset.idx;
+  const data=mathDataMap[name];
+  data.cells[sec][idx]=state;
+  btn.className='math-cell'+(MATH_STATES[state]?' '+MATH_STATES[state]:'');
+  mathSaveData(name,data);
+  if(mathRefreshMap[name]) mathRefreshMap[name]();
+}
+
+function mathPointerDown(e){
+  const btn=e.target.closest('.math-cell');
+  if(!btn) return;
+  e.preventDefault();
+  const name=btn.dataset.mname, sec=btn.dataset.sec, idx=+btn.dataset.idx;
+  const cur=mathDataMap[name].cells[sec][idx]||0;
+  mathPaintState=(cur+1)%MATH_STATES.length;
+  mathPainting=true;
+  mathPaintedKey=name+'|'+sec+'|'+idx;
+  mathApplyCell(btn,mathPaintState);
+}
+function mathPointerMove(e){
+  if(!mathPainting) return;
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  const btn=el&&el.closest('.math-cell');
+  if(!btn) return;
+  const key=btn.dataset.mname+'|'+btn.dataset.sec+'|'+btn.dataset.idx;
+  if(key===mathPaintedKey) return;
+  mathPaintedKey=key;
+  mathApplyCell(btn,mathPaintState);
+}
+function mathPointerUp(){
+  mathPainting=false;
+}
+
+function mathSetActive(name){
+  mathActiveMember=name;
+  Object.entries(mathColMap).forEach(([n,col])=>col.classList.toggle('active',n===name));
+  mathBuildTabs();
+}
+
+function mathBuildTabs(){
+  const tabs=document.getElementById('mathTabs');
+  if(!tabs) return;
+  tabs.innerHTML='';
+  members.forEach(m=>{
+    const b=document.createElement('button');
+    b.className='math-tab-btn'+(m.name===mathActiveMember?' active':'');
+    b.textContent=m.emoji+' '+m.name;
+    b.onclick=()=>mathSetActive(m.name);
+    tabs.appendChild(b);
+  });
+}
+
+function mathRefreshCompare(){
+  const el=document.getElementById('mathCompare');
+  if(!el) return;
+  el.innerHTML='';
+  members.forEach(m=>{
+    const data=mathDataMap[m.name];
+    if(!data) return;
+    const s=mathComputeStats(data);
+    const row=document.createElement('div');
+    row.className='math-compare-row';
+    row.innerHTML=`<span class="math-compare-name">${m.emoji} ${m.name}</span>
+      <span class="math-compare-track"><span class="math-compare-fill" style="width:${s.pct}%"></span></span>
+      <span class="math-compare-pct">${s.pct}%</span>`;
+    el.appendChild(row);
+  });
+}
+
+window.openMathStudy = function(){
+  mathDataMap={};
+  mathBuildBoard();
+  mathSubscribeAll();
+  document.getElementById('mathStudyOverlay').style.display='flex';
+  document.body.style.overflow='hidden';
+};
+window.closeMathStudy = function(){
+  document.getElementById('mathStudyOverlay').style.display='none';
+  document.body.style.overflow='';
+  mathUnsubscribeAll();
+  // 이벤트 정리
+  const board=document.getElementById('mathBoard');
+  board.removeEventListener('pointerdown',mathPointerDown);
+  document.removeEventListener('pointermove',mathPointerMove);
+  document.removeEventListener('pointerup',mathPointerUp);
+  document.removeEventListener('pointercancel',mathPointerUp);
+};
 
 // ── 결산 ──────────────────────────────────────────
 window.openSummary = function(){
