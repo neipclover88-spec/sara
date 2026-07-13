@@ -705,7 +705,10 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
         <div class="math-title">📐 마더텅 수Ⅱ 기출 스터디 진도</div>
         <div class="math-subtitle">클릭 또는 드래그로 상태 전환 · 자동 저장됨</div>
       </div>
-      <button class="ks-close-btn" onclick="closeMathStudy()">✕</button>
+      <div style="display:flex;gap:0.4rem;align-items:center">
+        <button class="ks-icon-btn" onclick="openMathSettings()" title="멤버 설정">⚙️</button>
+        <button class="ks-close-btn" onclick="closeMathStudy()">✕</button>
+      </div>
     </div>
     <div class="math-legend">
       <span><i class="math-dot" style="background:#232c40;border:1px solid #313c54"></i>미풀</span>
@@ -716,6 +719,21 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
     <div class="math-tabs" id="mathTabs"></div>
     <div class="math-compare" id="mathCompare"></div>
     <div class="math-board" id="mathBoard" style="touch-action:none;user-select:none"></div>
+  </div>
+</div>
+
+<!-- 📐 수학 스터디 설정 -->
+<div class="ks-settings-overlay" id="mathSettingsOverlay" style="display:none" onclick="closeMathSettingsOutside(event)">
+  <div class="ks-settings-modal">
+    <div class="ks-settings-header">
+      <span style="font-weight:800;font-size:0.95rem">⚙️ 수학 스터디 멤버</span>
+      <button class="ks-close-btn" onclick="closeMathSettings()">✕</button>
+    </div>
+    <div class="ks-settings-section">
+      <div class="ks-settings-label">👥 참여 멤버 선택</div>
+      <div class="ks-participant-grid" id="mathParticipantGrid"></div>
+    </div>
+    <button class="ks-save-btn" onclick="saveMathSettings()">저장</button>
   </div>
 </div>
 
@@ -1902,7 +1920,7 @@ async function mathSaveData(name, d){
 // Firebase 실시간 구독
 const mathUnsubscribes = {};
 function mathSubscribeAll(){
-  members.forEach(m=>{
+  members.filter(m=>mathParticipants.includes(m.name)).forEach(m=>{
     if(mathUnsubscribes[m.name]) return;
     const r = doc(db,'math_study',m.name.replace(/[^a-zA-Z0-9가-힣]/g,'_'));
     mathUnsubscribes[m.name] = onSnapshot(r, snap=>{
@@ -1946,6 +1964,7 @@ function mathComputeStats(d){
 }
 
 let mathDataMap = {};
+let mathParticipants = []; // 수학 스터디 참여 멤버 이름 배열
 let mathActiveMember = '';
 let mathColMap = {};
 let mathRefreshMap = {};
@@ -1961,7 +1980,8 @@ function mathBuildBoard(){
   mathColMap = {};
   mathRefreshMap = {};
 
-  members.forEach(m=>{
+  const mathMembers = members.filter(m=>mathParticipants.includes(m.name));
+  mathMembers.forEach(m=>{
     if(!mathDataMap[m.name]){
       mathDataMap[m.name] = mathLoadData(m.name);
     }
@@ -2083,7 +2103,7 @@ function mathBuildTabs(){
   const tabs=document.getElementById('mathTabs');
   if(!tabs) return;
   tabs.innerHTML='';
-  members.forEach(m=>{
+  members.filter(m=>mathParticipants.includes(m.name)).forEach(m=>{
     const b=document.createElement('button');
     b.className='math-tab-btn'+(m.name===mathActiveMember?' active':'');
     b.textContent=m.emoji+' '+m.name;
@@ -2096,7 +2116,7 @@ function mathRefreshCompare(){
   const el=document.getElementById('mathCompare');
   if(!el) return;
   el.innerHTML='';
-  members.forEach(m=>{
+  members.filter(m=>mathParticipants.includes(m.name)).forEach(m=>{
     const data=mathDataMap[m.name];
     if(!data) return;
     const s=mathComputeStats(data);
@@ -2109,13 +2129,61 @@ function mathRefreshCompare(){
   });
 }
 
-window.openMathStudy = function(){
+window.openMathStudy = async function(){
   mathDataMap={};
+  // Firebase에서 참여자 목록 로드
+  try{
+    const r = doc(db,'math_study_config','main');
+    const snap = await getDoc(r);
+    if(snap.exists() && snap.data().participants){
+      mathParticipants = snap.data().participants;
+    } else {
+      mathParticipants = members.map(m=>m.name);
+    }
+  }catch(e){
+    mathParticipants = members.map(m=>m.name);
+  }
   mathBuildBoard();
   mathSubscribeAll();
   document.getElementById('mathStudyOverlay').style.display='flex';
   document.body.style.overflow='hidden';
 };
+window.openMathSettings = function(){
+  const grid = document.getElementById('mathParticipantGrid');
+  if(!grid) return;
+  grid.innerHTML = members.map(m=>{
+    const selected = mathParticipants.includes(m.name);
+    return `<div class="ks-participant-chip${selected?' selected':''}"
+      onclick="toggleMathParticipant(this)">
+      <span style="display:none" class="ks-p-name">${m.name}</span>
+      ${m.emoji} ${m.name}
+    </div>`;
+  }).join('');
+  document.getElementById('mathSettingsOverlay').style.display='flex';
+};
+window.closeMathSettings = function(){
+  document.getElementById('mathSettingsOverlay').style.display='none';
+};
+window.closeMathSettingsOutside = function(e){
+  if(e.target.id==='mathSettingsOverlay') closeMathSettings();
+};
+window.toggleMathParticipant = function(el){
+  const name=el.querySelector('.ks-p-name').textContent;
+  const idx=mathParticipants.indexOf(name);
+  if(idx>=0){ mathParticipants.splice(idx,1); el.classList.remove('selected'); }
+  else{ mathParticipants.push(name); el.classList.add('selected'); }
+};
+window.saveMathSettings = async function(){
+  try{
+    const r=doc(db,'math_study_config','main');
+    await setDoc(r,{participants:mathParticipants});
+  }catch(e){}
+  closeMathSettings();
+  mathUnsubscribeAll();
+  mathBuildBoard();
+  mathSubscribeAll();
+};
+
 window.closeMathStudy = function(){
   document.getElementById('mathStudyOverlay').style.display='none';
   document.body.style.overflow='';
