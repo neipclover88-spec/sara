@@ -2006,7 +2006,8 @@ function mathRefreshCells(name){
   col.querySelectorAll('.math-cell').forEach(btn=>{
     if(btn.dataset.mname!==name) return;
     const si = data.cells[btn.dataset.sec]?.[+btn.dataset.idx]||0;
-    btn.className='math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'');
+    const hiLv = MATH_HI_SET[btn.dataset.sec]?.[+btn.dataset.idx+1]||null;
+    btn.className='math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'')+(hiLv?' math-hi'+hiLv:'');
   });
 }
 function mathComputeStats(d){
