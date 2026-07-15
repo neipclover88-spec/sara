@@ -467,6 +467,8 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .math-cell.retry  { background:#e0a83a; border-color:#e0a83a; color:#4a2c05; }
 .math-cell.wrong  { background:#e15b5b; border-color:#e15b5b; color:#5c1a1a; }
 .math-cell:hover { filter:brightness(1.3); }
+.math-hi3 { box-shadow:inset 0 0 0 2px #b78bff !important; }
+.math-hi4 { box-shadow:inset 0 0 0 2px #ff6fae !important; }
 .loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; transition:opacity 0.4s; }
 .loading.hidden { opacity:0; pointer-events:none; }
 .spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:1rem; }
@@ -715,6 +717,8 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
       <span><i class="math-dot" style="background:#2fb673"></i>해결</span>
       <span><i class="math-dot" style="background:#e0a83a"></i>다시볼것</span>
       <span><i class="math-dot" style="background:#e15b5b"></i>못품</span>
+      <span><i class="math-dot" style="background:#232c40;border:2px solid #b78bff"></i>★★★</span>
+      <span><i class="math-dot" style="background:#232c40;border:2px solid #ff6fae"></i>★★★★</span>
     </div>
     <div class="math-tabs" id="mathTabs"></div>
     <div class="math-compare" id="mathCompare"></div>
@@ -1871,20 +1875,30 @@ window.switchKsTab = function(){};
 
 // ── 수학 스터디 ────────────────────────────────────────
 const MATH_SECTIONS = [
-  {id:"1-1", name:"Ⅰ-1 함수의 극한",        total:186},
-  {id:"1-2", name:"Ⅰ-2 함수의 연속",        total:111},
-  {id:"2-1", name:"Ⅱ-1 미분계수와 도함수",  total:167},
-  {id:"2-2", name:"Ⅱ-2 도함수의 활용",      total:239},
-  {id:"3-1", name:"Ⅲ-1 부정적분과 정적분",  total:183},
-  {id:"3-2", name:"Ⅲ-2 정적분의 활용",      total:114}
+  {id:"1-1", name:"Ⅰ-1 함수의 극한",        total:190},
+  {id:"1-2", name:"Ⅰ-2 함수의 연속",        total:119},
+  {id:"2-1", name:"Ⅱ-1 미분계수와 도함수",  total:172},
+  {id:"2-2", name:"Ⅱ-2 도함수의 활용",      total:263},
+  {id:"3-1", name:"Ⅲ-1 부정적분과 정적분",  total:195},
+  {id:"3-2", name:"Ⅲ-2 정적분의 활용",      total:116},
+  {id:"m1",  name:"미니모의고사 1회",         total:11},
+  {id:"m2",  name:"미니모의고사 2회",         total:11},
+  {id:"m3",  name:"미니모의고사 3회",         total:11},
+  {id:"m4",  name:"미니모의고사 4회",         total:11},
+  {id:"m5",  name:"미니모의고사 5회",         total:11}
 ];
 const MATH_DAY_PLAN = {
-  "1-1":[["7/15",47],["7/16",43],["7/17",39],["7/20",29],["7/21",28]],
-  "1-2":[["7/22",44],["7/23",36],["7/24",31]],
-  "2-1":[["7/27",33],["7/28",30],["7/29",30],["7/30",27],["7/31",28],["8/3",19]],
-  "2-2":[["8/4",43],["8/5",26],["8/6",35],["8/7",24],["8/10",32],["8/11",29],["8/12",24],["8/13",24],["+",2]],
-  "3-1":[["8/14",47],["8/17",42],["8/18",37],["8/19",31],["8/20",25],["+",1]],
-  "3-2":[["8/21",45],["8/24",35],["8/25",34]]
+  "1-1":[["7/15",47],["7/16",49],["7/17",46],["7/20",28],["7/21",20]],
+  "1-2":[["7/22",58],["7/23",44],["7/24",17]],
+  "2-1":[["7/27",40],["7/28",35],["7/29",39],["7/30",34],["7/31",15],["8/3",9]],
+  "2-2":[["8/4",52],["8/5",52],["8/6",46],["8/7",31],["8/10",24],["8/11",36],["8/12",12],["8/13",10]],
+  "3-1":[["8/14",69],["8/17",57],["8/18",35],["8/19",21],["8/20",13]],
+  "3-2":[["8/21",38],["8/24",42],["8/25",36]],
+  "m1":[["8/26",11]],
+  "m2":[["8/27",11]],
+  "m3":[["8/28",11]],
+  "m4":[["8/31",11]],
+  "m5":[["9/1",11]]
 };
 const MATH_STATES = ["","solved","retry","wrong"];
 
@@ -2029,7 +2043,9 @@ function mathBuildBoard(){
         for(let k=0;k<count&&idx<sec.total;k++,idx++){
           const btn = document.createElement('button');
           const si = data.cells[sec.id][idx]||0;
-          btn.className = 'math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'');
+          const hiLv = MATH_HI_SET[sec.id]?.[idx+1]||null;
+          btn.className = 'math-cell'+(MATH_STATES[si]?' '+MATH_STATES[si]:'')+(hiLv?' math-hi'+hiLv:'');
+          btn.title = String(idx+1)+(hiLv?' ★'.repeat(+hiLv):'');
           btn.textContent = String(idx+1);
           btn.dataset.mname = m.name;
           btn.dataset.sec = sec.id;
@@ -2065,7 +2081,8 @@ function mathApplyCell(btn, state){
   const name=btn.dataset.mname, sec=btn.dataset.sec, idx=+btn.dataset.idx;
   const data=mathDataMap[name];
   data.cells[sec][idx]=state;
-  btn.className='math-cell'+(MATH_STATES[state]?' '+MATH_STATES[state]:'');
+  const hiLv = MATH_HI_SET[sec]?.[idx+1]||null;
+  btn.className='math-cell'+(MATH_STATES[state]?' '+MATH_STATES[state]:'')+(hiLv?' math-hi'+hiLv:'');
   mathSaveData(name,data);
   if(mathRefreshMap[name]) mathRefreshMap[name]();
 }
