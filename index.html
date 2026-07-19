@@ -1327,10 +1327,6 @@ function renderTable(){
     const isMe=name===myName;
     let total=0;
     bHtml+=`<tr class="${isMe?'my-row':''}" data-name="${name}">`;
-    const wkDays = getWeekDaysChecked(name);
-    const pendingWarn = (wkDays!==null && isWeekWarnWindow() && wkDays<3);
-    const missedWeeks = getMissedWeeksCount(name);
-    const cardTrail = getCardTrail(missedWeeks);
     const mWarn = getMonthlyWarning(name);
     const { mandatory: mTarget, isMid: mIsMid } = (curYear===todayY&&curMonth===todayM) ? getMandatoryDays(name) : { mandatory:20, isMid:false };
     const mTargetBadge = mIsMid ? `<span class="monthly-mandatory-badge" title="가입일 기준 의무 인증일">의무 ${mTarget}일</span>` : '';
@@ -1338,11 +1334,7 @@ function renderTable(){
       <span class="monthly-warn-badge monthly-warn-${mWarn.type}" title="${mWarn.msg}">${mWarn.msg}</span>` : '';
     bHtml+=`<td class="name-cell${isMe?' my-name':''}" data-name="${name}">
       <div style="display:flex;flex-direction:column;gap:0.15rem;align-items:flex-start">
-        <div>
-          <span class="name-emoji-inline">${emoji}</span>${name}
-          ${cardTrail?` <span class="card-trail" title="지난 ${missedWeeks}주 중 3일 미달 횟수">${cardTrail}</span>`:''}
-          ${pendingWarn?` <span class="week-warn-badge" title="이번주 ${wkDays}일 인증 (3일 미달, 마감임박)">⚠️${wkDays}일</span>`:''}
-        </div>
+        <div><span class="name-emoji-inline">${emoji}</span>${name}</div>
         ${mTargetBadge}${mWarnBadge}
       </div>
     </td>`;
@@ -2349,12 +2341,8 @@ window.openSummary = function(){
     const streak=calcStreak(m.name);
     const total=calcMonthTotal(m.name);
     const rate=calcRate(m.name);
-    const weekCount=getWeekDaysChecked(m.name);
-    const grade=getGrade(m.name,streak,total,rate,weekCount);
-    const isLowWeek = (weekCount!==null && isWeekWarnWindow() && weekCount < 3);
-    const missedWeeks = getMissedWeeksCount(m.name);
-    const cardTrail = getCardTrail(missedWeeks);
-    return {...m, streak, total, rate, weekCount, isLowWeek, missedWeeks, cardTrail, ...grade};
+    const grade=getGrade(m.name,streak,total,rate);
+    return {...m, streak, total, rate, ...grade};
   }).sort((a,b)=>b.streak-a.streak||b.total-a.total);
 
   const cntBadgeColor = {
@@ -2364,13 +2352,12 @@ window.openSummary = function(){
     'tier-low':'#5a6080'
   };
 
-  body.innerHTML = ranked.map(({name,emoji,streak,total,rate,weekCount,isLowWeek,missedWeeks,cardTrail,tier,msg,badge},idx)=>{
+  body.innerHTML = ranked.map(({name,emoji,tier,msg,badge})=>{
     const color = cntBadgeColor[tier];
-    const warnCls = isLowWeek ? ' week-warn' : '';
-    return `<div class="summary-member-row ${tier}${warnCls}">
+    return `<div class="summary-member-row ${tier}">
       <span class="summary-emoji">${emoji}</span>
       <div class="summary-info">
-        <span class="summary-name">${name}${cardTrail?` <span class="card-trail" title="지난 주 중 ${missedWeeks}회 3일 미달">${cardTrail}</span>`:''}${isLowWeek?' <span class="week-warn-tag">⚠️ 이번주 '+weekCount+'일</span>':''}</span>
+        <span class="summary-name">${name}</span>
         <span class="summary-msg">${msg}</span>
       </div>
       ${badge?`<span class="summary-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${badge}</span>`:''}
