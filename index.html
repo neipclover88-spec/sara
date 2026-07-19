@@ -912,7 +912,7 @@ function getMandatoryDays(name){
       // 이번 달에 가입한 경우
       if(jy===curYear && jm===curMonth && jd>1){
         const availDays = dim - jd + 1; // 가입일~말일
-        return { mandatory: Math.floor(availDays * 2/3), joinDay: jd, isMid: true, availDays };
+        return { mandatory: Math.floor(availDays / 3) * 2, joinDay: jd, isMid: true, availDays };
       }
     }
   }
