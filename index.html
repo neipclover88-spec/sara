@@ -504,6 +504,14 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .rank-list-name { font-size:0.92rem; font-weight:700; }
 .rank-list-sub { font-size:0.72rem; color:var(--muted); margin-top:0.1rem; }
 .rank-list-right { text-align:right; }
+.rank-formula-box {
+  background:rgba(255,217,61,0.06); border:1px solid rgba(255,217,61,0.25);
+  border-radius:12px; padding:0.7rem 1rem; margin-bottom:0.8rem;
+  display:flex; flex-direction:column; gap:0.3rem;
+}
+.rank-formula-title { font-size:0.68rem; color:var(--muted); font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+.rank-formula-main { font-size:0.88rem; font-weight:700; color:#ffd93d; font-family:'DM Mono',monospace; }
+.rank-formula-cases { display:flex; gap:1rem; flex-wrap:wrap; font-size:0.72rem; color:rgba(255,217,61,0.6); font-family:'DM Mono',monospace; }
 .rank-list-score { font-size:1.1rem; font-weight:900; color:var(--accent3); font-family:'DM Mono',monospace; line-height:1; }
 .rank-list-score-unit { font-size:0.65rem; font-weight:600; margin-left:1px; }
 .rank-list-formula { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:0.1rem; }
@@ -2367,6 +2375,16 @@ window.openMonthlyRank = function(){
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
   const podiumRanks = top3[1] ? [2,1,3] : [1,2,3];
 
+  const formulaHtml = `<div class="rank-formula-box">
+    <div class="rank-formula-title">📐 점수 계산식</div>
+    <div class="rank-formula-main">점수 = 참여일 × (1 + min(평균-1, 2) ÷ 2)</div>
+    <div class="rank-formula-cases">
+      <span>평균 1회/일 → ×1.0</span>
+      <span>평균 2회/일 → ×1.5</span>
+      <span>평균 3회/일 → ×2.0</span>
+    </div>
+  </div>`;
+
   const podiumHtml = `<div class="rank-podium">
     ${podiumOrder.map((m,i)=>{
       const r = podiumRanks[i];
@@ -2379,7 +2397,7 @@ window.openMonthlyRank = function(){
         <div class="rank-podium-block r${r}"></div>
       </div>`;
     }).join('')}
-  </div>`;
+  </div>` + formulaHtml;
 
   // 전체 순위 리스트
   const listHtml = `<div class="rank-list">
@@ -2391,12 +2409,12 @@ window.openMonthlyRank = function(){
         <div class="rank-list-num">${numIcon}</div>
         <div class="rank-list-emoji">${m.emoji}</div>
         <div class="rank-list-info">
-          <div class="rank-list-name">${m.name}</div>
-          <div class="rank-list-sub">${mandatoryBadge}</div>
+          <div class="rank-list-name" style="white-space:nowrap">${m.name}</div>
+          <div class="rank-list-sub" style="white-space:nowrap">${mandatoryBadge}</div>
         </div>
         <div class="rank-list-right">
           <div class="rank-list-score">${m.score.toFixed(1)}<span class="rank-list-score-unit">점</span></div>
-          <div class="rank-list-formula">${m.days}일 × ${(1+Math.min(Math.max((m.days>0?m.cnt/m.days:0)-1,0),2)/2).toFixed(2)} <span style="color:rgba(255,255,255,0.25)">(평균 ${(m.days>0?m.cnt/m.days:0).toFixed(2)}회/일 → 1 + min(평균-1,2)÷2)</span></div>
+
           <div class="rank-list-cnt">${m.days}일 참여 · ${m.cnt}회 인증</div>
         </div>
       </div>`;
