@@ -504,6 +504,9 @@ td.stat-cell.has-cnt { color:var(--accent); font-weight:500; }
 .rank-list-name { font-size:0.92rem; font-weight:700; }
 .rank-list-sub { font-size:0.72rem; color:var(--muted); margin-top:0.1rem; }
 .rank-list-right { text-align:right; }
+.rank-list-score { font-size:1.1rem; font-weight:900; color:var(--accent3); font-family:'DM Mono',monospace; line-height:1; }
+.rank-list-score-unit { font-size:0.65rem; font-weight:600; margin-left:1px; }
+.rank-list-formula { font-size:0.72rem; color:var(--muted); font-family:'DM Mono',monospace; margin-top:0.1rem; }
 .rank-list-days { font-size:1rem; font-weight:800; color:var(--accent); font-family:'DM Mono',monospace; }
 .rank-list-cnt { font-size:0.68rem; color:var(--muted); font-family:'DM Mono',monospace; }
 .rank-mandatory { font-size:0.65rem; padding:0.1rem 0.45rem; border-radius:100px; }
@@ -2390,8 +2393,9 @@ window.openMonthlyRank = function(){
           <div class="rank-list-sub">${mandatoryBadge}</div>
         </div>
         <div class="rank-list-right">
-          <div class="rank-list-days">${m.days}일</div>
-          <div class="rank-list-cnt">총 ${m.cnt}회 인증</div>
+          <div class="rank-list-score">${m.score.toFixed(1)}<span class="rank-list-score-unit">점</span></div>
+          <div class="rank-list-formula">${m.days}일 × ${(1 + Math.min(m.days>0?m.cnt/m.days:0, 3)/3).toFixed(2)}</div>
+          <div class="rank-list-cnt">${m.days}일 참여 · ${m.cnt}회 인증</div>
         </div>
       </div>`;
     }).join('')}
