@@ -2347,8 +2347,11 @@ window.openMonthlyRank = function(){
     }
     const { mandatory, isMid } = getMandatoryDays(m.name);
     const mandatoryDone = days >= mandatory;
-    return { ...m, days, cnt, mandatory, isMid, mandatoryDone };
-  }).sort((a,b)=> b.days!==a.days ? b.days-a.days : b.cnt-a.cnt);
+    // 종합 점수: 참여일 × (1 + min(평균인증횟수/일, 3)/3)
+    const avgCnt = days > 0 ? cnt/days : 0;
+    const score = days * (1 + Math.min(avgCnt, 3) / 3);
+    return { ...m, days, cnt, score, mandatory, isMid, mandatoryDone };
+  }).sort((a,b) => b.score - a.score);
 
   const medals = ['🥇','🥈','🥉'];
   const body = document.getElementById('monthlyRankBody');
@@ -2367,7 +2370,7 @@ window.openMonthlyRank = function(){
         <div class="rank-emoji">${m.emoji}</div>
         <div class="rank-name">${m.name}</div>
         <div class="rank-days">${m.days}일</div>
-        <div class="rank-cnt">총 ${m.cnt}회</div>
+        <div class="rank-cnt">점수 ${m.score.toFixed(1)}</div>
         <div class="rank-podium-block r${r}"></div>
       </div>`;
     }).join('')}
