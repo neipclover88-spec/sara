@@ -2350,9 +2350,11 @@ window.openMonthlyRank = function(){
     }
     const { mandatory, isMid } = getMandatoryDays(m.name);
     const mandatoryDone = days >= mandatory;
-    // 종합 점수: 참여일 × (1 + min(평균인증횟수/일, 3)/3)
+    // 종합 점수: 참여일 × (1 + min(평균-1, 2)/2)
+    // 평균 1회/일=×1.0, 2회/일=×1.5, 3회/일=×2.0
     const avgCnt = days > 0 ? cnt/days : 0;
-    const score = days * (1 + Math.min(avgCnt, 3) / 3);
+    const multiplier = 1 + Math.min(Math.max(avgCnt-1, 0), 2) / 2;
+    const score = days * multiplier;
     return { ...m, days, cnt, score, mandatory, isMid, mandatoryDone };
   }).sort((a,b) => b.score - a.score);
 
@@ -2394,7 +2396,7 @@ window.openMonthlyRank = function(){
         </div>
         <div class="rank-list-right">
           <div class="rank-list-score">${m.score.toFixed(1)}<span class="rank-list-score-unit">점</span></div>
-          <div class="rank-list-formula">${m.days}일 × ${(1 + Math.min(m.days>0?m.cnt/m.days:0, 3)/3).toFixed(2)}</div>
+          <div class="rank-list-formula">${m.days}일 × ${(1+Math.min(Math.max((m.days>0?m.cnt/m.days:0)-1,0),2)/2).toFixed(2)} <span style="color:rgba(255,255,255,0.25)">(평균 ${(m.days>0?m.cnt/m.days:0).toFixed(2)}회/일 → 1 + min(평균-1,2)÷2)</span></div>
           <div class="rank-list-cnt">${m.days}일 참여 · ${m.cnt}회 인증</div>
         </div>
       </div>`;
